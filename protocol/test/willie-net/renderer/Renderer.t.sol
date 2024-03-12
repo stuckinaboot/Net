@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17 .0;
 
-import { PRBTest } from "@prb/test/PRBTest.sol";
-import { console2 } from "forge-std/console2.sol";
-import { StdCheats } from "forge-std/StdCheats.sol";
-import { StdStorage, stdStorage } from "forge-std/StdStorage.sol";
-import { WillieNet } from "../../../src/willie-net/WillieNet.sol";
-import { Constants } from "../../../src/willie-net/Constants.sol";
-import { TwoStepOwnable } from "../../../src/utils/TwoStepOwnable.sol";
-import { NFTEventsAndErrors } from "../../../src/NFTEventsAndErrors.sol";
-import { IERC721A } from "@erc721a/ERC721A.sol";
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
-import { Utils } from "../../../src/utils/Utils.sol";
-import { IERC721Receiver } from "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
-import { TwoStepOwnable } from "../../../src/utils/TwoStepOwnable.sol";
-import { OnchainSteamboatWillie } from "../../../src/OnchainSteamboatWillie.sol";
-import { Renderer } from "../../../src/willie-net/renderer/Renderer.sol";
+import {PRBTest} from "@prb/test/PRBTest.sol";
+import {console2} from "forge-std/console2.sol";
+import {StdCheats} from "forge-std/StdCheats.sol";
+import {StdStorage, stdStorage} from "forge-std/StdStorage.sol";
+import {WillieNet} from "../../../src/willie-net/WillieNet.sol";
+import {Constants} from "../../../src/willie-net/Constants.sol";
+import {TwoStepOwnable} from "../../../src/utils/TwoStepOwnable.sol";
+import {NFTEventsAndErrors} from "../../../src/willie-net/onchain-steamboat-willie/NFTEventsAndErrors.sol";
+import {IERC721A} from "@erc721a/ERC721A.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {Utils} from "../../../src/utils/Utils.sol";
+import {IERC721Receiver} from "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
+import {TwoStepOwnable} from "../../../src/utils/TwoStepOwnable.sol";
+import {OnchainSteamboatWillie} from "../../../src/willie-net/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
+import {Renderer} from "../../../src/willie-net/renderer/Renderer.sol";
 
 contract RendererTest is PRBTest, StdCheats {
     using stdStorage for StdStorage;
@@ -29,7 +29,11 @@ contract RendererTest is PRBTest, StdCheats {
     uint16 ALLOWLIST_MINT_CAP = 45;
     uint8 ALLOWLIST_MINT_MAX_PER_WALLET = 15;
     OnchainSteamboatWillie public willie =
-        new OnchainSteamboatWillie(bytes32(0), ALLOWLIST_MINT_CAP, ALLOWLIST_MINT_MAX_PER_WALLET);
+        new OnchainSteamboatWillie(
+            bytes32(0),
+            ALLOWLIST_MINT_CAP,
+            ALLOWLIST_MINT_MAX_PER_WALLET
+        );
     WillieNet public nft = new WillieNet(address(willie));
     Renderer public renderer = new Renderer(address(nft));
 
@@ -51,19 +55,20 @@ contract RendererTest is PRBTest, StdCheats {
         uint256 expectedMsgsCnt,
         uint256 expectedAddressesCnt,
         string memory expectedMessage
-    )
-        public
-    {
-        (string memory messages, address[] memory addresses) = renderer.getMessagesEncoded();
+    ) public {
+        (string memory messages, address[] memory addresses) = renderer
+            .getMessagesEncoded();
         assertEq(nft.getTotalMessagesCount(), expectedMsgsCnt);
         // TODO add addresses check
         // assertEq(addresses.length, expectedAddressesCnt);
         assertEq(messages, expectedMessage);
     }
 
-    function testSendAndGetMessagesEncodedOneUserOneToken(bool notableMint) public {
+    function testSendAndGetMessagesEncodedOneUserOneToken(
+        bool notableMint
+    ) public {
         if (notableMint) {
-            nft.mintPublicNotable{ value: nft.PRICE() }(1);
+            nft.mintPublicNotable{value: nft.PRICE()}(1);
         } else {
             nft.mintPublic(1);
         }
@@ -77,7 +82,7 @@ contract RendererTest is PRBTest, StdCheats {
         postSendMessageChecks(
             3,
             1,
-            "[\"ghi\",\"0x7fa9385be102ac3eac297483dd6233d62b3e1496\",\"Topic\",\"def\",\"0x7fa9385be102ac3eac297483dd6233d62b3e1496\",\"Topic\",\"abc\",\"0x7fa9385be102ac3eac297483dd6233d62b3e1496\",\"Topic\"]"
+            '["ghi","0x7fa9385be102ac3eac297483dd6233d62b3e1496","Topic","def","0x7fa9385be102ac3eac297483dd6233d62b3e1496","Topic","abc","0x7fa9385be102ac3eac297483dd6233d62b3e1496","Topic"]'
         );
     }
 
@@ -93,15 +98,17 @@ contract RendererTest is PRBTest, StdCheats {
         postSendMessageChecks(
             3,
             1,
-            "[\"ghi\",\"0x7fa9385be102ac3eac297483dd6233d62b3e1496\",\"Topic\",\"def\",\"0x7fa9385be102ac3eac297483dd6233d62b3e1496\",\"Topic\",\"abc\",\"0x7fa9385be102ac3eac297483dd6233d62b3e1496\",\"Topic\"]"
+            '["ghi","0x7fa9385be102ac3eac297483dd6233d62b3e1496","Topic","def","0x7fa9385be102ac3eac297483dd6233d62b3e1496","Topic","abc","0x7fa9385be102ac3eac297483dd6233d62b3e1496","Topic"]'
         );
         string memory animationUrl = renderer.animationUrl();
         emit LogNamedString("Animation url", animationUrl);
     }
 
-    function testSendAndGetMessagesEncodedOneUserMultipleTokens(bool notableMint) public {
+    function testSendAndGetMessagesEncodedOneUserMultipleTokens(
+        bool notableMint
+    ) public {
         if (notableMint) {
-            nft.mintPublicNotable{ value: nft.PRICE() * 3 }(3);
+            nft.mintPublicNotable{value: nft.PRICE() * 3}(3);
         } else {
             nft.mintPublic(3);
         }
@@ -115,15 +122,17 @@ contract RendererTest is PRBTest, StdCheats {
         postSendMessageChecks(
             3,
             1,
-            "[\"ghi\",\"0x7fa9385be102ac3eac297483dd6233d62b3e1496\",\"Topic\",\"def\",\"0x7fa9385be102ac3eac297483dd6233d62b3e1496\",\"Topic\",\"abc\",\"0x7fa9385be102ac3eac297483dd6233d62b3e1496\",\"Topic\"]"
+            '["ghi","0x7fa9385be102ac3eac297483dd6233d62b3e1496","Topic","def","0x7fa9385be102ac3eac297483dd6233d62b3e1496","Topic","abc","0x7fa9385be102ac3eac297483dd6233d62b3e1496","Topic"]'
         );
     }
 
-    function testSendAndGetMessagesEncodedMultipleUsersMultipleTokens(bool notableMint) public {
+    function testSendAndGetMessagesEncodedMultipleUsersMultipleTokens(
+        bool notableMint
+    ) public {
         for (uint256 i; i < 3; i++) {
             vm.startPrank(users[i]);
             if (notableMint) {
-                nft.mintPublicNotable{ value: nft.PRICE() }(1);
+                nft.mintPublicNotable{value: nft.PRICE()}(1);
             } else {
                 nft.mintPublic(1);
             }
@@ -145,13 +154,13 @@ contract RendererTest is PRBTest, StdCheats {
         postSendMessageChecks(
             3,
             3,
-            "[\"cars\",\"0x0000000000000000000000000000000000000003\",\"Topic3\",\"banana\",\"0x0000000000000000000000000000000000000002\",\"Topic2\",\"apple\",\"0x0000000000000000000000000000000000000001\",\"Topic1\"]"
+            '["cars","0x0000000000000000000000000000000000000003","Topic3","banana","0x0000000000000000000000000000000000000002","Topic2","apple","0x0000000000000000000000000000000000000001","Topic1"]'
         );
     }
 
     function testSendAndGetUserAttributesOneUser(bool notableMint) public {
         if (notableMint) {
-            nft.mintPublicNotable{ value: nft.PRICE() }(1);
+            nft.mintPublicNotable{value: nft.PRICE()}(1);
         } else {
             nft.mintPublic(1);
         }
@@ -161,11 +170,12 @@ contract RendererTest is PRBTest, StdCheats {
         // 280 character message
         nft.sendMessage(1, bytes32(0), "abc", "Topic");
         nft.sendMessage(1, bytes32(0), "def", "Topic");
-        (string memory messages, address[] memory addresses) = renderer.getMessagesEncoded();
+        (string memory messages, address[] memory addresses) = renderer
+            .getMessagesEncoded();
         assertEq(
             renderer.getUserAttributesEncoded(addresses),
             // TODO get actual attributes showing
-            "{\"0x7fa9385be102ac3eac297483dd6233d62b3e1496\":[\"\",],\"0x7fa9385be102ac3eac297483dd6233d62b3e1496\":[\"\",]}"
+            '{"0x7fa9385be102ac3eac297483dd6233d62b3e1496":["",],"0x7fa9385be102ac3eac297483dd6233d62b3e1496":["",]}'
         );
     }
 }

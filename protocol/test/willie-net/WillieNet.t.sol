@@ -1,25 +1,32 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17 .0;
 
-import { PRBTest } from "@prb/test/PRBTest.sol";
-import { console2 } from "forge-std/console2.sol";
-import { StdCheats } from "forge-std/StdCheats.sol";
-import { StdStorage, stdStorage } from "forge-std/StdStorage.sol";
-import { WillieNet } from "../../src/willie-net/WillieNet.sol";
-import { IWillieNet } from "../../src/willie-net/IWillieNet.sol";
-import { Constants } from "../../src/willie-net/Constants.sol";
-import { TwoStepOwnable } from "../../src/utils/TwoStepOwnable.sol";
-import { NFTEventsAndErrors } from "../../src/willie-net/NFTEventsAndErrors.sol";
-import { IERC721A } from "@erc721a/ERC721A.sol";
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
-import { Utils } from "../../src/utils/Utils.sol";
-import { IERC721Receiver } from "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
-import { TwoStepOwnable } from "../../src/utils/TwoStepOwnable.sol";
-import { OnchainSteamboatWillie } from "../../src/OnchainSteamboatWillie.sol";
-import { Renderer } from "../../src/willie-net/renderer/Renderer.sol";
-import { TestUtils } from "./TestUtils.sol";
+import {PRBTest} from "@prb/test/PRBTest.sol";
+import {console2} from "forge-std/console2.sol";
+import {StdCheats} from "forge-std/StdCheats.sol";
+import {StdStorage, stdStorage} from "forge-std/StdStorage.sol";
+import {WillieNet} from "../../src/willie-net/WillieNet.sol";
+import {IWillieNet} from "../../src/willie-net/IWillieNet.sol";
+import {Constants} from "../../src/willie-net/Constants.sol";
+import {TwoStepOwnable} from "../../src/utils/TwoStepOwnable.sol";
+import {NFTEventsAndErrors} from "../../src/willie-net/NFTEventsAndErrors.sol";
+import {IERC721A} from "@erc721a/ERC721A.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {Utils} from "../../src/utils/Utils.sol";
+import {IERC721Receiver} from "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
+import {TwoStepOwnable} from "../../src/utils/TwoStepOwnable.sol";
+import {OnchainSteamboatWillie} from "../../../src/willie-net/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
+import {Renderer} from "../../src/willie-net/renderer/Renderer.sol";
+import {TestUtils} from "./TestUtils.sol";
 
-contract WillieNetTest is TestUtils, NFTEventsAndErrors, Constants, PRBTest, StdCheats, IERC721Receiver {
+contract WillieNetTest is
+    TestUtils,
+    NFTEventsAndErrors,
+    Constants,
+    PRBTest,
+    StdCheats,
+    IERC721Receiver
+{
     using stdStorage for StdStorage;
 
     StdStorage private stdstore;
@@ -31,10 +38,14 @@ contract WillieNetTest is TestUtils, NFTEventsAndErrors, Constants, PRBTest, Std
     uint16 ALLOWLIST_MINT_CAP = 45;
     uint8 ALLOWLIST_MINT_MAX_PER_WALLET = 15;
     OnchainSteamboatWillie public willie =
-        new OnchainSteamboatWillie(bytes32(0), ALLOWLIST_MINT_CAP, ALLOWLIST_MINT_MAX_PER_WALLET);
+        new OnchainSteamboatWillie(
+            bytes32(0),
+            ALLOWLIST_MINT_CAP,
+            ALLOWLIST_MINT_MAX_PER_WALLET
+        );
     WillieNet public nft = new WillieNet(address(willie));
 
-    constructor() TestUtils(nft) { }
+    constructor() TestUtils(nft) {}
 
     function setUp() public {
         vm.deal(address(this), 1000 ether);
@@ -50,7 +61,10 @@ contract WillieNetTest is TestUtils, NFTEventsAndErrors, Constants, PRBTest, Std
         }
     }
 
-    function verifyMessage(WillieNet.Message memory expectedMessage, WillieNet.Message memory actualMessage) public {
+    function verifyMessage(
+        WillieNet.Message memory expectedMessage,
+        WillieNet.Message memory actualMessage
+    ) public {
         assertEq(actualMessage.senderTokenId, expectedMessage.senderTokenId);
         assertEq(actualMessage.sender, expectedMessage.sender);
         assertEq(actualMessage.timestamp, expectedMessage.timestamp);
@@ -64,13 +78,12 @@ contract WillieNetTest is TestUtils, NFTEventsAndErrors, Constants, PRBTest, Std
         uint256 senderTokenId,
         string memory messageContents,
         string memory topic
-    )
-        public
-    {
+    ) public {
         uint256 currMessagesLength = nft.getTotalMessagesCount();
         uint256 topicMessagesLength = nft.getTotalMessagesForTopicCount(topic);
         uint256 userMessagesLength = nft.getTotalMessagesForUserCount(user);
-        uint256 senderTokenIdMessagesLength = nft.getTotalMessagesForSenderTokenIdCount(senderTokenId);
+        uint256 senderTokenIdMessagesLength = nft
+            .getTotalMessagesForSenderTokenIdCount(senderTokenId);
 
         vm.startPrank(user);
         vm.expectEmit(true, true, true, false);
@@ -88,27 +101,38 @@ contract WillieNetTest is TestUtils, NFTEventsAndErrors, Constants, PRBTest, Std
         });
 
         // Verify message fetched via get message
-        WillieNet.Message memory messageGlobal = nft.getMessage(currMessagesLength);
+        WillieNet.Message memory messageGlobal = nft.getMessage(
+            currMessagesLength
+        );
         verifyMessage(expectedMessage, messageGlobal);
 
         // Verify message fetched via get message for topic
-        WillieNet.Message memory messageTopic = nft.getMessageForTopic(topicMessagesLength, topic);
+        WillieNet.Message memory messageTopic = nft.getMessageForTopic(
+            topicMessagesLength,
+            topic
+        );
         verifyMessage(expectedMessage, messageTopic);
 
         // Verify message fetched via get message for user
-        WillieNet.Message memory messageUser = nft.getMessageForUser(userMessagesLength, user);
+        WillieNet.Message memory messageUser = nft.getMessageForUser(
+            userMessagesLength,
+            user
+        );
         verifyMessage(expectedMessage, messageUser);
 
         // Verify message fetched via get message for sender
-        WillieNet.Message memory messageSender = nft.getMessageForSender(senderTokenIdMessagesLength, senderTokenId);
+        WillieNet.Message memory messageSender = nft.getMessageForSender(
+            senderTokenIdMessagesLength,
+            senderTokenId
+        );
         verifyMessage(expectedMessage, messageSender);
     }
 
     function testSendOneMessage(bool notableMint) public {
         mint(notableMint, 1);
 
-        string memory messageContents =
-            "hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hell";
+        string
+            memory messageContents = "hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hell";
         string memory topic = "Topic";
         sendAndVerifyMessage(address(this), 1, messageContents, topic);
     }
@@ -121,7 +145,9 @@ contract WillieNetTest is TestUtils, NFTEventsAndErrors, Constants, PRBTest, Std
         sendAndVerifyMessage(address(this), 1, "message 3", "t3");
     }
 
-    function testSendMultipleMessagesOnDifferentTokens(bool notableMint) public {
+    function testSendMultipleMessagesOnDifferentTokens(
+        bool notableMint
+    ) public {
         mint(notableMint, 3);
 
         sendAndVerifyMessage(address(this), 1, "message 1", "t1");
@@ -129,7 +155,9 @@ contract WillieNetTest is TestUtils, NFTEventsAndErrors, Constants, PRBTest, Std
         sendAndVerifyMessage(address(this), 3, "message 3", "t3");
     }
 
-    function testSendMultipleMessagesOnDifferentTokensFromDifferentUsers(bool notableMint) public {
+    function testSendMultipleMessagesOnDifferentTokensFromDifferentUsers(
+        bool notableMint
+    ) public {
         for (uint256 i; i < 3; i++) {
             vm.startPrank(users[i]);
             mint(notableMint, 1);
@@ -142,7 +170,9 @@ contract WillieNetTest is TestUtils, NFTEventsAndErrors, Constants, PRBTest, Std
         sendAndVerifyMessage(users[2], 3, "message 3", "t3");
     }
 
-    function testSendOneMessageRevertsWhenUserNotOwner(bool notableMint) public {
+    function testSendOneMessageRevertsWhenUserNotOwner(
+        bool notableMint
+    ) public {
         mint(notableMint, 1);
 
         vm.startPrank(users[1]);
@@ -161,7 +191,7 @@ contract WillieNetTest is TestUtils, NFTEventsAndErrors, Constants, PRBTest, Std
             vm.startPrank(users[i]);
 
             if (notableMint) {
-                nft.mintPublicNotable{ value: nft.PRICE() }(1);
+                nft.mintPublicNotable{value: nft.PRICE()}(1);
             } else {
                 nft.mintPublic(1);
             }
@@ -183,7 +213,7 @@ contract WillieNetTest is TestUtils, NFTEventsAndErrors, Constants, PRBTest, Std
         vm.assume(invalidPrice != PRICE);
 
         vm.expectRevert(NFTEventsAndErrors.IncorrectPayment.selector);
-        nft.mintPublicNotable{ value: invalidPrice }(1);
+        nft.mintPublicNotable{value: invalidPrice}(1);
     }
 
     // function testTokenUriForNonExistentToken() public {
@@ -221,11 +251,16 @@ contract WillieNetTest is TestUtils, NFTEventsAndErrors, Constants, PRBTest, Std
 
     // Helpers
 
-    function onERC721Received(address, address, uint256, bytes memory) public virtual override returns (bytes4) {
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes memory
+    ) public virtual override returns (bytes4) {
         return this.onERC721Received.selector;
     }
 
-    receive() external payable { }
+    receive() external payable {}
 
     // Outdated but keeping around for now
 

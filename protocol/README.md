@@ -1,3 +1,12 @@
+# Willienet
+
+### TODOs
+- TODO consider fee for long messages to disincentivize spam
+- TODO use renderer for associating name to sender (make sure it's public!), pfp to sender (make sure it's public),
+- TODO goal is new renderers built on top of old renderer can still use those values and functions (e.g. new renderer setName could point to old renderer's set name)
+- etc.
+
+
 ## Foundry
 
 **Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
