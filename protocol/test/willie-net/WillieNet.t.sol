@@ -15,7 +15,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Utils} from "../../src/utils/Utils.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
 import {TwoStepOwnable} from "../../src/utils/TwoStepOwnable.sol";
-import {OnchainSteamboatWillie} from "../../../src/willie-net/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
+import {OnchainSteamboatWillie} from "../../src/willie-net/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
 import {Renderer} from "../../src/willie-net/renderer/Renderer.sol";
 import {TestUtils} from "./TestUtils.sol";
 
