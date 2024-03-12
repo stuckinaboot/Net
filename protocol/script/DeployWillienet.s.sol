@@ -2,7 +2,7 @@
 pragma solidity >=0.8.17 .0;
 
 import {Script, console} from "forge-std/Script.sol";
-import {OnchainSteamboatWillie} from "../src/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
+import {OnchainSteamboatWillie} from "../src/willie-net/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
 import {WillieNet} from "../src/willie-net/WillieNet.sol";
 import {Renderer} from "../src/willie-net/renderer/Renderer.sol";
 
