@@ -7,3 +7,6 @@
 [submodule "protocol/lib/prb-test"]
 	path = protocol/lib/prb-test
 	url = https://github.com/PaulRBerg/prb-test
+[submodule "protocol/lib/prb-math"]
+	path = protocol/lib/prb-math
+	url = https://github.com/PaulRBerg/prb-math
