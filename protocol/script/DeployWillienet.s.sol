@@ -29,7 +29,7 @@ contract DeployNFT is Script {
 
         vm.startBroadcast();
         OnchainSteamboatWillie nft = new OnchainSteamboatWillie(
-            address(0),
+            bytes32(0),
             0,
             0
         );
