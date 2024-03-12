@@ -14,7 +14,10 @@ contract DeployNFT is Script {
 
     function setUp() public virtual {}
 
-    function deployOnchainSteamboatWillies() returns (address onchainWillies) {
+    function deployOnchainSteamboatWillies()
+        internal
+        returns (address onchainWillies)
+    {
         string memory root = vm.projectRoot();
 
         string memory art0 = vm.readFile(
