@@ -1,0 +1,67 @@
+<html>
+  <body>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="100%"
+      height="100%"
+      shape-rendering="crispEdges"
+      viewBox="0 0 16 16"
+      style="background-color: #282828"
+    >
+      <rect fill="#BF5DCA" height="1" width="1" x="7" y="3" />
+      <rect fill="#BF5ECA" height="1" width="1" x="8" y="3" />
+      <rect fill="#BF5DCA" height="1" width="1" x="6" y="4" />
+      <rect fill="#BF5DCA" height="1" width="1" x="7" y="4" />
+      <rect fill="#BF5DCA" height="1" width="1" x="8" y="4" />
+      <rect fill="#BF5DCA" height="1" width="1" x="9" y="4" />
+      <rect fill="#BF5DCA" id="a" height="1" width="1" x="6" y="3" />
+      <rect fill="#BF5ECA" id="b" height="1" width="1" x="10" y="4" />
+      <rect fill="#C466C4" height="1" width="1" x="5" y="5" />
+      <rect fill="#4893C5" height="1" width="1" x="6" y="5" />
+      <rect fill="#4893C5" height="1" width="1" x="7" y="5" />
+      <rect fill="#4893C5" height="1" width="1" x="8" y="5" />
+      <rect fill="#4993C4" height="1" width="1" x="9" y="5" />
+      <rect fill="#4893C5" height="1" width="1" x="6" y="6" />
+      <rect fill="#282828" height="1" width="1" x="7" y="6" />
+      <rect fill="#4893C5" height="1" width="1" x="8" y="6" />
+      <rect fill="#282828" height="1" width="1" x="9" y="6" />
+      <rect fill="#4993C4" height="1" width="1" x="10" y="6" />
+      <rect fill="#C466C4" height="1" width="1" x="5" y="7" />
+      <rect fill="#4893C5" height="1" width="1" x="6" y="7" />
+      <rect fill="#4893C5" height="1" width="1" x="7" y="7" />
+      <rect fill="#4893C5" height="1" width="1" x="8" y="7" />
+      <rect fill="#4893C5" height="1" width="1" x="9" y="7" />
+      <rect fill="#4993C4" height="1" width="1" x="10" y="7" />
+      <rect fill="#4893C5" height="1" width="1" x="6" y="8" />
+      <rect fill="#787879" height="1" width="1" x="7" y="8" />
+      <rect fill="#787879" height="1" width="1" x="8" y="8" />
+      <rect fill="#4994C5" height="1" width="1" x="4" y="9" />
+      <rect fill="#C466C4" height="1" width="1" x="5" y="9" />
+      <rect fill="#4893C5" height="1" width="1" x="6" y="9" />
+      <rect fill="#4893C5" height="1" width="1" x="7" y="9" />
+      <rect fill="#787879" height="1" width="1" x="8" y="9" />
+      <rect fill="#4993C4" height="1" width="1" x="9" y="9" />
+      <rect fill="#4994C5" height="1" width="1" x="5" y="10" />
+      <rect fill="#4893C5" height="1" width="1" x="6" y="10" />
+      <rect fill="#787879" height="1" width="1" x="7" y="10" />
+      <rect fill="#787879" height="1" width="1" x="8" y="10" />
+      <rect fill="#4993C4" height="1" width="1" x="6" y="11" />
+      <rect fill="#4993C4" height="1" width="1" x="8" y="11" />
+    </svg>
+  </body>
+  <script>
+    document.body.addEventListener("click", () => {
+      let a = document.getElementById("a");
+      let new1, new2;
+      if (a.getAttribute("x") === "6") {
+        new1 = "9";
+        new2 = "5";
+      } else {
+        new1 = "6";
+        new2 = "10";
+      }
+      document.getElementById("a").setAttribute("x", new1);
+      document.getElementById("b").setAttribute("x", new2);
+    });
+  </script>
+</html>
