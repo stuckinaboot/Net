@@ -24,6 +24,8 @@
   goerli = { key = "${API_KEY_ETHERSCAN}" }
   sepolia = { key = "${API_KEY_ETHERSCAN}" }
   mainnet = { key = "${API_KEY_ETHERSCAN}" }
+  base = { key = "${API_KEY_BASESCAN}" }
+  base_sepolia = { key = "${API_KEY_BASESCAN}" }
   
 
 [fmt]
