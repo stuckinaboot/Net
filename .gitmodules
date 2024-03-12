@@ -10,3 +10,6 @@
 [submodule "protocol/lib/prb-math"]
 	path = protocol/lib/prb-math
 	url = https://github.com/PaulRBerg/prb-math
+[submodule "protocol/lib/solady"]
+	path = protocol/lib/solady
+	url = https://github.com/vectorized/solady
