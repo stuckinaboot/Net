@@ -1,21 +1,7 @@
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { WILLIE_NET_CONTRACT } from "../../app/constants";
-import { Button } from "@/components/ui/button";
 import SubmitTransactionButton from "./SubmitTransactionButton";
 
 export default function MintButton() {
-  const { data: hash, writeContractAsync, status } = useWriteContract();
-  const receipt = useWaitForTransactionReceipt({ hash });
-
-  async function mint() {
-    const res = await writeContractAsync({
-      address: WILLIE_NET_CONTRACT.address as any,
-      abi: WILLIE_NET_CONTRACT.abi,
-      functionName: "mintPublic",
-      args: [BigInt(1)],
-    });
-  }
-
   return (
     <SubmitTransactionButton
       functionName="mintPublic"
