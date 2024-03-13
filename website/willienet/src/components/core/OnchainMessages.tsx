@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useReadContract } from "wagmi";
 import { WILLIE_NET_CONTRACT } from "../../app/constants";
 import truncateEthAddress from "truncate-eth-address";
+import { cn } from "@/lib/utils";
 
 type OnchainMessage = {
   extraData: string;
@@ -48,5 +49,17 @@ export default function OnchainMessages() {
     setMessagesText(sanitizedOnchainMessages.join("\n"));
   }, [messagesResult.data]);
 
-  return <p className="whitespace-break-spaces">{messagesText}</p>;
+  return (
+    <p
+      className={cn(
+        "whitespace-break-spaces",
+        "font-mono",
+        "border-2 border-black",
+        "max-h-60 overflow-y-auto",
+        "w-full"
+      )}
+    >
+      {messagesText}
+    </p>
+  );
 }
