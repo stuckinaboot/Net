@@ -36,8 +36,8 @@ export default function OnchainMessages() {
       senderTokenId: message.senderTokenId.toString(),
       timestamp: message.timestamp.toString(),
     }));
-    setMessagesText(JSON.stringify(sanitizedOnchainMessages));
+    setMessagesText(JSON.stringify(sanitizedOnchainMessages, null, 4));
   }, [messagesResult]);
 
-  return <textarea value={messagesText} />;
+  return <p>{messagesText}</p>;
 }

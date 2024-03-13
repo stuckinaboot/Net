@@ -1,5 +1,6 @@
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { WILLIE_NET_CONTRACT } from "./constants";
+import { Button } from "@/components/ui/button";
 
 export default function SendMessageButton(props: {
   tokenId: number;
@@ -25,10 +26,12 @@ export default function SendMessageButton(props: {
 
   return (
     <>
-      <button onClick={performTransaction}>Send message</button>
-      <textarea value={`message: ${props.message}`} readOnly />
-      <textarea value={`tx submission: ${status}`} readOnly />
-      <textarea value={`tx receipt: ${receipt.status} ${hash}`} readOnly />
+      <Button onClick={performTransaction}>Send message</Button>
+      <p>message: {props.message}</p>
+      <p>tx submission: {status}</p>
+      <p>
+        tx receipt: {receipt.status} {hash}
+      </p>
     </>
   );
 }
