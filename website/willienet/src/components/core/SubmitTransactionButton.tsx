@@ -5,6 +5,9 @@ import { useEffect } from "react";
 
 // TODO implement this helper class and modify MintButton and SendMessageButton to use it
 
+const SHOW_TX_SUBMISSION_TEXT = false;
+const SHOW_TX_RECEIPT_TEXT = false;
+
 export default function SubmitTransactionButton(props: {
   functionName: string;
   args: any[];
@@ -20,6 +23,13 @@ export default function SubmitTransactionButton(props: {
 
   const { data: hash, writeContractAsync, status } = useWriteContract();
   const receipt = useWaitForTransactionReceipt({ hash });
+
+  useEffect(() => {
+    if (hash == null) {
+      return;
+    }
+    console.log(`Transactions submitted with hash: ${hash}`);
+  }, [hash]);
 
   useEffect(() => {
     if (!receipt.isSuccess) {
@@ -52,10 +62,12 @@ export default function SubmitTransactionButton(props: {
           ? props.messages.button.pending
           : "TODO figure out else"}
       </Button>
-      <p>tx submission: {status}</p>
-      <p>
-        tx receipt: {receipt.status} {hash}
-      </p>
+      {SHOW_TX_SUBMISSION_TEXT && <p>tx submission: {status}</p>}
+      {SHOW_TX_RECEIPT_TEXT && (
+        <p>
+          tx receipt: {receipt.status} {hash}
+        </p>
+      )}
     </>
   );
 }
