@@ -29,10 +29,8 @@ export default function OnchainMessages() {
     functionName: "getMessagesInRange",
     args: [BigInt(0), totalMessagesResult.data],
   });
-  console.log("NEW DATA! is", messagesResult.data, totalMessagesResult.data);
 
   useEffect(() => {
-    console.log("UPDATE!");
     const onchainMessages = messagesResult.data as OnchainMessage[] | undefined;
     if (!onchainMessages) {
       return;
