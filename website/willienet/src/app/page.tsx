@@ -33,9 +33,6 @@ export default function Home() {
     })();
   }, [isConnected]);
 
-  console.log("Address is", address);
-  console.log("Connected", isConnected);
-
   async function mintWillieNetNft() {}
 
   async function sendMessage(params: {
@@ -52,6 +49,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <h1 className="text-4xl">Willienet</h1>
       <ConnectButton />
       <MintButton />
       <Input

@@ -1,14 +1,29 @@
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { WILLIE_NET_CONTRACT } from "../../app/constants";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { useEffect } from "react";
 
 export default function SendMessageButton(props: {
   tokenId: number;
   message: string;
   topic: string;
 }) {
+  const { toast } = useToast();
+
   const { data: hash, writeContractAsync, status } = useWriteContract();
   const receipt = useWaitForTransactionReceipt({ hash });
+
+  useEffect(() => {
+    console.log("RECEIPT UPDATE!", receipt.isSuccess);
+    if (!receipt.isSuccess) {
+      return;
+    }
+    toast({
+      title: "Message",
+      description: "Your message has been sent successfully on Willienet",
+    });
+  }, [receipt.isSuccess]);
 
   async function performTransaction() {
     await writeContractAsync({
