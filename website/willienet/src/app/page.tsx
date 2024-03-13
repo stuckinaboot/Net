@@ -21,7 +21,7 @@ export default function Home() {
       `/api/getTokenIdsOwnedByUserInCollection?owner=${address}&contractAddress=${WILLIE_NET_CONTRACT.address}`
     );
     const resJson = await res.json();
-    setUserWillieNetTokenIds(resJson.tokenIds);
+    setUserWillieNetTokenIds(resJson.tokenIds || []);
   }
 
   useEffect(() => {

@@ -3,6 +3,8 @@ import { useReadContract } from "wagmi";
 import { WILLIE_NET_CONTRACT } from "../../app/constants";
 import truncateEthAddress from "truncate-eth-address";
 import { cn } from "@/lib/utils";
+import TimeAgo from "react-timeago";
+import { chainTimeToMilliseconds } from "@/app/utils";
 
 type OnchainMessage = {
   extraData: string;
@@ -49,6 +51,15 @@ export default function OnchainMessages() {
     setMessagesText(sanitizedOnchainMessages.join("\n"));
   }, [messagesResult.data]);
 
+  const onchainMessages =
+    (messagesResult.data as OnchainMessage[] | undefined) || [];
+  const sanitizedOnchainMessages = onchainMessages.map((message) => ({
+    ...message,
+    sender: truncateEthAddress(message.sender),
+    timestamp: +message.timestamp.toString(),
+    senderTokenId: message.senderTokenId.toString(),
+  }));
+
   return (
     <p
       className={cn(
@@ -59,7 +70,15 @@ export default function OnchainMessages() {
         "w-full"
       )}
     >
-      {messagesText}
+      {sanitizedOnchainMessages.map((message, idx) => (
+        <p key={idx}>
+          <p className="text-left">{message.message}</p>
+          <p className="text-right">
+            <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
+            {message.sender}
+          </p>
+        </p>
+      ))}
     </p>
   );
 }
