@@ -55,7 +55,6 @@ export default function Home() {
         message={message}
         topic="default"
       />
-      <p>Address: {address}</p>
       <OnchainMessages />
     </main>
   );
