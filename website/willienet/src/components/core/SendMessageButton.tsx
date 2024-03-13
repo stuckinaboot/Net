@@ -15,7 +15,6 @@ export default function SendMessageButton(props: {
   const receipt = useWaitForTransactionReceipt({ hash });
 
   useEffect(() => {
-    console.log("RECEIPT UPDATE!", receipt.isSuccess);
     if (!receipt.isSuccess) {
       return;
     }
