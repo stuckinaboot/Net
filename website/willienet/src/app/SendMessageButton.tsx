@@ -27,7 +27,6 @@ export default function SendMessageButton(props: {
   return (
     <>
       <Button onClick={performTransaction}>Send message</Button>
-      <p>message: {props.message}</p>
       <p>tx submission: {status}</p>
       <p>
         tx receipt: {receipt.status} {hash}

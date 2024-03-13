@@ -8,7 +8,7 @@ import MintButton from "./MintButton";
 import { WILLIE_NET_CONTRACT } from "./constants";
 import SendMessageButton from "./SendMessageButton";
 import OnchainMessages from "./OnchainMessages";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 
 export default function Home() {
   const [message, setMessage] = useState("");
@@ -54,17 +54,6 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <ConnectButton />
       <MintButton />
-      Get started by editing&nbsp;
-      <SendMessageButton
-        tokenId={userWillieNetTokenIds[0]}
-        message={message}
-        topic="default"
-      />
-      <textarea
-        contentEditable={false}
-        readOnly
-        value={`Address: ${address}`}
-      />
       <Input
         placeholder="Enter message to send"
         contentEditable
@@ -73,6 +62,12 @@ export default function Home() {
           setMessage(txt);
         }}
       />
+      <SendMessageButton
+        tokenId={userWillieNetTokenIds[0]}
+        message={message}
+        topic="default"
+      />
+      <p>Address: {address}</p>
       <OnchainMessages />
     </main>
   );
