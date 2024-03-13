@@ -1,34 +1,51 @@
 'use client'
 
-import { ConnectButton, RainbowKitProvider, getDefaultConfig } from "@rainbow-me/rainbowkit";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { base, baseSepolia } from "viem/chains";
-import { WagmiProvider, useAccount } from "wagmi";
+import { useAccount } from "wagmi";
 import MintButton from "./MintButton";
+import { WILLIE_NET_CONTRACT } from "./constants";
+import SendMessageButton from "./SendMessageButton";
 
 
 export default function Home() {
   const [message, setMessage] = useState('')
   const [topic, setTopic] = useState('default')
   const [storedMessages, setStoredMessages] = useState([])
+  const [userWillieNetTokenIds, setUserWillieNetTokenIds] = useState([])
 
   let sanitizedMessages = ''
 
+  const { isConnected, address } = useAccount()
+
+  async function updateOwnedWillieNetNftTokenIds() {
+    const res = await fetch(`/api/getTokenIdsOwnedByUserInCollection?owner=${address}&contractAddress=${WILLIE_NET_CONTRACT.address}`)
+    const resJson = await res.json()
+    setUserWillieNetTokenIds(resJson.tokenIds)
+  }
+
+
   useEffect(() => {
-    sanitizedMessages = storedMessages.join(',')
+    sanitizedMessages = storedMessages.join(',');
   }, storedMessages)
 
-  const { isConnected, address } = useAccount()
+  useEffect(() => {
+    (async () => {
+      if (!isConnected) {
+        return
+      }
+      await updateOwnedWillieNetNftTokenIds();
+    })();
+  }, [isConnected])
+
+
   console.log("Address is", address)
   console.log("Connected", isConnected)
 
   async function mintWillieNetNft() { }
 
-  async function getOwnedWillieNetNftTokenIds() {
-    return [];
-  }
+
 
   async function sendMessage(params: { tokenId: number, message: string, topic: string }) { }
 
@@ -44,14 +61,7 @@ export default function Home() {
         <ConnectButton />
         <MintButton />
         Get started by editing&nbsp;
-        <button onClick={async () => {
-          const tokenIds = await getOwnedWillieNetNftTokenIds();
-          if (tokenIds.length === 0) {
-            alert({ message: "No tokens owned" })
-            return;
-          }
-          await sendMessage({ tokenId: tokenIds[0], message, topic });
-        }}>Send message</button>
+        <SendMessageButton tokenId={userWillieNetTokenIds[0]} message={message} topic="default" />
         <textarea contentEditable={false} readOnly value={`Address: ${address}`} />
         <textarea placeholder="Enter message to send" contentEditable onChange={(e) => {
           const txt = e.target.value
