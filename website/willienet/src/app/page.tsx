@@ -33,25 +33,15 @@ export default function Home() {
     })();
   }, [isConnected]);
 
-  async function mintWillieNetNft() {}
-
-  async function sendMessage(params: {
-    tokenId: number;
-    message: string;
-    topic: string;
-  }) {}
-
-  async function readLatestMessages() {}
-
-  function alert(params: { message: string }) {
-    console.log(params.message);
-  }
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <h1 className="text-4xl">Willienet</h1>
       <ConnectButton />
       <MintButton />
+      <p>
+        You own the following Willienet token IDs:{" "}
+        {userWillieNetTokenIds.join(", ")}
+      </p>
       <Input
         placeholder="Enter message to send"
         contentEditable
