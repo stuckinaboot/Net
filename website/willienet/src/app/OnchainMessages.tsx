@@ -24,9 +24,12 @@ export default function OnchainMessages() {
     address: WILLIE_NET_CONTRACT.address as any,
     functionName: "getMessagesInRange",
     args: [BigInt(0), totalMessagesResult.data],
+    query: { refetchInterval: 2000 },
   });
+  console.log("NEW DATA! is", messagesResult.data);
 
   useEffect(() => {
+    console.log("UPDATE!");
     const onchainMessages = messagesResult.data as OnchainMessage[] | undefined;
     if (!onchainMessages) {
       return;
@@ -42,7 +45,7 @@ export default function OnchainMessages() {
       )
     );
     setMessagesText(sanitizedOnchainMessages.join("\n"));
-  }, [messagesResult]);
+  }, [messagesResult.data]);
 
   return <p className="whitespace-break-spaces">{messagesText}</p>;
 }
