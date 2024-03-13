@@ -50,7 +50,7 @@ export default function SubmitTransactionButton(props: {
           ? props.messages.button.success
           : receipt.isPending
           ? props.messages.button.pending
-          : "TODO figure out default"}
+          : "TODO figure out else"}
       </Button>
       <p>tx submission: {status}</p>
       <p>
