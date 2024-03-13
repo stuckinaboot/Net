@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useReadContract } from "wagmi";
 import { WILLIE_NET_CONTRACT } from "./constants";
+import truncateEthAddress from "truncate-eth-address";
 
 type OnchainMessage = {
   extraData: string;
@@ -18,15 +19,17 @@ export default function OnchainMessages() {
     abi: WILLIE_NET_CONTRACT.abi,
     address: WILLIE_NET_CONTRACT.address as any,
     functionName: "getTotalMessagesCount",
+    query: {
+      refetchInterval: 2000,
+    },
   });
   const messagesResult = useReadContract({
     abi: WILLIE_NET_CONTRACT.abi,
     address: WILLIE_NET_CONTRACT.address as any,
     functionName: "getMessagesInRange",
     args: [BigInt(0), totalMessagesResult.data],
-    query: { refetchInterval: 2000 },
   });
-  console.log("NEW DATA! is", messagesResult.data);
+  console.log("NEW DATA! is", messagesResult.data, totalMessagesResult.data);
 
   useEffect(() => {
     console.log("UPDATE!");
@@ -37,7 +40,7 @@ export default function OnchainMessages() {
     const sanitizedOnchainMessages = onchainMessages.map((message) =>
       JSON.stringify(
         {
-          sender: message.sender,
+          sender: truncateEthAddress(message.sender),
           message: message.message,
         },
         null,

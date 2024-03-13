@@ -21,6 +21,7 @@
     "react-dom": "^18",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
+    "truncate-eth-address": "^1.0.2",
     "viem": "2.x",
     "wagmi": "^2.5.7"
   },
