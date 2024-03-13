@@ -31,13 +31,18 @@ export default function OnchainMessages() {
     if (!onchainMessages) {
       return;
     }
-    const sanitizedOnchainMessages = onchainMessages.map((message) => ({
-      ...message,
-      senderTokenId: message.senderTokenId.toString(),
-      timestamp: message.timestamp.toString(),
-    }));
-    setMessagesText(JSON.stringify(sanitizedOnchainMessages, null, 4));
+    const sanitizedOnchainMessages = onchainMessages.map((message) =>
+      JSON.stringify(
+        {
+          sender: message.sender,
+          message: message.message,
+        },
+        null,
+        4
+      )
+    );
+    setMessagesText(sanitizedOnchainMessages.join("\n"));
   }, [messagesResult]);
 
-  return <p>{messagesText}</p>;
+  return <p className="whitespace-break-spaces">{messagesText}</p>;
 }
