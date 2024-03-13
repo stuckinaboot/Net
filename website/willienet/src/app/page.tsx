@@ -4,10 +4,10 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import MintButton from "./MintButton";
+import MintButton from "../components/core/MintButton";
 import { WILLIE_NET_CONTRACT } from "./constants";
-import SendMessageButton from "./SendMessageButton";
-import OnchainMessages from "./OnchainMessages";
+import SendMessageButton from "../components/core/SendMessageButton";
+import OnchainMessages from "../components/core/OnchainMessages";
 import { Input } from "@/components/ui/input";
 
 export default function Home() {

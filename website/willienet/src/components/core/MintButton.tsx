@@ -1,5 +1,5 @@
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
-import { WILLIE_NET_CONTRACT } from "./constants";
+import { WILLIE_NET_CONTRACT } from "../../app/constants";
 import { Button } from "@/components/ui/button";
 
 export default function MintButton() {

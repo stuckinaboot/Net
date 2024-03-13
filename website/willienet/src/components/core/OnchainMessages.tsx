@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useReadContract } from "wagmi";
-import { WILLIE_NET_CONTRACT } from "./constants";
+import { WILLIE_NET_CONTRACT } from "../../app/constants";
 import truncateEthAddress from "truncate-eth-address";
 
 type OnchainMessage = {
