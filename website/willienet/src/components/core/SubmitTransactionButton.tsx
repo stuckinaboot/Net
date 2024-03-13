@@ -53,9 +53,9 @@ export default function SubmitTransactionButton(props: {
   return (
     <>
       <Button onClick={performTransaction}>
-        {status === "idle"
-          ? props.messages.button.default ||
-            (receipt.isSuccess && props.useDefaultButtonMessageOnSuccess)
+        {status === "idle" ||
+        (receipt.isSuccess && props.useDefaultButtonMessageOnSuccess)
+          ? props.messages.button.default
           : receipt.isSuccess
           ? props.messages.button.success
           : receipt.isPending

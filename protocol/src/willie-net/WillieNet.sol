@@ -62,6 +62,8 @@ contract WillieNet is
             revert UserNotTokenOwner();
         }
 
+        // TODO revert if message length is none to prevent empty messages
+
         // Track message index in topic and user mappings
         uint256 messagesLength = messages.length;
         topicToMessageIndexes[keccak256(bytes(topic))].push(messagesLength);
