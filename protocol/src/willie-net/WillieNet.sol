@@ -23,6 +23,10 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         public topicToMessageIndexes;
     mapping(address sender => uint256[] messageIndexes)
         public userToMessageIndexes;
+
+    // TODO this is no longer relevant but we can track messages sent by certain NFTs? We can
+    // track the particular contract address and the contract-token combo possibly over two mappings
+    // (or via userToMessageIndexes, where we hash contract-token and turn that into address or bytes32)
     mapping(uint256 tokenId => uint256[] messageIndexes)
         public senderTokenIdToMessageIndexes;
 
@@ -33,7 +37,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     // ************
 
     function sendMessage(
-        uint256 tokenId,
         bytes32 extraData,
         string calldata message,
         string calldata topic
@@ -44,7 +47,9 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 messagesLength = messages.length;
         topicToMessageIndexes[keccak256(bytes(topic))].push(messagesLength);
         userToMessageIndexes[msg.sender].push(messagesLength);
-        senderTokenIdToMessageIndexes[tokenId].push(messagesLength);
+
+        // TODO remove
+        // senderTokenIdToMessageIndexes[tokenId].push(messagesLength);
 
         // Emit message sent using current messages length as the index
         emit MessageSent(topic, msg.sender, messagesLength);

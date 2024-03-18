@@ -21,7 +21,7 @@ import {TestUtils} from "./TestUtils.sol";
 
 contract WillieNetTest is
     TestUtils,
-    NFTEventsAndErrors,
+    EventsAndErrors,
     Constants,
     PRBTest,
     StdCheats,
@@ -176,7 +176,7 @@ contract WillieNetTest is
         mint(notableMint, 1);
 
         vm.startPrank(users[1]);
-        vm.expectRevert(NFTEventsAndErrors.UserNotTokenOwner.selector);
+        vm.expectRevert(EventsAndErrors.UserNotTokenOwner.selector);
         nft.sendMessage(1, bytes32(0), "hello", "Topic");
     }
 
@@ -212,7 +212,7 @@ contract WillieNetTest is
         vm.assume(invalidPrice < 0.01 ether);
         vm.assume(invalidPrice != PRICE);
 
-        vm.expectRevert(NFTEventsAndErrors.IncorrectPayment.selector);
+        vm.expectRevert(EventsAndErrors.IncorrectPayment.selector);
         nft.mintPublicNotable{value: invalidPrice}(1);
     }
 
