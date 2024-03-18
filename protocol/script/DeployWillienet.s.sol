@@ -13,40 +13,6 @@ contract DeployNFT is Script {
 
     function setUp() public virtual {}
 
-    function deployOnchainSteamboatWillies()
-        internal
-        returns (address onchainWillies)
-    {
-        string memory root = vm.projectRoot();
-
-        string memory art0 = vm.readFile(
-            string.concat(root, "/assets/art0.txt")
-        );
-        string memory art1 = vm.readFile(
-            string.concat(root, "/assets/art1.txt")
-        );
-        string memory art2 = vm.readFile(
-            string.concat(root, "/assets/art2.txt")
-        );
-
-        vm.startBroadcast();
-        OnchainSteamboatWillie nft = new OnchainSteamboatWillie(
-            bytes32(0),
-            0,
-            0
-        );
-        nft.setArt(0, art0);
-        nft.setArt(1, art1);
-        nft.setArt(2, art2);
-
-        // Now that it's already deployed, always enable public mint for testing
-        nft.updatePublicMintEnabled(true);
-
-        vm.stopBroadcast();
-
-        return address(nft);
-    }
-
     function run() public {
         string memory root = vm.projectRoot();
 
