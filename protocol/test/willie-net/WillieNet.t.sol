@@ -9,7 +9,7 @@ import {WillieNet} from "../../src/willie-net/WillieNet.sol";
 import {IWillieNet} from "../../src/willie-net/IWillieNet.sol";
 import {Constants} from "../../src/willie-net/Constants.sol";
 import {TwoStepOwnable} from "../../src/utils/TwoStepOwnable.sol";
-import {NFTEventsAndErrors} from "../../src/willie-net/NFTEventsAndErrors.sol";
+import {EventsAndErrors} from "../../src/willie-net/EventsAndErrors.sol";
 import {IERC721A} from "@erc721a/ERC721A.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Utils} from "../../src/utils/Utils.sol";
