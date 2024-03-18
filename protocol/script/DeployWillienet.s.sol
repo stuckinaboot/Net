@@ -2,7 +2,6 @@
 pragma solidity >=0.8.17 .0;
 
 import {Script, console} from "forge-std/Script.sol";
-import {OnchainSteamboatWillie} from "../src/willie-net/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
 import {WillieNet} from "../src/willie-net/WillieNet.sol";
 import {Renderer} from "../src/willie-net/renderer/Renderer.sol";
 
@@ -50,13 +49,9 @@ contract DeployNFT is Script {
 
     function run() public {
         string memory root = vm.projectRoot();
-        // TODO
-        // vm.parseAddress(vm.readFile(string.concat(root, "/onchain-steamboat-willie-address.txt")));
 
         vm.startBroadcast();
-
         willieNet = new WillieNet();
-
         vm.stopBroadcast();
     }
 }

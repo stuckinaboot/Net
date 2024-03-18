@@ -5,20 +5,14 @@ pragma solidity >=0.8.17 .0;
 import {ERC721A} from "@erc721a/ERC721A.sol";
 import {EventsAndErrors} from "./EventsAndErrors.sol";
 import {Constants} from "./Constants.sol";
-import {LibString} from "../utils/LibString.sol";
-import {SVG} from "../utils/SVG.sol";
-import {TwoStepOwnable} from "../utils/TwoStepOwnable.sol";
 import {IERC721} from "forge-std/interfaces/IERC721.sol";
-import {OnchainSteamboatWillie} from "./onchain-steamboat-willie/OnchainSteamboatWillie.sol";
 import {IWillieNet} from "./IWillieNet.sol";
 import {Utils} from "./Utils.sol";
 
 /// @title WillieNet
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
-/// @notice Fully decentralized onchain NFT-based messaging protocol.
+/// @notice Fully decentralized onchain messaging protocol.
 contract WillieNet is IWillieNet, EventsAndErrors, Constants {
-    using LibString for uint16;
-
     mapping(bytes32 topicHash => uint256[] messageIndexes)
         public topicToMessageIndexes;
     mapping(address sender => uint256[] messageIndexes)
