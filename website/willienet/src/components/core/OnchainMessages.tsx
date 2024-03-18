@@ -75,7 +75,7 @@ export default function OnchainMessages() {
           <p className="text-left">{message.message}</p>
           <p className="text-right">
             <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
-            {message.sender}
+            {message.sender} | Token #{message.senderTokenId}
           </p>
         </p>
       ))}
