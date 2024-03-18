@@ -50,16 +50,12 @@ contract DeployNFT is Script {
 
     function run() public {
         string memory root = vm.projectRoot();
-        address onchainSteamboatWillieAddress = deployOnchainSteamboatWillies();
         // TODO
         // vm.parseAddress(vm.readFile(string.concat(root, "/onchain-steamboat-willie-address.txt")));
 
         vm.startBroadcast();
 
-        willieNet = new WillieNet(onchainSteamboatWillieAddress);
-        willieNet.mintPublic(3);
-        renderer = new Renderer(address(willieNet));
-        renderer.mint(3);
+        willieNet = new WillieNet();
 
         vm.stopBroadcast();
     }

@@ -57,7 +57,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         // Store message
         messages.push(
             Message({
-                senderTokenId: tokenId,
                 sender: msg.sender,
                 extraData: extraData,
                 message: message,
@@ -115,6 +114,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return messages[userToMessageIndexes[user][idx]];
     }
 
+    // TODO modify for contract-address
     function getMessageForSender(
         uint256 idx,
         uint256 senderTokenId

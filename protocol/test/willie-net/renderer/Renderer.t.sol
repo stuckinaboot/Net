@@ -34,7 +34,7 @@ contract RendererTest is PRBTest, StdCheats {
             ALLOWLIST_MINT_CAP,
             ALLOWLIST_MINT_MAX_PER_WALLET
         );
-    WillieNet public nft = new WillieNet(address(willie));
+    WillieNet public nft = new WillieNet();
     Renderer public renderer = new Renderer(address(nft));
 
     function setUp() public {
@@ -64,21 +64,13 @@ contract RendererTest is PRBTest, StdCheats {
         assertEq(messages, expectedMessage);
     }
 
-    function testSendAndGetMessagesEncodedOneUserOneToken(
-        bool notableMint
-    ) public {
-        if (notableMint) {
-            nft.mintPublicNotable{value: nft.PRICE()}(1);
-        } else {
-            nft.mintPublic(1);
-        }
-
+    function testSendAndGetMessagesEncodedOneUserOneToken() public {
         assertEq(nft.getTotalMessagesCount(), 0);
 
         // 280 character message
-        nft.sendMessage(1, bytes32(0), "abc", "Topic");
-        nft.sendMessage(1, bytes32(0), "def", "Topic");
-        nft.sendMessage(1, bytes32(0), "ghi", "Topic");
+        nft.sendMessage(bytes32(0), "abc", "Topic");
+        nft.sendMessage(bytes32(0), "def", "Topic");
+        nft.sendMessage(bytes32(0), "ghi", "Topic");
         postSendMessageChecks(
             3,
             1,
@@ -87,14 +79,12 @@ contract RendererTest is PRBTest, StdCheats {
     }
 
     function testOneUserSendsThreeMessagesAnimationUrl() public {
-        nft.mintPublic(1);
-
         assertEq(nft.getTotalMessagesCount(), 0);
 
         // 280 character message
-        nft.sendMessage(1, bytes32(0), "abc", "Topic");
-        nft.sendMessage(1, bytes32(0), "def", "Topic");
-        nft.sendMessage(1, bytes32(0), "ghi", "Topic");
+        nft.sendMessage(bytes32(0), "abc", "Topic");
+        nft.sendMessage(bytes32(0), "def", "Topic");
+        nft.sendMessage(bytes32(0), "ghi", "Topic");
         postSendMessageChecks(
             3,
             1,
@@ -104,21 +94,13 @@ contract RendererTest is PRBTest, StdCheats {
         emit LogNamedString("Animation url", animationUrl);
     }
 
-    function testSendAndGetMessagesEncodedOneUserMultipleTokens(
-        bool notableMint
-    ) public {
-        if (notableMint) {
-            nft.mintPublicNotable{value: nft.PRICE() * 3}(3);
-        } else {
-            nft.mintPublic(3);
-        }
-
+    function testSendAndGetMessagesEncodedOneUserMultipleTokens() public {
         assertEq(nft.getTotalMessagesCount(), 0);
 
         // 280 character message
-        nft.sendMessage(1, bytes32(0), "abc", "Topic");
-        nft.sendMessage(2, bytes32(0), "def", "Topic");
-        nft.sendMessage(3, bytes32(0), "ghi", "Topic");
+        nft.sendMessage(bytes32(0), "abc", "Topic");
+        nft.sendMessage(bytes32(0), "def", "Topic");
+        nft.sendMessage(bytes32(0), "ghi", "Topic");
         postSendMessageChecks(
             3,
             1,
@@ -129,26 +111,16 @@ contract RendererTest is PRBTest, StdCheats {
     function testSendAndGetMessagesEncodedMultipleUsersMultipleTokens(
         bool notableMint
     ) public {
-        for (uint256 i; i < 3; i++) {
-            vm.startPrank(users[i]);
-            if (notableMint) {
-                nft.mintPublicNotable{value: nft.PRICE()}(1);
-            } else {
-                nft.mintPublic(1);
-            }
-            vm.stopPrank();
-        }
-
         assertEq(nft.getTotalMessagesCount(), 0);
 
         vm.startPrank(users[0]);
-        nft.sendMessage(1, bytes32(0), "apple", "Topic1");
+        nft.sendMessage(bytes32(0), "apple", "Topic1");
         vm.stopPrank();
         vm.startPrank(users[1]);
-        nft.sendMessage(2, bytes32(0), "banana", "Topic2");
+        nft.sendMessage(bytes32(0), "banana", "Topic2");
         vm.stopPrank();
         vm.startPrank(users[2]);
-        nft.sendMessage(3, bytes32(0), "cars", "Topic3");
+        nft.sendMessage(bytes32(0), "cars", "Topic3");
         vm.stopPrank();
 
         postSendMessageChecks(
@@ -158,18 +130,12 @@ contract RendererTest is PRBTest, StdCheats {
         );
     }
 
-    function testSendAndGetUserAttributesOneUser(bool notableMint) public {
-        if (notableMint) {
-            nft.mintPublicNotable{value: nft.PRICE()}(1);
-        } else {
-            nft.mintPublic(1);
-        }
-
+    function testSendAndGetUserAttributesOneUser() public {
         assertEq(nft.getTotalMessagesCount(), 0);
 
         // 280 character message
-        nft.sendMessage(1, bytes32(0), "abc", "Topic");
-        nft.sendMessage(1, bytes32(0), "def", "Topic");
+        nft.sendMessage(bytes32(0), "abc", "Topic");
+        nft.sendMessage(bytes32(0), "def", "Topic");
         (string memory messages, address[] memory addresses) = renderer
             .getMessagesEncoded();
         assertEq(
