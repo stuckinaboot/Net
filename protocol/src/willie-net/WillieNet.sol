@@ -3,7 +3,7 @@ pragma solidity >=0.8.17 .0;
 
 // TODO copy in the relevant files
 import {ERC721A} from "@erc721a/ERC721A.sol";
-import {NFTEventsAndErrors} from "./NFTEventsAndErrors.sol";
+import {EventsAndErrors} from "./EventsAndErrors.sol";
 import {Constants} from "./Constants.sol";
 import {LibString} from "../utils/LibString.sol";
 import {SVG} from "../utils/SVG.sol";
@@ -16,16 +16,9 @@ import {Utils} from "./Utils.sol";
 /// @title WillieNet
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
 /// @notice Fully decentralized onchain NFT-based messaging protocol.
-contract WillieNet is
-    IWillieNet,
-    ERC721A,
-    NFTEventsAndErrors,
-    Constants,
-    TwoStepOwnable
-{
+contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     using LibString for uint16;
 
-    address public immutable onchainSteamboatWillie;
     mapping(uint256 tokenId => bool special) public tokenToNotable;
 
     mapping(bytes32 topicHash => uint256[] messageIndexes)
@@ -37,16 +30,6 @@ contract WillieNet is
 
     Message[] public messages;
 
-    // ***********
-    // Constructor
-    // ***********
-
-    constructor(
-        address onchainSteamboatWillieAddr
-    ) ERC721A("WillieNet", "WNET") {
-        onchainSteamboatWillie = onchainSteamboatWillieAddr;
-    }
-
     // ************
     // Send message
     // ************
@@ -57,11 +40,6 @@ contract WillieNet is
         string calldata message,
         string calldata topic
     ) external {
-        // Check user owns token
-        if (ownerOf(tokenId) != msg.sender) {
-            revert UserNotTokenOwner();
-        }
-
         // TODO revert if message length is none to prevent empty messages
 
         // Track message index in topic and user mappings
@@ -265,104 +243,5 @@ contract WillieNet is
         uint256 senderTokenId
     ) external view returns (uint256) {
         return senderTokenIdToMessageIndexes[senderTokenId].length;
-    }
-
-    // ***
-    // NFT
-    // ***
-
-    /// @notice Mint tokens.
-    /// @param amount amount of tokens to mint
-    function mintPublic(uint8 amount) external {
-        // Checks
-        unchecked {
-            // TODO consider open edition
-            if (MAX_SUPPLY + 1 < _nextTokenId() + amount) {
-                // Check max supply not exceeded
-                revert MaxSupplyReached();
-            }
-        }
-
-        // Mint NFTs
-        _mint(msg.sender, amount);
-    }
-
-    /// @notice Mint notable tokens.
-    /// @param amount amount of tokens to mint
-    function mintPublicNotable(uint8 amount) external payable {
-        // Checks
-        unchecked {
-            if (amount * PRICE != msg.value) {
-                // Check payment by sender is correct
-                revert IncorrectPayment();
-            }
-        }
-
-        unchecked {
-            // TODO consider open edition
-            uint256 nextTokenId = _nextTokenId();
-            if (MAX_SUPPLY + 1 < nextTokenId + amount) {
-                // Check max supply not exceeded
-                revert MaxSupplyReached();
-            }
-
-            // Mark minted tokens as notable
-            for (uint256 i; i < nextTokenId + amount; ++i) {
-                tokenToNotable[i] = true;
-            }
-        }
-
-        // Mint NFTs
-        _mint(msg.sender, amount);
-
-        // TODO could do free mint is one color art for sender, paid is another
-
-        // Mint willies
-        OnchainSteamboatWillie(onchainSteamboatWillie).mintPublic{
-            value: msg.value
-        }(amount);
-    }
-
-    function _startTokenId() internal pure override returns (uint256) {
-        return 1;
-    }
-
-    /// @notice Get token uri for token.
-    /// @param tokenId token id
-    /// @return tokenURI
-    function tokenURI(
-        uint256 tokenId
-    ) public view virtual override returns (string memory) {
-        if (!_exists(tokenId)) {
-            revert URIQueryForNonexistentToken();
-        }
-
-        string memory artSvg = "TODO";
-
-        return
-            Utils.formatTokenURI(
-                tokenId,
-                string.concat(
-                    "data:image/svg+xml;base64,",
-                    Utils.encodeBase64(bytes(artSvg))
-                ),
-                string.concat(
-                    "data:text/html;base64,",
-                    Utils.encodeBase64(
-                        bytes(
-                            string.concat(
-                                '<html style="overflow:hidden"><body style="margin:0">',
-                                "",
-                                "</body></html>"
-                            )
-                        )
-                    )
-                ),
-                string.concat(
-                    "[",
-                    Utils.getTrait("Hue", "todo", true, false),
-                    "]"
-                )
-            );
     }
 }
