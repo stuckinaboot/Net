@@ -19,8 +19,6 @@ import {Utils} from "./Utils.sol";
 contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     using LibString for uint16;
 
-    mapping(uint256 tokenId => bool special) public tokenToNotable;
-
     mapping(bytes32 topicHash => uint256[] messageIndexes)
         public topicToMessageIndexes;
     mapping(address sender => uint256[] messageIndexes)
