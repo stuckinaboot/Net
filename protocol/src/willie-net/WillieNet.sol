@@ -45,18 +45,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
 
         if (senderNftContract != address(0)) {
             userToMessageIndexes[
-                address(
-                    uint160(
-                        uint256(
-                            keccak256(
-                                abi.encodePacked(
-                                    senderNftContract,
-                                    senderNftTokenId
-                                )
-                            )
-                        )
-                    )
-                )
+                getSenderNftAsAddress(senderNftContract, senderNftTokenId)
             ].push(messagesLength);
         }
 
@@ -98,11 +87,15 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return userToMessageIndexes[user][idx];
     }
 
-    function getMessageIdxForSenderTokenId(
+    function getMessageIdxForSenderNft(
         uint256 idx,
-        uint256 senderTokenId
+        address senderNftContract,
+        uint256 senderNftTokenId
     ) external view returns (uint256) {
-        return senderTokenIdToMessageIndexes[senderTokenId][idx];
+        return
+            userToMessageIndexes[
+                getSenderNftAsAddress(senderNftContract, senderNftTokenId)
+            ][idx];
     }
 
     // Fetch single message
@@ -134,18 +127,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return
             messages[
                 userToMessageIndexes[
-                    address(
-                        uint160(
-                            uint256(
-                                keccak256(
-                                    abi.encodePacked(
-                                        senderNftContract,
-                                        senderNftTokenId
-                                    )
-                                )
-                            )
-                        )
-                    )
+                    getSenderNftAsAddress(senderNftContract, senderNftTokenId)
                 ][idx]
             ];
     }
@@ -239,14 +221,9 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
             return messagesSlice;
         }
         uint256 idxInMessages = endIdx;
-        address senderNftHashAddress = address(
-            uint160(
-                uint256(
-                    keccak256(
-                        abi.encodePacked(senderNftContract, senderNftTokenId)
-                    )
-                )
-            )
+        address senderNftHashAddress = getSenderNftAsAddress(
+            senderNftContract,
+            senderNftTokenId
         );
         unchecked {
             for (uint256 i; i < length && idxInMessages > startIdx; ) {
@@ -285,19 +262,31 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 senderNftTokenId
     ) external view returns (uint256) {
         return
-            senderTokenIdToMessageIndexes[
-                address(
-                    uint160(
-                        uint256(
-                            keccak256(
-                                abi.encodePacked(
-                                    senderNftContract,
-                                    senderNftTokenId
-                                )
+            userToMessageIndexes[
+                getSenderNftAsAddress(senderNftContract, senderNftTokenId)
+            ].length;
+    }
+
+    // ************
+    // Helpers
+    // ************
+
+    function getSenderNftAsAddress(
+        address senderNftContract,
+        uint256 senderNftTokenId
+    ) public pure returns (address) {
+        return
+            address(
+                uint160(
+                    uint256(
+                        keccak256(
+                            abi.encodePacked(
+                                senderNftContract,
+                                senderNftTokenId
                             )
                         )
                     )
                 )
-            ].length;
+            );
     }
 }
