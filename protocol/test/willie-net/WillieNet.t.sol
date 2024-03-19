@@ -66,6 +66,7 @@ contract WillieNetTest is
         assertEq(actualMessage.topic, expectedMessage.topic);
     }
 
+    // Send and verify without requiring NFT
     function sendAndVerifyMessage(
         address user,
         string memory messageContents,
