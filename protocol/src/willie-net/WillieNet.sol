@@ -16,12 +16,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     mapping(address sender => uint256[] messageIndexes)
         public userToMessageIndexes;
 
-    // TODO this is no longer relevant but we can track messages sent by certain NFTs? We can
-    // track the particular contract address and the contract-token combo possibly over two mappings
-    // (or via userToMessageIndexes, where we hash contract-token and turn that into address or bytes32)
-    mapping(uint256 tokenId => uint256[] messageIndexes)
-        public senderTokenIdToMessageIndexes;
-
     Message[] public messages;
 
     // ************
@@ -49,7 +43,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         topicToMessageIndexes[keccak256(bytes(topic))].push(messagesLength);
         userToMessageIndexes[msg.sender].push(messagesLength);
 
-        // TODO remove
         if (senderNftContract != address(0)) {
             userToMessageIndexes[
                 address(
@@ -66,7 +59,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
                 )
             ].push(messagesLength);
         }
-        // senderTokenIdToMessageIndexes[tokenId].push(messagesLength);
 
         // Emit message sent using current messages length as the index
         emit MessageSent(topic, msg.sender, senderNftContract, messagesLength);
@@ -134,12 +126,28 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return messages[userToMessageIndexes[user][idx]];
     }
 
-    // TODO modify for contract-address
-    function getMessageForSender(
+    function getMessageForSenderNft(
         uint256 idx,
-        uint256 senderTokenId
+        address senderNftContract,
+        uint256 senderNftTokenId
     ) external view returns (Message memory) {
-        return messages[senderTokenIdToMessageIndexes[senderTokenId][idx]];
+        return
+            messages[
+                userToMessageIndexes[
+                    address(
+                        uint160(
+                            uint256(
+                                keccak256(
+                                    abi.encodePacked(
+                                        senderNftContract,
+                                        senderNftTokenId
+                                    )
+                                )
+                            )
+                        )
+                    )
+                ][idx]
+            ];
     }
 
     // Fetch multiple messages
@@ -217,10 +225,11 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return messagesSlice;
     }
 
-    function getMessagesInRangeForSenderTokenId(
+    function getMessagesInRangeForSenderNft(
         uint256 startIdx,
         uint256 endIdx,
-        uint256 senderTokenId
+        address senderNftContract,
+        uint256 senderNftTokenId
     ) external view returns (Message[] memory) {
         // TODO consider adding error for startIdx, endIdx invalid
 
@@ -230,11 +239,20 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
             return messagesSlice;
         }
         uint256 idxInMessages = endIdx;
+        address senderNftHashAddress = address(
+            uint160(
+                uint256(
+                    keccak256(
+                        abi.encodePacked(senderNftContract, senderNftTokenId)
+                    )
+                )
+            )
+        );
         unchecked {
             for (uint256 i; i < length && idxInMessages > startIdx; ) {
                 --idxInMessages;
                 messagesSlice[i] = messages[
-                    senderTokenIdToMessageIndexes[senderTokenId][idxInMessages]
+                    userToMessageIndexes[senderNftHashAddress][idxInMessages]
                 ];
                 ++i;
             }
@@ -262,9 +280,24 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return userToMessageIndexes[user].length;
     }
 
-    function getTotalMessagesForSenderTokenIdCount(
-        uint256 senderTokenId
+    function getTotalMessagesForSenderNftCount(
+        address senderNftContract,
+        uint256 senderNftTokenId
     ) external view returns (uint256) {
-        return senderTokenIdToMessageIndexes[senderTokenId].length;
+        return
+            senderTokenIdToMessageIndexes[
+                address(
+                    uint160(
+                        uint256(
+                            keccak256(
+                                abi.encodePacked(
+                                    senderNftContract,
+                                    senderNftTokenId
+                                )
+                            )
+                        )
+                    )
+                )
+            ].length;
     }
 }
