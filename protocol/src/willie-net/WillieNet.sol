@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17 .0;
 
-// TODO copy in the relevant files
-import {ERC721A} from "@erc721a/ERC721A.sol";
 import {EventsAndErrors} from "./EventsAndErrors.sol";
 import {Constants} from "./Constants.sol";
 import {IERC721} from "forge-std/interfaces/IERC721.sol";
@@ -31,10 +29,19 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     // ************
 
     function sendMessage(
+        address senderNftContract,
+        uint256 senderNftTokenId,
         bytes32 extraData,
         string calldata message,
         string calldata topic
     ) external {
+        // When senderNftContract is a non-zero address, check if the user owns the NFT
+        if (
+            senderNftContract != address(0) &&
+            IERC721(senderNftContract).ownerOf(senderNftTokenId) != msg.sender
+        ) {
+            revert MsgSenderNotNftOwner();
+        }
         // TODO revert if message length is none to prevent empty messages
 
         // Track message index in topic and user mappings
@@ -43,15 +50,34 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         userToMessageIndexes[msg.sender].push(messagesLength);
 
         // TODO remove
+        if (senderNftContract != address(0)) {
+            userToMessageIndexes[
+                address(
+                    uint160(
+                        uint256(
+                            keccak256(
+                                abi.encodePacked(
+                                    senderNftContract,
+                                    senderNftTokenId
+                                )
+                            )
+                        )
+                    )
+                )
+            ].push(messagesLength);
+        }
         // senderTokenIdToMessageIndexes[tokenId].push(messagesLength);
 
         // Emit message sent using current messages length as the index
-        emit MessageSent(topic, msg.sender, messagesLength);
+        emit MessageSent(topic, msg.sender, senderNftContract, messagesLength);
 
         // Store message
         messages.push(
             Message({
                 sender: msg.sender,
+                // TODO update tests to account for this
+                senderNftContract: senderNftContract,
+                senderNftTokenId: senderNftTokenId,
                 extraData: extraData,
                 message: message,
                 topic: topic,

@@ -6,6 +6,8 @@ interface IWillieNet {
     // TODO update to include all relevant functions from Willienet main
     struct Message {
         address sender;
+        address senderNftContract;
+        uint256 senderNftTokenId;
         uint256 timestamp;
         bytes32 extraData;
         string message;
