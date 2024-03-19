@@ -92,14 +92,20 @@ contract WillieNetTest is
 
         vm.startPrank(user);
         vm.expectEmit(true, true, true, false);
-        emit MessageSent(topic, user, address(0), currMessagesLength);
-        net.sendMessage(address(0), 0, bytes32(0), messageContents, topic);
+        emit MessageSent(topic, user, nftContract, currMessagesLength);
+        net.sendMessage(
+            nftContract,
+            tokenId,
+            bytes32(0),
+            messageContents,
+            topic
+        );
         vm.stopPrank();
 
         WillieNet.Message memory expectedMessage = IWillieNet.Message({
             sender: user,
-            senderNftContract: address(0),
-            senderNftTokenId: 0,
+            senderNftContract: nftContract,
+            senderNftTokenId: tokenId,
             timestamp: block.timestamp,
             extraData: bytes32(0),
             message: messageContents,
@@ -172,6 +178,7 @@ contract WillieNetTest is
     }
 
     function testSendMessageFromNft() public {
+        vm.startPrank(users[0]);
         mintNft(1);
         sendAndVerifyMessage(users[0], address(nft), 1, "message 1", "t1");
     }
