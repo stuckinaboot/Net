@@ -34,7 +34,7 @@ contract WillieNetTest is
     OnchainSteamboatWillie public nft =
         new OnchainSteamboatWillie(bytes32(0), 0, 0);
 
-    constructor() TestUtils(net) {}
+    constructor() TestUtils(net, nft) {}
 
     function setUp() public {
         vm.deal(address(this), 1000 ether);
@@ -160,8 +160,6 @@ contract WillieNetTest is
     }
 
     function testSendMultipleMessagesOnDifferentTokens() public {
-        // TODO update for net-based test
-
         sendAndVerifyMessage(address(this), "message 1", "t1");
         sendAndVerifyMessage(address(this), "message 2", "t2");
         sendAndVerifyMessage(address(this), "message 3", "t3");
@@ -173,14 +171,16 @@ contract WillieNetTest is
         sendAndVerifyMessage(users[2], "message 3", "t3");
     }
 
-    function mintNft(uint8 amount) public {
-        nft.mintPublic{value: amount * 0.005 ether}(amount);
-    }
-
     function testSendMessageFromNft() public {
         vm.startPrank(users[0]);
         mintNft(1);
         sendAndVerifyMessage(users[0], address(nft), 1, "message 1", "t1");
+    }
+
+    function testSendMessageFromNftNotOwner() public {
+        vm.startPrank(users[0]);
+        mintNft(1);
+        sendAndVerifyMessage(users[1], address(nft), 1, "message 1", "t1");
     }
 
     // Helpers
