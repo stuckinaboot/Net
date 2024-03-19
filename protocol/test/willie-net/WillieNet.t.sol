@@ -25,14 +25,13 @@ contract WillieNetTest is
     using stdStorage for StdStorage;
 
     StdStorage private stdstore;
-    uint256 _MINT_AMOUNT_DURING_COMMENCE = 0;
 
     // Test users
     address[100] users;
 
-    WillieNet public nft = new WillieNet();
+    WillieNet public net = new WillieNet();
 
-    constructor() TestUtils(nft) {}
+    constructor() TestUtils(net) {}
 
     function setUp() public {
         vm.deal(address(this), 1000 ether);
@@ -59,18 +58,18 @@ contract WillieNetTest is
         string memory messageContents,
         string memory topic
     ) public {
-        uint256 currMessagesLength = nft.getTotalMessagesCount();
-        uint256 topicMessagesLength = nft.getTotalMessagesForTopicCount(topic);
-        uint256 userMessagesLength = nft.getTotalMessagesForUserCount(user);
+        uint256 currMessagesLength = net.getTotalMessagesCount();
+        uint256 topicMessagesLength = net.getTotalMessagesForTopicCount(topic);
+        uint256 userMessagesLength = net.getTotalMessagesForUserCount(user);
 
-        // TODO use nft contract-token
-        // uint256 senderTokenIdMessagesLength = nft
+        // TODO use net contract-token
+        // uint256 senderTokenIdMessagesLength = net
         //     .getTotalMessagesForSenderTokenIdCount(senderTokenId);
 
         vm.startPrank(user);
         vm.expectEmit(true, true, true, false);
         emit MessageSent(topic, user, address(0), currMessagesLength);
-        nft.sendMessage(address(0), 0, bytes32(0), messageContents, topic);
+        net.sendMessage(address(0), 0, bytes32(0), messageContents, topic);
         vm.stopPrank();
 
         WillieNet.Message memory expectedMessage = IWillieNet.Message({
@@ -84,20 +83,20 @@ contract WillieNetTest is
         });
 
         // Verify message fetched via get message
-        WillieNet.Message memory messageGlobal = nft.getMessage(
+        WillieNet.Message memory messageGlobal = net.getMessage(
             currMessagesLength
         );
         verifyMessage(expectedMessage, messageGlobal);
 
         // Verify message fetched via get message for topic
-        WillieNet.Message memory messageTopic = nft.getMessageForTopic(
+        WillieNet.Message memory messageTopic = net.getMessageForTopic(
             topicMessagesLength,
             topic
         );
         verifyMessage(expectedMessage, messageTopic);
 
         // Verify message fetched via get message for user
-        WillieNet.Message memory messageUser = nft.getMessageForUser(
+        WillieNet.Message memory messageUser = net.getMessageForUser(
             userMessagesLength,
             user
         );
@@ -105,7 +104,7 @@ contract WillieNetTest is
 
         // Verify message fetched via get message for sender
         // TODO add verification for contract-token
-        // WillieNet.Message memory messageSender = nft.getMessageForSender(
+        // WillieNet.Message memory messageSender = net.getMessageForSender(
         //     // TODO update
         //     0,
         //     // senderTokenIdMessagesLength,
@@ -129,7 +128,7 @@ contract WillieNetTest is
     }
 
     function testSendMultipleMessagesOnDifferentTokens() public {
-        // TODO update for nft-based test
+        // TODO update for net-based test
 
         sendAndVerifyMessage(address(this), "message 1", "t1");
         sendAndVerifyMessage(address(this), "message 2", "t2");
