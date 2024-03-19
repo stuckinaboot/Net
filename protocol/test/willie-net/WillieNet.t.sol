@@ -85,6 +85,10 @@ contract WillieNetTest is
         uint256 currMessagesLength = net.getTotalMessagesCount();
         uint256 topicMessagesLength = net.getTotalMessagesForTopicCount(topic);
         uint256 userMessagesLength = net.getTotalMessagesForUserCount(user);
+        uint256 senderNftMessagesLength = net.getTotalMessagesForSenderNftCount(
+            nftContract,
+            tokenId
+        );
 
         vm.startPrank(user);
         vm.expectEmit(true, true, true, false);
@@ -123,11 +127,6 @@ contract WillieNetTest is
         verifyMessage(expectedMessage, messageUser);
 
         // Verify message fetched via get message for sender
-        // TODO add verification for contract-token
-        uint256 senderNftMessagesLength = net.getTotalMessagesForSenderNftCount(
-            nftContract,
-            tokenId
-        );
         if (nftContract != address(0)) {
             WillieNet.Message memory messageSenderNft = net
                 .getMessageForSenderNft(
@@ -166,6 +165,15 @@ contract WillieNetTest is
         sendAndVerifyMessage(users[0], "message 1", "t1");
         sendAndVerifyMessage(users[1], "message 2", "t2");
         sendAndVerifyMessage(users[2], "message 3", "t3");
+    }
+
+    function mintNft(uint8 amount) public {
+        nft.mintPublic{value: amount * 0.005 ether}(amount);
+    }
+
+    function testSendMessageFromNft() public {
+        mintNft(1);
+        sendAndVerifyMessage(users[0], address(nft), 1, "message 1", "t1");
     }
 
     // Helpers

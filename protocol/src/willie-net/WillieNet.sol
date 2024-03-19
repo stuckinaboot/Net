@@ -56,7 +56,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         messages.push(
             Message({
                 sender: msg.sender,
-                // TODO update tests to account for this
                 senderNftContract: senderNftContract,
                 senderNftTokenId: senderNftTokenId,
                 extraData: extraData,
