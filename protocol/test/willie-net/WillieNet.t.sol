@@ -12,8 +12,6 @@ import {EventsAndErrors} from "../../src/willie-net/EventsAndErrors.sol";
 import {IERC721A} from "@erc721a/ERC721A.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
-import {OnchainSteamboatWillie} from "../../src/willie-net/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
-import {Renderer} from "../../src/willie-net/renderer/Renderer.sol";
 import {TestUtils} from "./TestUtils.sol";
 
 contract WillieNetTest is

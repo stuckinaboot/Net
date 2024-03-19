@@ -3,7 +3,7 @@ pragma solidity >=0.8.17 .0;
 
 import {IRenderer} from "./IRenderer.sol";
 import {TwoStepOwnable} from "./TwoStepOwnable.sol";
-import {WillieNet} from "../WillieNet.sol";
+import {WillieNet} from "../willie-net/WillieNet.sol";
 import {EventsAndErrors} from "./EventsAndErrors.sol";
 import {IERC721} from "@openzeppelin/contracts/interfaces/IERC721.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";

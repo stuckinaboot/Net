@@ -2,7 +2,7 @@
 pragma solidity >=0.8.17 .0;
 
 import {Script, console} from "forge-std/Script.sol";
-import {OnchainSteamboatWillie} from "../src/willie-net/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
+import {OnchainSteamboatWillie} from "../src/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
 
 contract DeployNFT is Script {
     address internal deployer;

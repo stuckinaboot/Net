@@ -5,16 +5,15 @@ import {PRBTest} from "@prb/test/PRBTest.sol";
 import {console2} from "forge-std/console2.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
 import {StdStorage, stdStorage} from "forge-std/StdStorage.sol";
-import {WillieNet} from "../../../src/willie-net/WillieNet.sol";
-import {Constants} from "../../../src/willie-net/Constants.sol";
-import {NFTEventsAndErrors} from "../../../src/willie-net/onchain-steamboat-willie/NFTEventsAndErrors.sol";
+import {WillieNet} from "../../src/willie-net/WillieNet.sol";
+import {Constants} from "../../src/willie-net/Constants.sol";
 import {IERC721A} from "@erc721a/ERC721A.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
-import {Utils} from "../../../src/willie-net/renderer/Utils.sol";
+import {Utils} from "../../src/renderer/Utils.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
-import {TwoStepOwnable} from "../../../src/willie-net/renderer/TwoStepOwnable.sol";
-import {OnchainSteamboatWillie} from "../../../src/willie-net/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
-import {Renderer} from "../../../src/willie-net/renderer/Renderer.sol";
+import {TwoStepOwnable} from "../../src/renderer/TwoStepOwnable.sol";
+import {OnchainSteamboatWillie} from "../../src/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
+import {Renderer} from "../../src/renderer/Renderer.sol";
 
 contract RendererTest is PRBTest, StdCheats {
     using stdStorage for StdStorage;
