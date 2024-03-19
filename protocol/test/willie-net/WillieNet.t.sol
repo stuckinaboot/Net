@@ -71,12 +71,14 @@ contract WillieNetTest is
 
         vm.startPrank(user);
         vm.expectEmit(true, true, true, false);
-        emit MessageSent(topic, user, currMessagesLength);
-        nft.sendMessage(bytes32(0), messageContents, topic);
+        emit MessageSent(topic, user, address(0), currMessagesLength);
+        nft.sendMessage(address(0), 0, bytes32(0), messageContents, topic);
         vm.stopPrank();
 
         WillieNet.Message memory expectedMessage = IWillieNet.Message({
             sender: user,
+            senderNftContract: address(0),
+            senderNftTokenId: 0,
             timestamp: block.timestamp,
             extraData: bytes32(0),
             message: messageContents,

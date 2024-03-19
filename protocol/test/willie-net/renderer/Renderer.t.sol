@@ -67,9 +67,9 @@ contract RendererTest is PRBTest, StdCheats {
         assertEq(nft.getTotalMessagesCount(), 0);
 
         // 280 character message
-        nft.sendMessage(bytes32(0), "abc", "Topic");
-        nft.sendMessage(bytes32(0), "def", "Topic");
-        nft.sendMessage(bytes32(0), "ghi", "Topic");
+        nft.sendMessage(address(0), 0, bytes32(0), "abc", "Topic");
+        nft.sendMessage(address(0), 0, bytes32(0), "def", "Topic");
+        nft.sendMessage(address(0), 0, bytes32(0), "ghi", "Topic");
         postSendMessageChecks(
             3,
             1,
@@ -81,9 +81,9 @@ contract RendererTest is PRBTest, StdCheats {
         assertEq(nft.getTotalMessagesCount(), 0);
 
         // 280 character message
-        nft.sendMessage(bytes32(0), "abc", "Topic");
-        nft.sendMessage(bytes32(0), "def", "Topic");
-        nft.sendMessage(bytes32(0), "ghi", "Topic");
+        nft.sendMessage(address(0), 0, bytes32(0), "abc", "Topic");
+        nft.sendMessage(address(0), 0, bytes32(0), "def", "Topic");
+        nft.sendMessage(address(0), 0, bytes32(0), "ghi", "Topic");
         postSendMessageChecks(
             3,
             1,
@@ -97,9 +97,9 @@ contract RendererTest is PRBTest, StdCheats {
         assertEq(nft.getTotalMessagesCount(), 0);
 
         // 280 character message
-        nft.sendMessage(bytes32(0), "abc", "Topic");
-        nft.sendMessage(bytes32(0), "def", "Topic");
-        nft.sendMessage(bytes32(0), "ghi", "Topic");
+        nft.sendMessage(address(0), 0, bytes32(0), "abc", "Topic");
+        nft.sendMessage(address(0), 0, bytes32(0), "def", "Topic");
+        nft.sendMessage(address(0), 0, bytes32(0), "ghi", "Topic");
         postSendMessageChecks(
             3,
             1,
@@ -113,13 +113,13 @@ contract RendererTest is PRBTest, StdCheats {
         assertEq(nft.getTotalMessagesCount(), 0);
 
         vm.startPrank(users[0]);
-        nft.sendMessage(bytes32(0), "apple", "Topic1");
+        nft.sendMessage(address(0), 0, bytes32(0), "apple", "Topic1");
         vm.stopPrank();
         vm.startPrank(users[1]);
-        nft.sendMessage(bytes32(0), "banana", "Topic2");
+        nft.sendMessage(address(0), 0, bytes32(0), "banana", "Topic2");
         vm.stopPrank();
         vm.startPrank(users[2]);
-        nft.sendMessage(bytes32(0), "cars", "Topic3");
+        nft.sendMessage(address(0), 0, bytes32(0), "cars", "Topic3");
         vm.stopPrank();
 
         postSendMessageChecks(
@@ -133,8 +133,8 @@ contract RendererTest is PRBTest, StdCheats {
         assertEq(nft.getTotalMessagesCount(), 0);
 
         // 280 character message
-        nft.sendMessage(bytes32(0), "abc", "Topic");
-        nft.sendMessage(bytes32(0), "def", "Topic");
+        nft.sendMessage(address(0), 0, bytes32(0), "abc", "Topic");
+        nft.sendMessage(address(0), 0, bytes32(0), "def", "Topic");
         (string memory messages, address[] memory addresses) = renderer
             .getMessagesEncoded();
         assertEq(
