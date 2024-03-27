@@ -63,6 +63,15 @@ contract WillieNetTest is
         string memory messageContents,
         string memory topic
     ) public {
+        sendAndVerifyMessage(user, address(0), messageContents, topic);
+    }
+
+    function sendAndVerifyMessage(
+        address user,
+        address app,
+        string memory messageContents,
+        string memory topic
+    ) public {
         uint256 currMessagesLength = net.getTotalMessagesCount();
         uint256 topicMessagesLength = net.getTotalMessagesForTopicCount(topic);
         uint256 userMessagesLength = net.getTotalMessagesForUserCount(user);
@@ -74,8 +83,7 @@ contract WillieNetTest is
         vm.stopPrank();
 
         WillieNet.Message memory expectedMessage = IWillieNet.Message({
-            // TODO if app is present use correct value
-            app: address(0),
+            app: app,
             sender: user,
             timestamp: block.timestamp,
             extraData: "",
