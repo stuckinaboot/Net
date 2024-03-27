@@ -7,6 +7,7 @@ interface IWillieNet {
     struct Message {
         address sender;
         uint256 timestamp;
+        // TODO consider changing to bytes
         bytes32 extraData;
         string message;
         string topic;
