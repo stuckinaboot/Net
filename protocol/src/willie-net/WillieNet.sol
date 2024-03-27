@@ -22,6 +22,58 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     // Send message
     // ************
 
+    function sendMessageViaApp(
+        bytes32 extraData,
+        address sender,
+        string calldata message,
+        string calldata topic
+    ) external {
+        // TODO revert if message length is none to prevent empty messages
+
+        // Track message index in topic and user mappings
+        uint256 messagesLength = messages.length;
+
+        // App messages
+        userToMessageIndexes[
+            address(
+                uint160(uint256(keccak256(bytes(abi.encodePacked(msg.sender)))))
+            )
+        ].push(messagesLength);
+
+        // App-user messages
+        topicToMessageIndexes[
+            keccak256(bytes(abi.encodePacked(msg.sender, sender)))
+        ].push(messagesLength);
+
+        // App-topic messages
+        topicToMessageIndexes[
+            // msg.sender is the app id
+            keccak256(bytes(abi.encodePacked(msg.sender, topic)))
+        ].push(messagesLength);
+        // TODO use bytes instead of address
+
+        // App-user-topic messages
+        // TODO is this one needed?
+        topicToMessageIndexes[
+            keccak256(bytes(abi.encodePacked(msg.sender, sender, topic)))
+        ].push(messagesLength);
+
+        // Emit message sent using current messages length as the index
+        emit MessageSentViaApp(msg.sender, topic, sender, messagesLength);
+
+        // Store message
+        messages.push(
+            Message({
+                app: msg.sender,
+                sender: sender,
+                extraData: extraData,
+                message: message,
+                topic: topic,
+                timestamp: block.timestamp
+            })
+        );
+    }
+
     function sendMessage(
         bytes32 extraData,
         string calldata message,
@@ -40,6 +92,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         // Store message
         messages.push(
             Message({
+                app: address(0),
                 sender: msg.sender,
                 extraData: extraData,
                 message: message,

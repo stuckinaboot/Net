@@ -5,6 +5,7 @@ pragma solidity >=0.8.17 .0;
 interface IWillieNet {
     // TODO update to include all relevant functions from Willienet main
     struct Message {
+        address app;
         address sender;
         uint256 timestamp;
         // TODO consider changing to bytes

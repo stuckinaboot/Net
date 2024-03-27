@@ -13,4 +13,11 @@ interface EventsAndErrors {
         address indexed sender,
         uint256 messageIndex
     );
+
+    event MessageSentViaApp(
+        address indexed app,
+        string indexed topic,
+        address indexed sender,
+        uint256 messageIndex
+    );
 }
