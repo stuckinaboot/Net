@@ -11,7 +11,6 @@ interface EventsAndErrors {
     event MessageSent(
         string indexed topic,
         address indexed sender,
-        address indexed senderNftContract,
         uint256 messageIndex
     );
 }

@@ -23,19 +23,10 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     // ************
 
     function sendMessage(
-        address senderNftContract,
-        uint256 senderNftTokenId,
         bytes32 extraData,
         string calldata message,
         string calldata topic
     ) external {
-        // When senderNftContract is a non-zero address, check if the user owns the NFT
-        if (
-            senderNftContract != address(0) &&
-            IERC721(senderNftContract).ownerOf(senderNftTokenId) != msg.sender
-        ) {
-            revert MsgSenderNotNftOwner();
-        }
         // TODO revert if message length is none to prevent empty messages
 
         // Track message index in topic and user mappings
@@ -43,21 +34,13 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         topicToMessageIndexes[keccak256(bytes(topic))].push(messagesLength);
         userToMessageIndexes[msg.sender].push(messagesLength);
 
-        if (senderNftContract != address(0)) {
-            userToMessageIndexes[
-                getSenderNftAsAddress(senderNftContract, senderNftTokenId)
-            ].push(messagesLength);
-        }
-
         // Emit message sent using current messages length as the index
-        emit MessageSent(topic, msg.sender, senderNftContract, messagesLength);
+        emit MessageSent(topic, msg.sender, messagesLength);
 
         // Store message
         messages.push(
             Message({
                 sender: msg.sender,
-                senderNftContract: senderNftContract,
-                senderNftTokenId: senderNftTokenId,
                 extraData: extraData,
                 message: message,
                 topic: topic,

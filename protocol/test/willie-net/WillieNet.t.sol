@@ -52,60 +52,29 @@ contract WillieNetTest is
         WillieNet.Message memory actualMessage
     ) public {
         assertEq(actualMessage.sender, expectedMessage.sender);
-        assertEq(
-            actualMessage.senderNftContract,
-            expectedMessage.senderNftContract
-        );
-        assertEq(
-            actualMessage.senderNftTokenId,
-            expectedMessage.senderNftTokenId
-        );
         assertEq(actualMessage.timestamp, expectedMessage.timestamp);
         assertEq(actualMessage.extraData, expectedMessage.extraData);
         assertEq(actualMessage.message, expectedMessage.message);
         assertEq(actualMessage.topic, expectedMessage.topic);
     }
 
-    // Send and verify without requiring NFT
     function sendAndVerifyMessage(
         address user,
-        string memory messageContents,
-        string memory topic
-    ) public {
-        sendAndVerifyMessage(user, address(0), 0, messageContents, topic);
-    }
-
-    function sendAndVerifyMessage(
-        address user,
-        address nftContract,
-        uint256 tokenId,
         string memory messageContents,
         string memory topic
     ) public {
         uint256 currMessagesLength = net.getTotalMessagesCount();
         uint256 topicMessagesLength = net.getTotalMessagesForTopicCount(topic);
         uint256 userMessagesLength = net.getTotalMessagesForUserCount(user);
-        uint256 senderNftMessagesLength = net.getTotalMessagesForSenderNftCount(
-            nftContract,
-            tokenId
-        );
 
         vm.startPrank(user);
         vm.expectEmit(true, true, true, false);
-        emit MessageSent(topic, user, nftContract, currMessagesLength);
-        net.sendMessage(
-            nftContract,
-            tokenId,
-            bytes32(0),
-            messageContents,
-            topic
-        );
+        emit MessageSent(topic, user, currMessagesLength);
+        net.sendMessage(bytes32(0), messageContents, topic);
         vm.stopPrank();
 
         WillieNet.Message memory expectedMessage = IWillieNet.Message({
             sender: user,
-            senderNftContract: nftContract,
-            senderNftTokenId: tokenId,
             timestamp: block.timestamp,
             extraData: bytes32(0),
             message: messageContents,
@@ -131,19 +100,6 @@ contract WillieNetTest is
             user
         );
         verifyMessage(expectedMessage, messageUser);
-
-        // Verify message fetched via get message for sender
-        if (nftContract != address(0)) {
-            WillieNet.Message memory messageSenderNft = net
-                .getMessageForSenderNft(
-                    senderNftMessagesLength,
-                    nftContract,
-                    tokenId
-                );
-            verifyMessage(expectedMessage, messageSenderNft);
-        } else {
-            assertEq(senderNftMessagesLength, 0);
-        }
     }
 
     function testSendOneMessage() public {
