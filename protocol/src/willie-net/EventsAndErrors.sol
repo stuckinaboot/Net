@@ -10,15 +10,15 @@ interface EventsAndErrors {
     error TopicExceedsMaxLength();
 
     event MessageSent(
-        string indexed topic,
         address indexed sender,
+        string indexed topic,
         uint256 messageIndex
     );
 
     event MessageSentViaApp(
         address indexed app,
-        string indexed topic,
         address indexed sender,
+        string indexed topic,
         uint256 messageIndex
     );
 }

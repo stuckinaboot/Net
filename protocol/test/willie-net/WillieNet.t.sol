@@ -76,11 +76,21 @@ contract WillieNetTest is
         uint256 topicMessagesLength = net.getTotalMessagesForTopicCount(topic);
         uint256 userMessagesLength = net.getTotalMessagesForUserCount(user);
 
-        vm.startPrank(user);
-        vm.expectEmit(true, true, true, false);
-        emit MessageSent(topic, user, currMessagesLength);
-        net.sendMessage("", messageContents, topic);
-        vm.stopPrank();
+        if (app == address(0)) {
+            // Send message from user
+            vm.startPrank(user);
+            vm.expectEmit(true, true, true, false);
+            emit MessageSent(user, topic, currMessagesLength);
+            net.sendMessage(messageContents, topic, "");
+            vm.stopPrank();
+        } else {
+            // Send message via app
+            vm.startPrank(app);
+            vm.expectEmit(true, true, true, false);
+            emit MessageSentViaApp(app, user, topic, currMessagesLength);
+            net.sendMessageViaApp(user, messageContents, topic, "");
+            vm.stopPrank();
+        }
 
         WillieNet.Message memory expectedMessage = IWillieNet.Message({
             app: app,

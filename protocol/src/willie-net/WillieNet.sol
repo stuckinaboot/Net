@@ -57,7 +57,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         ].push(messagesLength);
 
         // Emit message sent using current messages length as the index
-        emit MessageSentViaApp(msg.sender, topic, sender, messagesLength);
+        emit MessageSentViaApp(msg.sender, sender, topic, messagesLength);
 
         // Store message
         messages.push(
@@ -73,9 +73,9 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     }
 
     function sendMessage(
-        bytes calldata extraData,
         string calldata message,
-        string calldata topic
+        string calldata topic,
+        bytes calldata extraData
     ) external {
         // Revert if message length is none to prevent empty messages
         if (bytes(message).length == 0) {
@@ -93,7 +93,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         );
 
         // Emit message sent using current messages length as the index
-        emit MessageSent(topic, msg.sender, messagesLength);
+        emit MessageSent(msg.sender, topic, messagesLength);
 
         // Store message
         messages.push(
