@@ -3,6 +3,7 @@ pragma solidity >=0.8.17 .0;
 
 interface EventsAndErrors {
     error MsgSenderNotNftOwner();
+    error MsgEmpty();
 
     // TODO remove if unused
     error MessageExceedsMaxLength();
