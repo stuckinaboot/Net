@@ -70,7 +70,7 @@ contract WillieNetTest is
         vm.startPrank(user);
         vm.expectEmit(true, true, true, false);
         emit MessageSent(topic, user, currMessagesLength);
-        net.sendMessage(bytes32(0), messageContents, topic);
+        net.sendMessage("", messageContents, topic);
         vm.stopPrank();
 
         WillieNet.Message memory expectedMessage = IWillieNet.Message({
@@ -78,7 +78,7 @@ contract WillieNetTest is
             app: address(0),
             sender: user,
             timestamp: block.timestamp,
-            extraData: bytes32(0),
+            extraData: "",
             message: messageContents,
             topic: topic
         });

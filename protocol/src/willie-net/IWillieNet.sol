@@ -8,8 +8,7 @@ interface IWillieNet {
         address app;
         address sender;
         uint256 timestamp;
-        // TODO consider changing to bytes
-        bytes32 extraData;
+        bytes extraData;
         string message;
         string topic;
     }

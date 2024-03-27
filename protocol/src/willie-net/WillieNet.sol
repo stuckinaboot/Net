@@ -23,9 +23,9 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
 
     function sendMessageViaApp(
         address sender,
-        bytes32 extraData,
         string calldata message,
-        string calldata topic
+        string calldata topic,
+        bytes calldata extraData
     ) external {
         // TODO revert if message length is none to prevent empty messages
 
@@ -71,7 +71,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     }
 
     function sendMessage(
-        bytes32 extraData,
+        bytes calldata extraData,
         string calldata message,
         string calldata topic
     ) external {
