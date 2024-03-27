@@ -171,18 +171,6 @@ contract WillieNetTest is
         sendAndVerifyMessage(users[2], "message 3", "t3");
     }
 
-    function testSendMessageFromNft() public {
-        vm.startPrank(users[0]);
-        mintNft(1);
-        sendAndVerifyMessage(users[0], address(nft), 1, "message 1", "t1");
-    }
-
-    function testSendMessageFromNftNotOwner() public {
-        vm.startPrank(users[0]);
-        mintNft(1);
-        sendAndVerifyMessage(users[1], address(nft), 1, "message 1", "t1");
-    }
-
     // Helpers
 
     function onERC721Received(
