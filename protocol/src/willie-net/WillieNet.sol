@@ -270,39 +270,21 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return messages.length;
     }
 
+    function getTotalMessagesForHashCount(
+        bytes32 hashVal
+    ) public view returns (uint256) {
+        return hashToMessageIndexes[hashVal].length;
+    }
+
     function getTotalMessagesForTopicCount(
         string calldata topic
     ) external view returns (uint256) {
-        return hashToMessageIndexes[keccak256(bytes(topic))].length;
+        return getTotalMessagesForHashCount(keccak256(bytes(topic)));
     }
 
     function getTotalMessagesForUserCount(
         address user
     ) external view returns (uint256) {
-        return hashToMessageIndexes[keccak256(abi.encodePacked(user))].length;
-    }
-
-    // ************
-    // Helpers
-    // ************
-
-    // TODO can probs get rid of this, possibly in favor of new helpers
-    function getSenderNftAsAddress(
-        address senderNftContract,
-        uint256 senderNftTokenId
-    ) public pure returns (address) {
-        return
-            address(
-                uint160(
-                    uint256(
-                        keccak256(
-                            abi.encodePacked(
-                                senderNftContract,
-                                senderNftTokenId
-                            )
-                        )
-                    )
-                )
-            );
+        return getTotalMessagesForHashCount(keccak256(abi.encodePacked(user)));
     }
 }
