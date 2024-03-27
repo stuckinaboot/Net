@@ -79,6 +79,9 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
 
         // Track message index in topic and user mappings
         uint256 messagesLength = messages.length;
+
+        // TODO should user topic be stored here as well?
+
         hashToMessageIndexes[keccak256(bytes(topic))].push(messagesLength);
         hashToMessageIndexes[keccak256(abi.encodePacked(msg.sender))].push(
             messagesLength
@@ -286,5 +289,36 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         address user
     ) external view returns (uint256) {
         return getTotalMessagesForHashCount(keccak256(abi.encodePacked(user)));
+    }
+
+    function getTotalMessagesForAppUserCount(
+        address app,
+        address user
+    ) external view returns (uint256) {
+        return
+            getTotalMessagesForHashCount(
+                keccak256(abi.encodePacked(app, user))
+            );
+    }
+
+    function getTotalMessagesForAppTopicCount(
+        address app,
+        string calldata topic
+    ) external view returns (uint256) {
+        return
+            getTotalMessagesForHashCount(
+                keccak256(abi.encodePacked(app, topic))
+            );
+    }
+
+    function getTotalMessagesForAppUserTopicCount(
+        address app,
+        address user,
+        string calldata topic
+    ) external view returns (uint256) {
+        return
+            getTotalMessagesForHashCount(
+                keccak256(abi.encodePacked(app, user, topic))
+            );
     }
 }
