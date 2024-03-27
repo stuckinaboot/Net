@@ -26,7 +26,10 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         string calldata topic,
         bytes calldata extraData
     ) external {
-        // TODO revert if message length is none to prevent empty messages
+        // Revert if message length is none to prevent empty messages
+        if (bytes(message).length == 0) {
+            revert MsgEmpty();
+        }
 
         // Track message index in topic and user mappings
         uint256 messagesLength = messages.length;
