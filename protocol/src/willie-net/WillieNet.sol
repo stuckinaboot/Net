@@ -3,7 +3,6 @@ pragma solidity >=0.8.17 .0;
 
 import {EventsAndErrors} from "./EventsAndErrors.sol";
 import {Constants} from "./Constants.sol";
-import {IERC721} from "forge-std/interfaces/IERC721.sol";
 import {IWillieNet} from "./IWillieNet.sol";
 import {Utils} from "./Utils.sol";
 
