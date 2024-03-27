@@ -168,11 +168,11 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return messagesSlice;
     }
 
-    function getMessagesInRangeForTopic(
+    function getMessagesInRangeForHash(
         uint256 startIdx,
         uint256 endIdx,
-        string calldata topic
-    ) external view returns (Message[] memory) {
+        bytes32 hashVal
+    ) public view returns (Message[] memory) {
         // TODO consider adding error for startIdx, endIdx invalid
 
         uint256 length = endIdx - startIdx;
@@ -181,12 +181,11 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
             return messagesSlice;
         }
         uint256 idxInMessages = endIdx;
-        bytes32 topicHash = keccak256(bytes(topic));
         unchecked {
             for (uint256 i; i < length && idxInMessages > startIdx; ) {
                 --idxInMessages;
                 messagesSlice[i] = messages[
-                    hashToMessageIndexes[topicHash][idxInMessages]
+                    hashToMessageIndexes[hashVal][idxInMessages]
                 ];
                 ++i;
             }
@@ -194,33 +193,73 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return messagesSlice;
     }
 
-    // TODO consider consolidating these functions into one that relies on the hash
+    function getMessagesInRangeForTopic(
+        uint256 startIdx,
+        uint256 endIdx,
+        string calldata topic
+    ) external view returns (Message[] memory) {
+        return
+            getMessagesInRangeForHash(
+                startIdx,
+                endIdx,
+                keccak256(bytes(topic))
+            );
+    }
+
     function getMessagesInRangeForUser(
         uint256 startIdx,
         uint256 endIdx,
         address user
     ) external view returns (Message[] memory) {
-        // TODO consider adding error for startIdx, endIdx invalid
+        return
+            getMessagesInRangeForHash(
+                startIdx,
+                endIdx,
+                keccak256(abi.encodePacked(user))
+            );
+    }
 
-        uint256 length = endIdx - startIdx;
-        Message[] memory messagesSlice = new Message[](length);
-        if (messages.length == 0) {
-            return messagesSlice;
-        }
-        uint256 idxInMessages = endIdx;
-        unchecked {
-            for (uint256 i; i < length && idxInMessages > startIdx; ) {
-                --idxInMessages;
-                messagesSlice[i] = messages[
-                    // TODO make more efficient
-                    hashToMessageIndexes[keccak256(abi.encodePacked(user))][
-                        idxInMessages
-                    ]
-                ];
-                ++i;
-            }
-        }
-        return messagesSlice;
+    function getMessagesInRangeForAppUser(
+        uint256 startIdx,
+        uint256 endIdx,
+        address app,
+        address user
+    ) external view returns (Message[] memory) {
+        return
+            getMessagesInRangeForHash(
+                startIdx,
+                endIdx,
+                keccak256(abi.encodePacked(app, user))
+            );
+    }
+
+    function getMessagesInRangeForAppTopic(
+        uint256 startIdx,
+        uint256 endIdx,
+        address app,
+        string calldata topic
+    ) external view returns (Message[] memory) {
+        return
+            getMessagesInRangeForHash(
+                startIdx,
+                endIdx,
+                keccak256(abi.encodePacked(app, topic))
+            );
+    }
+
+    function getMessagesInRangeForAppUserTopic(
+        uint256 startIdx,
+        uint256 endIdx,
+        address app,
+        address user,
+        string calldata topic
+    ) external view returns (Message[] memory) {
+        return
+            getMessagesInRangeForHash(
+                startIdx,
+                endIdx,
+                keccak256(abi.encodePacked(app, user, topic))
+            );
     }
 
     // **************
