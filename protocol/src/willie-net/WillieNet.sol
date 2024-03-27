@@ -22,8 +22,8 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     // ************
 
     function sendMessageViaApp(
-        bytes32 extraData,
         address sender,
+        bytes32 extraData,
         string calldata message,
         string calldata topic
     ) external {
