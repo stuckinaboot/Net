@@ -96,6 +96,7 @@ contract WillieNetTest is
             app: app,
             sender: user,
             timestamp: block.timestamp,
+            // TODO use fuzz data
             extraData: "",
             message: messageContents,
             topic: topic
@@ -129,22 +130,22 @@ contract WillieNetTest is
         sendAndVerifyMessage(address(this), messageContents, topic);
     }
 
-    function testSendMultipleMessagesOnSameToken() public {
-        sendAndVerifyMessage(address(this), "message 1", "t1");
-        sendAndVerifyMessage(address(this), "message 2", "t2");
-        sendAndVerifyMessage(address(this), "message 3", "t3");
+    function testSendMultipleMessagesOnSameToken(address app) public {
+        sendAndVerifyMessage(address(this), app, "message 1", "t1");
+        sendAndVerifyMessage(address(this), app, "message 2", "t2");
+        sendAndVerifyMessage(address(this), app, "message 3", "t3");
     }
 
     function testSendMultipleMessagesOnDifferentTokens() public {
-        sendAndVerifyMessage(address(this), "message 1", "t1");
-        sendAndVerifyMessage(address(this), "message 2", "t2");
-        sendAndVerifyMessage(address(this), "message 3", "t3");
+        sendAndVerifyMessage(address(this), app, "message 1", "t1");
+        sendAndVerifyMessage(address(this), app, "message 2", "t2");
+        sendAndVerifyMessage(address(this), app, "message 3", "t3");
     }
 
     function testSendMultipleMessagesFromDifferentUsers() public {
-        sendAndVerifyMessage(users[0], "message 1", "t1");
-        sendAndVerifyMessage(users[1], "message 2", "t2");
-        sendAndVerifyMessage(users[2], "message 3", "t3");
+        sendAndVerifyMessage(users[0], app, "message 1", "t1");
+        sendAndVerifyMessage(users[1], app, "message 2", "t2");
+        sendAndVerifyMessage(users[2], app, "message 3", "t3");
     }
 
     // Helpers
