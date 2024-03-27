@@ -11,10 +11,9 @@ import {Utils} from "./Utils.sol";
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
 /// @notice Fully decentralized onchain messaging protocol.
 contract WillieNet is IWillieNet, EventsAndErrors, Constants {
-    mapping(bytes32 topicHash => uint256[] messageIndexes)
-        public topicToMessageIndexes;
-    mapping(address sender => uint256[] messageIndexes)
-        public userToMessageIndexes;
+    // Use a single global mapping to map hashes to message indexes
+    mapping(bytes32 hashVal => uint256[] messageIndexes)
+        public hashToMessageIndexes;
 
     Message[] public messages;
 
@@ -34,19 +33,16 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 messagesLength = messages.length;
 
         // App messages
-        userToMessageIndexes[
-            address(
-                uint160(uint256(keccak256(bytes(abi.encodePacked(msg.sender)))))
-            )
-        ].push(messagesLength);
+        hashToMessageIndexes[keccak256(bytes(abi.encodePacked(msg.sender)))]
+            .push(messagesLength);
 
         // App-user messages
-        topicToMessageIndexes[
+        hashToMessageIndexes[
             keccak256(bytes(abi.encodePacked(msg.sender, sender)))
         ].push(messagesLength);
 
         // App-topic messages
-        topicToMessageIndexes[
+        hashToMessageIndexes[
             // msg.sender is the app id
             keccak256(bytes(abi.encodePacked(msg.sender, topic)))
         ].push(messagesLength);
@@ -54,7 +50,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
 
         // App-user-topic messages
         // TODO is this one needed?
-        topicToMessageIndexes[
+        hashToMessageIndexes[
             keccak256(bytes(abi.encodePacked(msg.sender, sender, topic)))
         ].push(messagesLength);
 
@@ -83,8 +79,10 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
 
         // Track message index in topic and user mappings
         uint256 messagesLength = messages.length;
-        topicToMessageIndexes[keccak256(bytes(topic))].push(messagesLength);
-        userToMessageIndexes[msg.sender].push(messagesLength);
+        hashToMessageIndexes[keccak256(bytes(topic))].push(messagesLength);
+        hashToMessageIndexes[keccak256(abi.encodePacked(msg.sender))].push(
+            messagesLength
+        );
 
         // Emit message sent using current messages length as the index
         emit MessageSent(topic, msg.sender, messagesLength);
@@ -112,25 +110,14 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 idx,
         string calldata topic
     ) external view returns (uint256) {
-        return topicToMessageIndexes[keccak256(bytes(topic))][idx];
+        return hashToMessageIndexes[keccak256(bytes(topic))][idx];
     }
 
     function getMessageIdxForUser(
         uint256 idx,
         address user
     ) external view returns (uint256) {
-        return userToMessageIndexes[user][idx];
-    }
-
-    function getMessageIdxForSenderNft(
-        uint256 idx,
-        address senderNftContract,
-        uint256 senderNftTokenId
-    ) external view returns (uint256) {
-        return
-            userToMessageIndexes[
-                getSenderNftAsAddress(senderNftContract, senderNftTokenId)
-            ][idx];
+        return hashToMessageIndexes[keccak256(abi.encodePacked(user))][idx];
     }
 
     // Fetch single message
@@ -144,26 +131,16 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 idx,
         string calldata topic
     ) external view returns (Message memory) {
-        return messages[topicToMessageIndexes[keccak256(bytes(topic))][idx]];
+        return messages[hashToMessageIndexes[keccak256(bytes(topic))][idx]];
     }
 
     function getMessageForUser(
         uint256 idx,
         address user
     ) external view returns (Message memory) {
-        return messages[userToMessageIndexes[user][idx]];
-    }
-
-    function getMessageForSenderNft(
-        uint256 idx,
-        address senderNftContract,
-        uint256 senderNftTokenId
-    ) external view returns (Message memory) {
         return
             messages[
-                userToMessageIndexes[
-                    getSenderNftAsAddress(senderNftContract, senderNftTokenId)
-                ][idx]
+                hashToMessageIndexes[keccak256(abi.encodePacked(user))][idx]
             ];
     }
 
@@ -209,7 +186,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
             for (uint256 i; i < length && idxInMessages > startIdx; ) {
                 --idxInMessages;
                 messagesSlice[i] = messages[
-                    topicToMessageIndexes[topicHash][idxInMessages]
+                    hashToMessageIndexes[topicHash][idxInMessages]
                 ];
                 ++i;
             }
@@ -217,6 +194,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return messagesSlice;
     }
 
+    // TODO consider consolidating these functions into one that relies on the hash
     function getMessagesInRangeForUser(
         uint256 startIdx,
         uint256 endIdx,
@@ -234,37 +212,10 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
             for (uint256 i; i < length && idxInMessages > startIdx; ) {
                 --idxInMessages;
                 messagesSlice[i] = messages[
-                    userToMessageIndexes[user][idxInMessages]
-                ];
-                ++i;
-            }
-        }
-        return messagesSlice;
-    }
-
-    function getMessagesInRangeForSenderNft(
-        uint256 startIdx,
-        uint256 endIdx,
-        address senderNftContract,
-        uint256 senderNftTokenId
-    ) external view returns (Message[] memory) {
-        // TODO consider adding error for startIdx, endIdx invalid
-
-        uint256 length = endIdx - startIdx;
-        Message[] memory messagesSlice = new Message[](length);
-        if (messages.length == 0) {
-            return messagesSlice;
-        }
-        uint256 idxInMessages = endIdx;
-        address senderNftHashAddress = getSenderNftAsAddress(
-            senderNftContract,
-            senderNftTokenId
-        );
-        unchecked {
-            for (uint256 i; i < length && idxInMessages > startIdx; ) {
-                --idxInMessages;
-                messagesSlice[i] = messages[
-                    userToMessageIndexes[senderNftHashAddress][idxInMessages]
+                    // TODO make more efficient
+                    hashToMessageIndexes[keccak256(abi.encodePacked(user))][
+                        idxInMessages
+                    ]
                 ];
                 ++i;
             }
@@ -283,29 +234,20 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     function getTotalMessagesForTopicCount(
         string calldata topic
     ) external view returns (uint256) {
-        return topicToMessageIndexes[keccak256(bytes(topic))].length;
+        return hashToMessageIndexes[keccak256(bytes(topic))].length;
     }
 
     function getTotalMessagesForUserCount(
         address user
     ) external view returns (uint256) {
-        return userToMessageIndexes[user].length;
-    }
-
-    function getTotalMessagesForSenderNftCount(
-        address senderNftContract,
-        uint256 senderNftTokenId
-    ) external view returns (uint256) {
-        return
-            userToMessageIndexes[
-                getSenderNftAsAddress(senderNftContract, senderNftTokenId)
-            ].length;
+        return hashToMessageIndexes[keccak256(abi.encodePacked(user))].length;
     }
 
     // ************
     // Helpers
     // ************
 
+    // TODO can probs get rid of this, possibly in favor of new helpers
     function getSenderNftAsAddress(
         address senderNftContract,
         uint256 senderNftTokenId
