@@ -74,6 +74,8 @@ contract WillieNetTest is
         vm.stopPrank();
 
         WillieNet.Message memory expectedMessage = IWillieNet.Message({
+            // TODO if app is present use correct value
+            app: address(0),
             sender: user,
             timestamp: block.timestamp,
             extraData: bytes32(0),
