@@ -76,7 +76,7 @@ contract WillieNetTest is
 
         uint256 currMessagesLength = net.getTotalMessagesCount();
 
-        // TODO do we want all of these duplicated functions or just use same with app as 0?
+        // TODO do we want all of these duplicated functions or just use same with app as address(0)?
         uint256 topicMessagesLength = isApp
             ? net.getTotalMessagesForAppTopicCount(app, topic)
             : net.getTotalMessagesForTopicCount(topic);
