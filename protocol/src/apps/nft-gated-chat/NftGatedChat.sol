@@ -11,13 +11,8 @@ import {EventsAndErrors} from "./EventsAndErrors.sol";
 contract NftGatedChat is EventsAndErrors {
     WillieNet net;
 
-    struct NFTMessageSender {
-        address nftContract;
-        uint256 nftTokenId;
-    }
-
-    // Track a mapping of each NFT contract to message sender for each message sent
-    mapping(address nftContract => NFTMessageSender[]) public nftMessageSenders;
+    // Track a mapping of each NFT contract to message sender token id
+    mapping(address nftContract => uint256[]) public nftMessageSenders;
 
     constructor(address willieNet) {
         net = WillieNet(willieNet);
@@ -34,9 +29,7 @@ contract NftGatedChat is EventsAndErrors {
         }
 
         // Add message sender
-        nftMessageSenders[nftContract].push(
-            NFTMessageSender({nftContract: nftContract, nftTokenId: nftTokenId})
-        );
+        nftMessageSenders[nftContract].push(nftTokenId);
 
         // Send message
         net.sendMessageViaApp(
@@ -48,17 +41,24 @@ contract NftGatedChat is EventsAndErrors {
         );
     }
 
+    function getMessageSender(
+        address nftContract,
+        uint256 idx
+    ) external view returns (uint256) {
+        return nftMessageSenders[nftContract][idx];
+    }
+
     function getMessageSendersInRange(
         address nftContract,
         uint256 startIdx,
         uint256 endIdx
-    ) external view returns (NFTMessageSender[] memory) {
+    ) external view returns (uint256[] memory) {
         if (startIdx >= endIdx) {
             revert InvalidRange();
         }
 
         uint256 length = endIdx - startIdx;
-        NFTMessageSender[] memory sendersSlice = new NFTMessageSender[](length);
+        uint256[] memory sendersSlice = new uint256[](length);
         if (nftMessageSenders[nftContract].length == 0) {
             return sendersSlice;
         }

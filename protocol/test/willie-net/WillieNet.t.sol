@@ -12,14 +12,13 @@ import {EventsAndErrors} from "../../src/willie-net/EventsAndErrors.sol";
 import {IERC721A} from "@erc721a/ERC721A.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
-import {TestUtils} from "./TestUtils.sol";
+import {TestUtils} from "../TestUtils.sol";
 import {OnchainSteamboatWillie} from "../../src/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
 
 contract WillieNetTest is
     TestUtils,
     EventsAndErrors,
     Constants,
-    PRBTest,
     StdCheats,
     IERC721Receiver
 {
@@ -34,7 +33,7 @@ contract WillieNetTest is
     OnchainSteamboatWillie public nft =
         new OnchainSteamboatWillie(bytes32(0), 0, 0);
 
-    constructor() TestUtils(net, nft) {}
+    constructor() {}
 
     function setUp() public {
         vm.deal(address(this), 1000 ether);
@@ -47,16 +46,17 @@ contract WillieNetTest is
         nft.updatePublicMintEnabled(true);
     }
 
-    function verifyMessage(
-        WillieNet.Message memory expectedMessage,
-        WillieNet.Message memory actualMessage
-    ) public {
-        assertEq(actualMessage.sender, expectedMessage.sender);
-        assertEq(actualMessage.timestamp, expectedMessage.timestamp);
-        assertEq(actualMessage.extraData, expectedMessage.extraData);
-        assertEq(actualMessage.message, expectedMessage.message);
-        assertEq(actualMessage.topic, expectedMessage.topic);
-    }
+    // function verifyMessage(
+    //     WillieNet.Message memory expectedMessage,
+    //     WillieNet.Message memory actualMessage
+    // ) public {
+    //     assertEq(actualMessage.app, expectedMessage.app);
+    //     assertEq(actualMessage.sender, expectedMessage.sender);
+    //     assertEq(actualMessage.timestamp, expectedMessage.timestamp);
+    //     assertEq(actualMessage.extraData, expectedMessage.extraData);
+    //     assertEq(actualMessage.message, expectedMessage.message);
+    //     assertEq(actualMessage.topic, expectedMessage.topic);
+    // }
 
     // function sendAndVerifyMessage(
     //     address user,
