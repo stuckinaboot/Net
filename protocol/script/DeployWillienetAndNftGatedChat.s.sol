@@ -3,7 +3,7 @@ pragma solidity >=0.8.17 .0;
 
 import {Script, console} from "forge-std/Script.sol";
 import {WillieNet} from "../src/willie-net/WillieNet.sol";
-import {NftGatedChat} from "../src/willie-net/apps/NftGatedChat.sol";
+import {NftGatedChat} from "../src/apps/nft-gated-chat/NftGatedChat.sol";
 
 /// @dev See the Solidity Scripting tutorial: https://book.getfoundry.sh/tutorials/solidity-scripting
 contract DeployWillieNetAndNftGatedChat is Script {
@@ -18,7 +18,7 @@ contract DeployWillieNetAndNftGatedChat is Script {
 
         vm.startBroadcast();
         willieNet = new WillieNet();
-        chat = new NftGatedChat(willieNet);
+        chat = new NftGatedChat(address(willieNet));
         vm.stopBroadcast();
     }
 }
