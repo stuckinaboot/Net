@@ -9,9 +9,13 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import SendMessageSection from "./SendMessageSection";
+import { Separator } from "@/components/ui/separator";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 type OnchainMessage = {
   extraData: string;
@@ -70,14 +74,17 @@ export default function OnchainMessages() {
 
   return (
     <Card className="w-full">
-      <CardHeader>
-        <CardTitle>View</CardTitle>
+      <CardHeader className="flex flex-col">
+        <div className="flex flex-row justify-between">
+          <CardTitle>WillieNet</CardTitle>
+          <ConnectButton />
+        </div>
         <CardDescription>
           All messages are stored and read onchain and are publicly accessible.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p
+        <div
           className={cn(
             "whitespace-break-spaces",
             "font-mono",
@@ -86,16 +93,20 @@ export default function OnchainMessages() {
           )}
         >
           {sanitizedOnchainMessages.map((message, idx) => (
-            <p key={idx}>
+            <div key={idx}>
               <p className="text-left">{message.message}</p>
               <p className="text-right">
                 <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
                 {message.sender}
               </p>
-            </p>
+            </div>
           ))}
-        </p>
+        </div>
       </CardContent>
+      <CardFooter className="flex flex-col">
+        <Separator className="m-3" />
+        <SendMessageSection />
+      </CardFooter>
     </Card>
   );
 }

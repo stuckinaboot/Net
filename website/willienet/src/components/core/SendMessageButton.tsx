@@ -4,9 +4,11 @@ import SubmitTransactionButton from "./SubmitTransactionButton";
 export default function SendMessageButton(props: {
   message: string;
   topic: string;
+  className?: string;
 }) {
   return (
     <SubmitTransactionButton
+      className={props.className}
       functionName="sendMessage"
       abi={WILLIE_NET_CONTRACT.abi}
       to={WILLIE_NET_CONTRACT.address}

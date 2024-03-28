@@ -18,6 +18,7 @@ export default function SubmitTransactionButton(props: {
     button: { default: string; pending: string; success: string };
   };
   useDefaultButtonMessageOnSuccess?: boolean;
+  className?: string;
 }) {
   const { toast } = useToast();
 
@@ -52,7 +53,7 @@ export default function SubmitTransactionButton(props: {
 
   return (
     <>
-      <Button onClick={performTransaction}>
+      <Button onClick={performTransaction} className={props.className}>
         {status === "idle" ||
         (receipt.isSuccess && props.useDefaultButtonMessageOnSuccess)
           ? props.messages.button.default
