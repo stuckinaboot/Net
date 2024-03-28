@@ -23,6 +23,7 @@ export default function SendMessageButton(props: {
   topic: string;
   className?: string;
   nft?: Nft;
+  onTransactionConfirmed?: (transactionHash: string) => void;
 }) {
   if (props.nft) {
     return (
@@ -34,6 +35,7 @@ export default function SendMessageButton(props: {
         args={[props.nft.address, props.nft.tokenId, props.message]}
         messages={{ toasts: TOASTS, button: BUTTONS }}
         useDefaultButtonMessageOnSuccess={true}
+        onTransactionConfirmed={props.onTransactionConfirmed}
       />
     );
   }
@@ -47,6 +49,7 @@ export default function SendMessageButton(props: {
       args={[props.message, props.topic, ""]}
       messages={{ toasts: TOASTS, button: BUTTONS }}
       useDefaultButtonMessageOnSuccess={true}
+      onTransactionConfirmed={props.onTransactionConfirmed}
     />
   );
 }

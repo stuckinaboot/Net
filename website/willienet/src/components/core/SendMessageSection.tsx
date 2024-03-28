@@ -16,12 +16,16 @@ export default function SendMessageSection(props: { nft?: Nft }) {
           const txt = e.target.value;
           setMessage(txt);
         }}
+        value={message}
       />
       <SendMessageButton
         nft={props.nft}
         className="w-full"
         message={message}
         topic="default"
+        onTransactionConfirmed={() => {
+          setMessage("");
+        }}
       />
     </div>
   );
