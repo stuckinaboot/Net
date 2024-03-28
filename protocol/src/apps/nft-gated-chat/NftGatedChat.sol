@@ -11,6 +11,14 @@ import {EventsAndErrors} from "./EventsAndErrors.sol";
 contract NftGatedChat is EventsAndErrors {
     WillieNet net;
 
+    struct NFTMessageSender {
+        address nftContract;
+        uint256 nftTokenId;
+    }
+
+    // Track a mapping of each NFT contract to message sender for each message sent
+    mapping(address nftContract => NFTMessageSender[]) public nftMessageSenders;
+
     constructor(address willieNet) {
         net = WillieNet(willieNet);
     }
@@ -20,10 +28,17 @@ contract NftGatedChat is EventsAndErrors {
         uint256 nftTokenId,
         string memory message
     ) public {
+        // Check user is owner of NFT
         if (IERC721(nftContract).ownerOf(nftTokenId) != msg.sender) {
             revert MsgSenderNotOwnerOfNft();
         }
 
+        // Add message sender
+        nftMessageSenders[nftContract].push(
+            NFTMessageSender({nftContract: nftContract, nftTokenId: nftTokenId})
+        );
+
+        // Send message
         net.sendMessageViaApp(
             msg.sender,
             message,
