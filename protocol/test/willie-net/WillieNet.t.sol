@@ -285,6 +285,9 @@ contract WillieNetTest is
                 user,
                 topic
             );
+            if (maxEndIdx == 0) {
+                vm.expectRevert(EventsAndErrors.InvalidRange.selector);
+            }
             WillieNet.Message[] memory expectedMessages = net
                 .getMessagesInRangeForAppUserTopic(
                     0,

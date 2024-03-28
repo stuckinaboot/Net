@@ -2,12 +2,8 @@
 pragma solidity >=0.8.17 .0;
 
 interface EventsAndErrors {
-    error MsgSenderNotNftOwner();
     error MsgEmpty();
-
-    // TODO remove if unused
-    error MessageExceedsMaxLength();
-    error TopicExceedsMaxLength();
+    error InvalidRange();
 
     event MessageSent(
         address indexed sender,

@@ -51,7 +51,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
             // msg.sender is the app id
             keccak256(abi.encodePacked(msg.sender, topic))
         ].push(messagesLength);
-        // TODO use bytes instead of address
 
         // App-user-topic messages
         // TODO is this one needed?
@@ -182,18 +181,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return messages[idx];
     }
 
-    // function getMessageForTopic(
-    //     uint256 idx,
-    //     string calldata topic
-    // ) external view returns (Message memory) {
-    //     return
-    //         messages[
-    //             hashToMessageIndexes[
-    //                 keccak256(abi.encodePacked(address(0), topic))
-    //             ][idx]
-    //         ];
-    // }
-
     function getMessageForApp(
         uint256 idx,
         address app
@@ -250,21 +237,15 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 startIdx,
         uint256 endIdx
     ) external view returns (Message[] memory) {
-        // TODO consider adding error for startIdx, endIdx invalid
+        if (startIdx >= endIdx) {
+            revert InvalidRange();
+        }
 
         uint256 length = endIdx - startIdx;
         Message[] memory messagesSlice = new Message[](length);
         if (messages.length == 0) {
             return messagesSlice;
         }
-        // uint256 idxInMessages = endIdx;
-        // unchecked {
-        //     for (uint256 i; i < length && idxInMessages > startIdx; ) {
-        //         --idxInMessages;
-        //         messagesSlice[i] = messages[idxInMessages];
-        //         ++i;
-        //     }
-        // }
         uint256 idxInMessages = startIdx;
         unchecked {
             for (uint256 i; i < length && idxInMessages < endIdx; ) {
@@ -281,23 +262,15 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 endIdx,
         bytes32 hashVal
     ) public view returns (Message[] memory) {
-        // TODO consider adding error for startIdx, endIdx invalid
+        if (startIdx >= endIdx) {
+            revert InvalidRange();
+        }
 
         uint256 length = endIdx - startIdx;
         Message[] memory messagesSlice = new Message[](length);
         if (messages.length == 0) {
             return messagesSlice;
         }
-        // uint256 idxInMessages = endIdx;
-        // unchecked {
-        //     for (uint256 i; i < length && idxInMessages > startIdx; ) {
-        //         --idxInMessages;
-        //         messagesSlice[i] = messages[
-        //             hashToMessageIndexes[hashVal][idxInMessages]
-        //         ];
-        //         ++i;
-        //     }
-        // }
         uint256 idxInMessages = startIdx;
         unchecked {
             for (uint256 i; i < length && idxInMessages < endIdx; ) {
@@ -310,34 +283,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         }
         return messagesSlice;
     }
-
-    // Non-app
-
-    // function getMessagesInRangeForTopic(
-    //     uint256 startIdx,
-    //     uint256 endIdx,
-    //     string calldata topic
-    // ) external view returns (Message[] memory) {
-    //     return
-    //         getMessagesInRangeForHash(
-    //             startIdx,
-    //             endIdx,
-    //             keccak256(bytes(topic))
-    //         );
-    // }
-
-    // function getMessagesInRangeForUser(
-    //     uint256 startIdx,
-    //     uint256 endIdx,
-    //     address user
-    // ) external view returns (Message[] memory) {
-    //     return
-    //         getMessagesInRangeForHash(
-    //             startIdx,
-    //             endIdx,
-    //             keccak256(abi.encodePacked(user))
-    //         );
-    // }
 
     function getMessagesInRangeForApp(
         uint256 startIdx,
@@ -408,22 +353,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     ) public view returns (uint256) {
         return hashToMessageIndexes[hashVal].length;
     }
-
-    // Non-app
-
-    // function getTotalMessagesForTopicCount(
-    //     string calldata topic
-    // ) external view returns (uint256) {
-    //     return getTotalMessagesForHashCount(keccak256(bytes(topic)));
-    // }
-
-    // function getTotalMessagesForUserCount(
-    //     address user
-    // ) external view returns (uint256) {
-    //     return getTotalMessagesForHashCount(keccak256(abi.encodePacked(user)));
-    // }
-
-    // App
 
     function getTotalMessagesForAppCount(
         address app
