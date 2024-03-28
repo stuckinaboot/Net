@@ -58,19 +58,20 @@ contract WillieNetTest is
         assertEq(actualMessage.topic, expectedMessage.topic);
     }
 
-    function sendAndVerifyMessage(
-        address user,
-        string memory messageContents,
-        string memory topic
-    ) public {
-        sendAndVerifyMessage(user, address(0), messageContents, topic);
-    }
+    // function sendAndVerifyMessage(
+    //     address user,
+    //     string memory messageContents,
+    //     string memory topic
+    // ) public {
+    //     sendAndVerifyMessage(user, address(0), messageContents, topic);
+    // }
 
     function sendAndVerifyMessage(
         address user,
         address app,
         string memory messageContents,
-        string memory topic
+        string memory topic,
+        bytes memory extraData
     ) public {
         bool isApp = app != address(0);
         bool isEmptyMessageContents = bytes(messageContents).length == 0;
@@ -94,7 +95,7 @@ contract WillieNetTest is
                 vm.expectEmit(true, true, true, false);
                 emit MessageSentViaApp(app, user, topic, currMessagesLength);
             }
-            net.sendMessageViaApp(user, messageContents, topic, "");
+            net.sendMessageViaApp(user, messageContents, topic, extraData);
             vm.stopPrank();
         } else {
             // Send message from user
@@ -105,7 +106,7 @@ contract WillieNetTest is
                 vm.expectEmit(true, true, true, false);
                 emit MessageSent(user, topic, currMessagesLength);
             }
-            net.sendMessage(messageContents, topic, "");
+            net.sendMessage(messageContents, topic, extraData);
             vm.stopPrank();
         }
 
@@ -117,8 +118,7 @@ contract WillieNetTest is
             app: app,
             sender: user,
             timestamp: block.timestamp,
-            // TODO use fuzz data
-            extraData: "",
+            extraData: extraData,
             message: messageContents,
             topic: topic
         });
@@ -168,42 +168,61 @@ contract WillieNetTest is
         // TODO maybe add check for app topic user
     }
 
-    function testSendOneMessage() public {
-        string
-            memory messageContents = "hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hell";
-        string memory topic = "Topic";
-        sendAndVerifyMessage(address(this), messageContents, topic);
+    function testSendOneMessage(
+        address app,
+        string calldata messageContents,
+        string calldata topic,
+        bytes calldata extraData
+    ) public {
+        // string
+        //     memory messageContents = "hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hell";
+        // string memory topic = "Topic";
+        sendAndVerifyMessage(
+            address(this),
+            app,
+            messageContents,
+            topic,
+            extraData
+        );
     }
 
-    function testSendMultipleMessagesFromSameUserSameApp(address app) public {
-        sendAndVerifyMessage(address(this), app, "message 1", "t1");
-        sendAndVerifyMessage(address(this), app, "message 2", "t2");
-        sendAndVerifyMessage(address(this), app, "message 3", "t3");
+    function testSendMultipleMessagesFromSameUserSameApp(
+        address app,
+        bytes calldata extraData
+    ) public {
+        sendAndVerifyMessage(address(this), app, "message 1", "t1", extraData);
+        sendAndVerifyMessage(address(this), app, "message 2", "t2", extraData);
+        sendAndVerifyMessage(address(this), app, "message 3", "t3", extraData);
     }
 
     function testSendMultipleMessagesFromDifferentUsersSameApp(
-        address app
+        address app,
+        bytes calldata extraData
     ) public {
-        sendAndVerifyMessage(users[0], app, "message 1", "t1");
-        sendAndVerifyMessage(users[1], app, "message 2", "t2");
-        sendAndVerifyMessage(users[2], app, "message 3", "t3");
+        sendAndVerifyMessage(users[0], app, "message 1", "t1", extraData);
+        sendAndVerifyMessage(users[1], app, "message 2", "t2", extraData);
+        sendAndVerifyMessage(users[2], app, "message 3", "t3", extraData);
     }
 
     function testSendMultipleMessagesFromDifferentUsersDifferentApp(
         address app1,
         address app2,
-        address app3
+        address app3,
+        bytes calldata extraData
     ) public {
-        sendAndVerifyMessage(users[0], app1, "message 1", "t1");
-        sendAndVerifyMessage(users[0], app1, "message 1.1", "t1");
-        sendAndVerifyMessage(users[1], app2, "message 2", "t2");
-        sendAndVerifyMessage(users[1], app2, "message 2.2", "t2");
-        sendAndVerifyMessage(users[2], app3, "message 3", "t3");
-        sendAndVerifyMessage(users[2], app3, "message 3.3", "t3");
+        sendAndVerifyMessage(users[0], app1, "message 1", "t1", extraData);
+        sendAndVerifyMessage(users[0], app1, "message 1.1", "t1", extraData);
+        sendAndVerifyMessage(users[1], app2, "message 2", "t2", extraData);
+        sendAndVerifyMessage(users[1], app2, "message 2.2", "t2", extraData);
+        sendAndVerifyMessage(users[2], app3, "message 3", "t3", extraData);
+        sendAndVerifyMessage(users[2], app3, "message 3.3", "t3", extraData);
     }
 
-    function testSendEmptyMessageExpectsRevert(address app) public {
-        sendAndVerifyMessage(users[0], app, "", "Topic");
+    function testSendEmptyMessageExpectsRevert(
+        address app,
+        bytes calldata extraData
+    ) public {
+        sendAndVerifyMessage(users[0], app, "", "Topic", extraData);
     }
 
     // Helpers
