@@ -72,23 +72,29 @@ contract WillieNetTest is
         string memory messageContents,
         string memory topic
     ) public {
-        uint256 currMessagesLength = net.getTotalMessagesCount();
-        uint256 topicMessagesLength = net.getTotalMessagesForTopicCount(topic);
-        uint256 userMessagesLength = net.getTotalMessagesForUserCount(user);
+        bool isApp = app != address(0);
 
-        if (app == address(0)) {
-            // Send message from user
-            vm.startPrank(user);
-            vm.expectEmit(true, true, true, false);
-            emit MessageSent(user, topic, currMessagesLength);
-            net.sendMessage(messageContents, topic, "");
-            vm.stopPrank();
-        } else {
+        uint256 currMessagesLength = net.getTotalMessagesCount();
+        uint256 topicMessagesLength = isApp
+            ? net.getTotalMessagesForAppTopicCount(app, topic)
+            : net.getTotalMessagesForTopicCount(topic);
+        uint256 userMessagesLength = isApp
+            ? net.getTotalMessagesForAppUserCount(app, user)
+            : net.getTotalMessagesForUserCount(user);
+
+        if (isApp) {
             // Send message via app
             vm.startPrank(app);
             vm.expectEmit(true, true, true, false);
             emit MessageSentViaApp(app, user, topic, currMessagesLength);
             net.sendMessageViaApp(user, messageContents, topic, "");
+            vm.stopPrank();
+        } else {
+            // Send message from user
+            vm.startPrank(user);
+            vm.expectEmit(true, true, true, false);
+            emit MessageSent(user, topic, currMessagesLength);
+            net.sendMessage(messageContents, topic, "");
             vm.stopPrank();
         }
 
@@ -109,18 +115,18 @@ contract WillieNetTest is
         verifyMessage(expectedMessage, messageGlobal);
 
         // Verify message fetched via get message for topic
-        WillieNet.Message memory messageTopic = net.getMessageForTopic(
-            topicMessagesLength,
-            topic
-        );
+        WillieNet.Message memory messageTopic = isApp
+            ? net.getMessageForAppTopic(topicMessagesLength, app, topic)
+            : net.getMessageForTopic(topicMessagesLength, topic);
         verifyMessage(expectedMessage, messageTopic);
 
         // Verify message fetched via get message for user
-        WillieNet.Message memory messageUser = net.getMessageForUser(
-            userMessagesLength,
-            user
-        );
+        WillieNet.Message memory messageUser = isApp
+            ? net.getMessageForAppUser(userMessagesLength, app, user)
+            : net.getMessageForUser(userMessagesLength, user);
         verifyMessage(expectedMessage, messageUser);
+
+        // TODO maybe add check for app topic user
     }
 
     function testSendOneMessage() public {
@@ -130,19 +136,15 @@ contract WillieNetTest is
         sendAndVerifyMessage(address(this), messageContents, topic);
     }
 
-    function testSendMultipleMessagesOnSameToken(address app) public {
+    function testSendMultipleMessagesFromSameUserSameApp(address app) public {
         sendAndVerifyMessage(address(this), app, "message 1", "t1");
         sendAndVerifyMessage(address(this), app, "message 2", "t2");
         sendAndVerifyMessage(address(this), app, "message 3", "t3");
     }
 
-    function testSendMultipleMessagesOnDifferentTokens() public {
-        sendAndVerifyMessage(address(this), app, "message 1", "t1");
-        sendAndVerifyMessage(address(this), app, "message 2", "t2");
-        sendAndVerifyMessage(address(this), app, "message 3", "t3");
-    }
-
-    function testSendMultipleMessagesFromDifferentUsers() public {
+    function testSendMultipleMessagesFromDifferentUsersSameApp(
+        address app
+    ) public {
         sendAndVerifyMessage(users[0], app, "message 1", "t1");
         sendAndVerifyMessage(users[1], app, "message 2", "t2");
         sendAndVerifyMessage(users[2], app, "message 3", "t3");
