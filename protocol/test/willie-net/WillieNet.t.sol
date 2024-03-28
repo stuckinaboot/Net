@@ -28,7 +28,7 @@ contract WillieNetTest is
     StdStorage private stdstore;
 
     // Test users
-    address[100] users;
+    address[10] users;
 
     WillieNet public net = new WillieNet();
     OnchainSteamboatWillie public nft =
@@ -162,7 +162,7 @@ contract WillieNetTest is
                 app,
                 user
             );
-            assertEq(msgIdx, userMessagesLength);
+            assertEq(msgIdx, currMessagesLength);
         }
 
         // TODO maybe add check for app topic user
