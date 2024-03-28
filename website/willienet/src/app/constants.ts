@@ -1,11 +1,19 @@
 import willienetAbi from "../../assets/abis/willienet.json";
+import nftGatedChatAbi from "../../assets/abis/nft-gated-chat.json";
 
 export const testnetsEnabled =
   process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true";
 
 export const WILLIE_NET_CONTRACT = {
   address: testnetsEnabled
-    ? "0x54253c5d34a8bd64a7882572cac83c3cc1422704"
+    ? "0xa84cc9d1814b41b32baf692dce1d3b15623e333f"
     : "0xabc",
   abi: willienetAbi,
+};
+
+export const NFT_GATED_CHAT_CONTRACT = {
+  address: testnetsEnabled
+    ? "0xDB4EAB0C91ac1483d5c25E615dfa0b3993E442C2"
+    : "0xabc",
+  abi: nftGatedChatAbi,
 };

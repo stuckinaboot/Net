@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { WILLIE_NET_CONTRACT } from "./constants";
 import OnchainMessages from "../components/core/OnchainMessages";
-
-const SHOW_TITLE = false;
+import { getOwnedNftTokenIds } from "./utils";
 
 export default function Home() {
   const [userWillieNetTokenIds, setUserWillieNetTokenIds] = useState([]);
@@ -14,11 +13,11 @@ export default function Home() {
   const { isConnected, address } = useAccount();
 
   async function updateOwnedWillieNetNftTokenIds() {
-    const res = await fetch(
-      `/api/getTokenIdsOwnedByUserInCollection?owner=${address}&contractAddress=${WILLIE_NET_CONTRACT.address}`
-    );
-    const resJson = await res.json();
-    setUserWillieNetTokenIds(resJson.tokenIds || []);
+    const tokenIds = await getOwnedNftTokenIds({
+      userAddress: address as string,
+      contractAddress: "todo",
+    });
+    setUserWillieNetTokenIds(tokenIds || []);
   }
 
   useEffect(() => {
@@ -30,10 +29,5 @@ export default function Home() {
     })();
   }, [isConnected]);
 
-  return (
-    <main className="flex flex-col items-center justify-between p-2">
-      {SHOW_TITLE && <h1 className="text-4xl">Willienet</h1>}
-      <OnchainMessages />
-    </main>
-  );
+  return <OnchainMessages />;
 }

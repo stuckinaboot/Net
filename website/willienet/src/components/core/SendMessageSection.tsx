@@ -1,10 +1,10 @@
 import { chainTimeToMilliseconds } from "@/app/utils";
 import { cn } from "@/lib/utils";
 import React, { useState } from "react";
-import SendMessageButton from "./SendMessageButton";
+import SendMessageButton, { Nft } from "./SendMessageButton";
 import { Input } from "@/components/ui/input";
 
-export default function SendMessageSection() {
+export default function SendMessageSection(props: { nft?: Nft }) {
   const [message, setMessage] = useState("");
 
   return (
@@ -17,7 +17,12 @@ export default function SendMessageSection() {
           setMessage(txt);
         }}
       />
-      <SendMessageButton className="w-full" message={message} topic="default" />
+      <SendMessageButton
+        nft={props.nft}
+        className="w-full"
+        message={message}
+        topic="default"
+      />
     </div>
   );
 }

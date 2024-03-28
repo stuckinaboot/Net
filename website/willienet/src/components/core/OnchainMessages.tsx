@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { useReadContract } from "wagmi";
-import { WILLIE_NET_CONTRACT } from "../../app/constants";
+import { useAccount, useReadContract } from "wagmi";
+import {
+  NFT_GATED_CHAT_CONTRACT,
+  WILLIE_NET_CONTRACT,
+} from "../../app/constants";
 import truncateEthAddress from "truncate-eth-address";
 import { cn } from "@/lib/utils";
 import TimeAgo from "react-timeago";
-import { chainTimeToMilliseconds } from "@/app/utils";
+import { chainTimeToMilliseconds, getOwnedNftTokenIds } from "@/app/utils";
 import {
   Card,
   CardContent,
@@ -16,6 +19,8 @@ import {
 import SendMessageSection from "./SendMessageSection";
 import { Separator } from "@/components/ui/separator";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { isAddress } from "viem";
+import useAsyncEffect from "use-async-effect";
 
 type OnchainMessage = {
   extraData: string;
@@ -26,41 +31,50 @@ type OnchainMessage = {
   topic: string;
 };
 
-export default function OnchainMessages() {
-  const [messagesText, setMessagesText] = useState("");
+export default function OnchainMessages(props: { nftAddress?: string }) {
+  const { isConnected, address: userAddress } = useAccount();
+  const [ownedNftTokenIds, setOwnedNftTokenIds] = useState([]);
 
-  const totalMessagesResult = useReadContract({
-    abi: WILLIE_NET_CONTRACT.abi,
-    address: WILLIE_NET_CONTRACT.address as any,
-    functionName: "getTotalMessagesCount",
-    query: {
-      refetchInterval: 2000,
-    },
-  });
-  const messagesResult = useReadContract({
-    abi: WILLIE_NET_CONTRACT.abi,
-    address: WILLIE_NET_CONTRACT.address as any,
-    functionName: "getMessagesInRange",
-    args: [BigInt(0), totalMessagesResult.data],
-  });
+  const isValidNftAddress = props.nftAddress
+    ? isAddress(props.nftAddress)
+    : false;
 
-  useEffect(() => {
-    const onchainMessages = messagesResult.data as OnchainMessage[] | undefined;
-    if (!onchainMessages) {
-      return;
-    }
-    const sanitizedOnchainMessages = onchainMessages.map((message) =>
-      JSON.stringify(
-        {
-          sender: truncateEthAddress(message.sender),
-          message: message.message,
+  const totalMessagesResult = props.nftAddress
+    ? useReadContract({
+        abi: WILLIE_NET_CONTRACT.abi,
+        address: WILLIE_NET_CONTRACT.address as any,
+        functionName: "getTotalMessagesForAppTopicCount",
+        query: {
+          refetchInterval: 2000,
         },
-        null,
-        4
-      )
-    );
-    setMessagesText(sanitizedOnchainMessages.join("\n"));
-  }, [messagesResult.data]);
+        args: [NFT_GATED_CHAT_CONTRACT.address, props.nftAddress],
+      })
+    : useReadContract({
+        abi: WILLIE_NET_CONTRACT.abi,
+        address: WILLIE_NET_CONTRACT.address as any,
+        functionName: "getTotalMessagesCount",
+        query: {
+          refetchInterval: 2000,
+        },
+      });
+  const messagesResult = props.nftAddress
+    ? useReadContract({
+        abi: WILLIE_NET_CONTRACT.abi,
+        address: WILLIE_NET_CONTRACT.address as any,
+        functionName: "getMessagesInRangeForAppTopic",
+        args: [
+          BigInt(0),
+          totalMessagesResult.data,
+          NFT_GATED_CHAT_CONTRACT.address,
+          props.nftAddress,
+        ],
+      })
+    : useReadContract({
+        abi: WILLIE_NET_CONTRACT.abi,
+        address: WILLIE_NET_CONTRACT.address as any,
+        functionName: "getMessagesInRange",
+        args: [BigInt(0), totalMessagesResult.data],
+      });
 
   const onchainMessages =
     (messagesResult.data as OnchainMessage[] | undefined) || [];
@@ -72,11 +86,24 @@ export default function OnchainMessages() {
     }))
     .reverse();
 
+  useAsyncEffect(async () => {
+    if (props.nftAddress == null || !isConnected) {
+      return;
+    }
+    const tokenIds = await getOwnedNftTokenIds({
+      userAddress: userAddress as string,
+      contractAddress: props.nftAddress,
+    });
+    setOwnedNftTokenIds(tokenIds);
+  }, [isConnected]);
+
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-col">
         <div className="flex flex-row justify-between">
-          <CardTitle>WillieNet</CardTitle>
+          <CardTitle>
+            {isValidNftAddress ? `WillieNet: ${props.nftAddress}` : "WillieNet"}
+          </CardTitle>
           <ConnectButton />
         </div>
         <CardDescription>
@@ -105,7 +132,17 @@ export default function OnchainMessages() {
       </CardContent>
       <CardFooter className="flex flex-col">
         <Separator className="m-3" />
-        <SendMessageSection />
+        {isValidNftAddress &&
+        props.nftAddress &&
+        ownedNftTokenIds.length > 0 ? (
+          <SendMessageSection
+            nft={{ address: props.nftAddress, tokenId: ownedNftTokenIds[0] }}
+          />
+        ) : !isValidNftAddress ? (
+          <SendMessageSection />
+        ) : (
+          <p>No NFTs owned in {props.nftAddress}</p>
+        )}
       </CardFooter>
     </Card>
   );
