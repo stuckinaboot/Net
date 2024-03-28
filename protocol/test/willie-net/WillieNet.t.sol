@@ -253,6 +253,18 @@ contract WillieNetTest is
 
         {
             WillieNet.Message[] memory expectedMessages = net
+                .getMessagesInRangeForApp(
+                    0,
+                    net.getTotalMessagesForAppCount(app),
+                    app
+                );
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i]);
+            }
+        }
+
+        {
+            WillieNet.Message[] memory expectedMessages = net
                 .getMessagesInRangeForAppUser(
                     0,
                     net.getTotalMessagesForAppUserCount(app, user),
