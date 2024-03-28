@@ -75,16 +75,30 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
         functionName: "getMessagesInRange",
         args: [BigInt(0), totalMessagesResult.data],
       });
-
   const onchainMessages =
     (messagesResult.data as OnchainMessage[] | undefined) || [];
-  const sanitizedOnchainMessages = onchainMessages
-    .map((message) => ({
-      ...message,
-      sender: truncateEthAddress(message.sender),
-      timestamp: +message.timestamp.toString(),
-    }))
-    .reverse();
+  const sanitizedOnchainMessages = onchainMessages.map((message) => ({
+    ...message,
+    sender: truncateEthAddress(message.sender),
+    timestamp: +message.timestamp.toString(),
+  }));
+
+  const nftMsgSendersResult = isValidNftAddress
+    ? useReadContract({
+        abi: NFT_GATED_CHAT_CONTRACT.abi,
+        address: NFT_GATED_CHAT_CONTRACT.address as any,
+        functionName: "getMessageSendersInRange",
+        args: [props.nftAddress, BigInt(0), totalMessagesResult.data],
+      })
+    : undefined;
+  console.log("HIT!", nftMsgSendersResult, NFT_GATED_CHAT_CONTRACT, [
+    props.nftAddress,
+    BigInt(0),
+    totalMessagesResult.data,
+  ]);
+  const nftMsgSenderTokenIds = nftMsgSendersResult?.data as
+    | number[]
+    | undefined;
 
   useAsyncEffect(async () => {
     if (props.nftAddress == null || !isConnected) {
@@ -124,7 +138,10 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
               <p className="text-left">{message.message}</p>
               <p className="text-right">
                 <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
-                {message.sender}
+                {message.sender}{" "}
+                {nftMsgSenderTokenIds != null
+                  ? `Token #${nftMsgSenderTokenIds[idx].toString()}`
+                  : ""}
               </p>
             </div>
           ))}
