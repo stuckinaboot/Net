@@ -73,7 +73,6 @@ contract WillieNetTest is
         string memory topic,
         bytes memory extraData
     ) public {
-        bool isApp = app != address(0);
         bool isEmptyMessageContents = bytes(messageContents).length == 0;
 
         uint256 currMessagesLength = net.getTotalMessagesCount();
@@ -86,7 +85,7 @@ contract WillieNetTest is
             user
         );
 
-        if (isApp) {
+        if (app != address(0)) {
             // Send message via app
             vm.startPrank(app);
             if (isEmptyMessageContents) {
