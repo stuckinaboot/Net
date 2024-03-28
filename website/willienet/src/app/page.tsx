@@ -9,9 +9,9 @@ import { WILLIE_NET_CONTRACT } from "./constants";
 import SendMessageButton from "../components/core/SendMessageButton";
 import OnchainMessages from "../components/core/OnchainMessages";
 import { Input } from "@/components/ui/input";
+import SendMessageCard from "@/components/core/SendMessageCard";
 
 export default function Home() {
-  const [message, setMessage] = useState("");
   const [userWillieNetTokenIds, setUserWillieNetTokenIds] = useState([]);
 
   const { isConnected, address } = useAccount();
@@ -37,15 +37,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <h1 className="text-4xl">Willienet</h1>
       <ConnectButton />
-      <Input
-        placeholder="Enter message to send"
-        contentEditable
-        onChange={(e) => {
-          const txt = e.target.value;
-          setMessage(txt);
-        }}
-      />
-      <SendMessageButton message={message} topic="default" />
+      <SendMessageCard />
       <OnchainMessages />
     </main>
   );

@@ -9,7 +9,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -61,43 +60,42 @@ export default function OnchainMessages() {
 
   const onchainMessages =
     (messagesResult.data as OnchainMessage[] | undefined) || [];
-  const sanitizedOnchainMessages = onchainMessages.map((message) => ({
-    ...message,
-    sender: truncateEthAddress(message.sender),
-    timestamp: +message.timestamp.toString(),
-  }));
+  const sanitizedOnchainMessages = onchainMessages
+    .map((message) => ({
+      ...message,
+      sender: truncateEthAddress(message.sender),
+      timestamp: +message.timestamp.toString(),
+    }))
+    .reverse();
 
   return (
-    <>
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Onchain Messages</CardTitle>
-          <CardDescription>
-            All messages are stored and read onchain and are publicly
-            accessible.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p
-            className={cn(
-              "whitespace-break-spaces",
-              "font-mono",
-              "max-h-60 overflow-y-auto",
-              "w-full"
-            )}
-          >
-            {sanitizedOnchainMessages.map((message, idx) => (
-              <p key={idx}>
-                <p className="text-left">{message.message}</p>
-                <p className="text-right">
-                  <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} />{" "}
-                  | {message.sender}
-                </p>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>View</CardTitle>
+        <CardDescription>
+          All messages are stored and read onchain and are publicly accessible.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p
+          className={cn(
+            "whitespace-break-spaces",
+            "font-mono",
+            "max-h-60 overflow-y-auto",
+            "w-full"
+          )}
+        >
+          {sanitizedOnchainMessages.map((message, idx) => (
+            <p key={idx}>
+              <p className="text-left">{message.message}</p>
+              <p className="text-right">
+                <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
+                {message.sender}
               </p>
-            ))}
-          </p>
-        </CardContent>
-      </Card>
-    </>
+            </p>
+          ))}
+        </p>
+      </CardContent>
+    </Card>
   );
 }
