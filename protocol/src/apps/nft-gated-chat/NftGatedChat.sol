@@ -47,4 +47,29 @@ contract NftGatedChat is EventsAndErrors {
             ""
         );
     }
+
+    function getMessageSendersInRange(
+        address nftContract,
+        uint256 startIdx,
+        uint256 endIdx
+    ) external view returns (NFTMessageSender[] memory) {
+        if (startIdx >= endIdx) {
+            revert InvalidRange();
+        }
+
+        uint256 length = endIdx - startIdx;
+        NFTMessageSender[] memory sendersSlice = new NFTMessageSender[](length);
+        if (nftMessageSenders[nftContract].length == 0) {
+            return sendersSlice;
+        }
+        uint256 idxInSenders = startIdx;
+        unchecked {
+            for (uint256 i; i < length && idxInSenders < endIdx; ) {
+                sendersSlice[i] = nftMessageSenders[nftContract][idxInSenders];
+                ++i;
+                ++idxInSenders;
+            }
+        }
+        return sendersSlice;
+    }
 }
