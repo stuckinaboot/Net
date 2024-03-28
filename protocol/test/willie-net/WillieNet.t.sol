@@ -76,8 +76,6 @@ contract WillieNetTest is
         bool isEmptyMessageContents = bytes(messageContents).length == 0;
 
         uint256 currMessagesLength = net.getTotalMessagesCount();
-
-        // TODO do we want all of these duplicated functions or just use same with app as address(0)?
         uint256 topicMessagesLength = net.getTotalMessagesForAppTopicCount(
             app,
             topic
@@ -141,15 +139,31 @@ contract WillieNetTest is
                 topic
             );
             verifyMessage(expectedMessage, messageTopic);
+
+            uint256 msgIdx = net.getMessageIdxForAppTopic(
+                topicMessagesLength,
+                app,
+                topic
+            );
+            assertEq(msgIdx, currMessagesLength);
         }
 
         // Verify message fetched via get message for user
-        WillieNet.Message memory messageUser = net.getMessageForAppUser(
-            userMessagesLength,
-            app,
-            user
-        );
-        verifyMessage(expectedMessage, messageUser);
+        {
+            WillieNet.Message memory messageUser = net.getMessageForAppUser(
+                userMessagesLength,
+                app,
+                user
+            );
+            verifyMessage(expectedMessage, messageUser);
+
+            uint256 msgIdx = net.getMessageIdxForAppUser(
+                userMessagesLength,
+                app,
+                user
+            );
+            assertEq(msgIdx, userMessagesLength);
+        }
 
         // TODO maybe add check for app topic user
     }
