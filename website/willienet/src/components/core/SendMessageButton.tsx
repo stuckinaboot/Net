@@ -2,7 +2,6 @@ import { WILLIE_NET_CONTRACT } from "../../app/constants";
 import SubmitTransactionButton from "./SubmitTransactionButton";
 
 export default function SendMessageButton(props: {
-  tokenId: number;
   message: string;
   topic: string;
 }) {

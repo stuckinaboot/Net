@@ -5,6 +5,14 @@ import truncateEthAddress from "truncate-eth-address";
 import { cn } from "@/lib/utils";
 import TimeAgo from "react-timeago";
 import { chainTimeToMilliseconds } from "@/app/utils";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type OnchainMessage = {
   extraData: string;
@@ -60,24 +68,36 @@ export default function OnchainMessages() {
   }));
 
   return (
-    <p
-      className={cn(
-        "whitespace-break-spaces",
-        "font-mono",
-        "border-2 border-black",
-        "max-h-60 overflow-y-auto",
-        "w-full"
-      )}
-    >
-      {sanitizedOnchainMessages.map((message, idx) => (
-        <p key={idx}>
-          <p className="text-left">{message.message}</p>
-          <p className="text-right">
-            <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
-            {message.sender}
+    <>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Onchain Messages</CardTitle>
+          <CardDescription>
+            All messages are stored and read onchain and are publicly
+            accessible.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p
+            className={cn(
+              "whitespace-break-spaces",
+              "font-mono",
+              "max-h-60 overflow-y-auto",
+              "w-full"
+            )}
+          >
+            {sanitizedOnchainMessages.map((message, idx) => (
+              <p key={idx}>
+                <p className="text-left">{message.message}</p>
+                <p className="text-right">
+                  <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} />{" "}
+                  | {message.sender}
+                </p>
+              </p>
+            ))}
           </p>
-        </p>
-      ))}
-    </p>
+        </CardContent>
+      </Card>
+    </>
   );
 }

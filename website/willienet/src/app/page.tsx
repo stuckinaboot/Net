@@ -45,11 +45,7 @@ export default function Home() {
           setMessage(txt);
         }}
       />
-      <SendMessageButton
-        tokenId={userWillieNetTokenIds[0]}
-        message={message}
-        topic="default"
-      />
+      <SendMessageButton message={message} topic="default" />
       <OnchainMessages />
     </main>
   );
