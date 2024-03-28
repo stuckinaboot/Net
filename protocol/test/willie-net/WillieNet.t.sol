@@ -158,6 +158,19 @@ contract WillieNetTest is
         sendAndVerifyMessage(users[2], app, "message 3", "t3");
     }
 
+    function testSendMultipleMessagesFromDifferentUsersDifferentApp(
+        address app1,
+        address app2,
+        address app3
+    ) public {
+        sendAndVerifyMessage(users[0], app1, "message 1", "t1");
+        sendAndVerifyMessage(users[0], app1, "message 1.1", "t1");
+        sendAndVerifyMessage(users[1], app2, "message 2", "t2");
+        sendAndVerifyMessage(users[1], app2, "message 2.2", "t2");
+        sendAndVerifyMessage(users[2], app3, "message 3", "t3");
+        sendAndVerifyMessage(users[2], app3, "message 3.3", "t3");
+    }
+
     // Helpers
 
     function onERC721Received(
