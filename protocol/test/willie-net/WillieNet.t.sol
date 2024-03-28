@@ -73,6 +73,7 @@ contract WillieNetTest is
         string memory topic
     ) public {
         bool isApp = app != address(0);
+        bool isEmptyMessageContents = bytes(messageContents).length == 0;
 
         uint256 currMessagesLength = net.getTotalMessagesCount();
 
@@ -89,17 +90,29 @@ contract WillieNetTest is
         if (isApp) {
             // Send message via app
             vm.startPrank(app);
-            vm.expectEmit(true, true, true, false);
-            emit MessageSentViaApp(app, user, topic, currMessagesLength);
+            if (isEmptyMessageContents) {
+                vm.expectRevert(EventsAndErrors.MsgEmpty.selector);
+            } else {
+                vm.expectEmit(true, true, true, false);
+                emit MessageSentViaApp(app, user, topic, currMessagesLength);
+            }
             net.sendMessageViaApp(user, messageContents, topic, "");
             vm.stopPrank();
         } else {
             // Send message from user
             vm.startPrank(user);
-            vm.expectEmit(true, true, true, false);
-            emit MessageSent(user, topic, currMessagesLength);
+            if (isEmptyMessageContents) {
+                vm.expectRevert(EventsAndErrors.MsgEmpty.selector);
+            } else {
+                vm.expectEmit(true, true, true, false);
+                emit MessageSent(user, topic, currMessagesLength);
+            }
             net.sendMessage(messageContents, topic, "");
             vm.stopPrank();
+        }
+
+        if (isEmptyMessageContents) {
+            return;
         }
 
         WillieNet.Message memory expectedMessage = IWillieNet.Message({
@@ -113,18 +126,22 @@ contract WillieNetTest is
         });
 
         // Verify message fetched via get message
-        WillieNet.Message memory messageGlobal = net.getMessage(
-            currMessagesLength
-        );
-        verifyMessage(expectedMessage, messageGlobal);
+        {
+            WillieNet.Message memory messageGlobal = net.getMessage(
+                currMessagesLength
+            );
+            verifyMessage(expectedMessage, messageGlobal);
+        }
 
         // Verify message fetched via get message for topic
-        WillieNet.Message memory messageTopic = net.getMessageForAppTopic(
-            topicMessagesLength,
-            app,
-            topic
-        );
-        verifyMessage(expectedMessage, messageTopic);
+        {
+            WillieNet.Message memory messageTopic = net.getMessageForAppTopic(
+                topicMessagesLength,
+                app,
+                topic
+            );
+            verifyMessage(expectedMessage, messageTopic);
+        }
 
         // Verify message fetched via get message for user
         WillieNet.Message memory messageUser = net.getMessageForAppUser(
@@ -169,6 +186,10 @@ contract WillieNetTest is
         sendAndVerifyMessage(users[1], app2, "message 2.2", "t2");
         sendAndVerifyMessage(users[2], app3, "message 3", "t3");
         sendAndVerifyMessage(users[2], app3, "message 3.3", "t3");
+    }
+
+    function testSendEmptyMessageExpectsRevert(address app) public {
+        sendAndVerifyMessage(users[0], app, "", "Topic");
     }
 
     // Helpers
