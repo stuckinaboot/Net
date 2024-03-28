@@ -130,6 +130,15 @@ contract WillieNetTest is
             verifyMessage(expectedMessage, messageGlobal);
         }
 
+        // Verify message fetched via get message for app
+        {
+            WillieNet.Message memory messageApp = net.getMessageForApp(
+                net.getTotalMessagesForAppCount(app) - 1,
+                app
+            );
+            verifyMessage(expectedMessage, messageApp);
+        }
+
         // Verify message fetched via get message for topic
         {
             WillieNet.Message memory messageTopic = net.getMessageForAppTopic(

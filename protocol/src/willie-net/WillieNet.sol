@@ -88,6 +88,9 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
 
         // TODO should user topic be stored here as well?
 
+        hashToMessageIndexes[keccak256(abi.encodePacked(address(0)))].push(
+            messagesLength
+        );
         hashToMessageIndexes[keccak256(abi.encodePacked(address(0), topic))]
             .push(messagesLength);
         hashToMessageIndexes[
