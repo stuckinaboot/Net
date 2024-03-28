@@ -11,6 +11,7 @@ import {Utils} from "./Utils.sol";
 /// @notice Fully decentralized onchain messaging protocol.
 contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     // Use a single global mapping to map hashes to message indexes
+    // TODO use address(0) to represent non-app messages
     mapping(bytes32 hashVal => uint256[] messageIndexes)
         public hashToMessageIndexes;
 
@@ -115,25 +116,25 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
 
     // Fetch message indexes
 
-    function getMessageIdxForTopic(
-        uint256 idx,
-        string calldata topic
-    ) external view returns (uint256) {
-        return
-            hashToMessageIndexes[
-                keccak256(abi.encodePacked(address(0), topic))
-            ][idx];
-    }
+    // function getMessageIdxForTopic(
+    //     uint256 idx,
+    //     string calldata topic
+    // ) external view returns (uint256) {
+    //     return
+    //         hashToMessageIndexes[
+    //             keccak256(abi.encodePacked(address(0), topic))
+    //         ][idx];
+    // }
 
-    function getMessageIdxForUser(
-        uint256 idx,
-        address user
-    ) external view returns (uint256) {
-        return
-            hashToMessageIndexes[keccak256(abi.encodePacked(address(0), user))][
-                idx
-            ];
-    }
+    // function getMessageIdxForUser(
+    //     uint256 idx,
+    //     address user
+    // ) external view returns (uint256) {
+    //     return
+    //         hashToMessageIndexes[keccak256(abi.encodePacked(address(0), user))][
+    //             idx
+    //         ];
+    // }
 
     function getMessageIdxForApp(
         uint256 idx,
@@ -178,29 +179,17 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return messages[idx];
     }
 
-    function getMessageForTopic(
-        uint256 idx,
-        string calldata topic
-    ) external view returns (Message memory) {
-        return
-            messages[
-                hashToMessageIndexes[
-                    keccak256(abi.encodePacked(address(0), topic))
-                ][idx]
-            ];
-    }
-
-    function getMessageForUser(
-        uint256 idx,
-        address user
-    ) external view returns (Message memory) {
-        return
-            messages[
-                hashToMessageIndexes[
-                    keccak256(abi.encodePacked(address(0), user))
-                ][idx]
-            ];
-    }
+    // function getMessageForTopic(
+    //     uint256 idx,
+    //     string calldata topic
+    // ) external view returns (Message memory) {
+    //     return
+    //         messages[
+    //             hashToMessageIndexes[
+    //                 keccak256(abi.encodePacked(address(0), topic))
+    //             ][idx]
+    //         ];
+    // }
 
     function getMessageForApp(
         uint256 idx,
@@ -303,33 +292,31 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
 
     // Non-app
 
-    function getMessagesInRangeForTopic(
-        uint256 startIdx,
-        uint256 endIdx,
-        string calldata topic
-    ) external view returns (Message[] memory) {
-        return
-            getMessagesInRangeForHash(
-                startIdx,
-                endIdx,
-                keccak256(bytes(topic))
-            );
-    }
+    // function getMessagesInRangeForTopic(
+    //     uint256 startIdx,
+    //     uint256 endIdx,
+    //     string calldata topic
+    // ) external view returns (Message[] memory) {
+    //     return
+    //         getMessagesInRangeForHash(
+    //             startIdx,
+    //             endIdx,
+    //             keccak256(bytes(topic))
+    //         );
+    // }
 
-    function getMessagesInRangeForUser(
-        uint256 startIdx,
-        uint256 endIdx,
-        address user
-    ) external view returns (Message[] memory) {
-        return
-            getMessagesInRangeForHash(
-                startIdx,
-                endIdx,
-                keccak256(abi.encodePacked(user))
-            );
-    }
-
-    // App
+    // function getMessagesInRangeForUser(
+    //     uint256 startIdx,
+    //     uint256 endIdx,
+    //     address user
+    // ) external view returns (Message[] memory) {
+    //     return
+    //         getMessagesInRangeForHash(
+    //             startIdx,
+    //             endIdx,
+    //             keccak256(abi.encodePacked(user))
+    //         );
+    // }
 
     function getMessagesInRangeForAppUser(
         uint256 startIdx,
@@ -403,17 +390,17 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
 
     // Non-app
 
-    function getTotalMessagesForTopicCount(
-        string calldata topic
-    ) external view returns (uint256) {
-        return getTotalMessagesForHashCount(keccak256(bytes(topic)));
-    }
+    // function getTotalMessagesForTopicCount(
+    //     string calldata topic
+    // ) external view returns (uint256) {
+    //     return getTotalMessagesForHashCount(keccak256(bytes(topic)));
+    // }
 
-    function getTotalMessagesForUserCount(
-        address user
-    ) external view returns (uint256) {
-        return getTotalMessagesForHashCount(keccak256(abi.encodePacked(user)));
-    }
+    // function getTotalMessagesForUserCount(
+    //     address user
+    // ) external view returns (uint256) {
+    //     return getTotalMessagesForHashCount(keccak256(abi.encodePacked(user)));
+    // }
 
     // App
 

@@ -77,12 +77,14 @@ contract WillieNetTest is
         uint256 currMessagesLength = net.getTotalMessagesCount();
 
         // TODO do we want all of these duplicated functions or just use same with app as address(0)?
-        uint256 topicMessagesLength = isApp
-            ? net.getTotalMessagesForAppTopicCount(app, topic)
-            : net.getTotalMessagesForTopicCount(topic);
-        uint256 userMessagesLength = isApp
-            ? net.getTotalMessagesForAppUserCount(app, user)
-            : net.getTotalMessagesForUserCount(user);
+        uint256 topicMessagesLength = net.getTotalMessagesForAppTopicCount(
+            app,
+            topic
+        );
+        uint256 userMessagesLength = net.getTotalMessagesForAppUserCount(
+            app,
+            user
+        );
 
         if (isApp) {
             // Send message via app
@@ -117,15 +119,19 @@ contract WillieNetTest is
         verifyMessage(expectedMessage, messageGlobal);
 
         // Verify message fetched via get message for topic
-        WillieNet.Message memory messageTopic = isApp
-            ? net.getMessageForAppTopic(topicMessagesLength, app, topic)
-            : net.getMessageForTopic(topicMessagesLength, topic);
+        WillieNet.Message memory messageTopic = net.getMessageForAppTopic(
+            topicMessagesLength,
+            app,
+            topic
+        );
         verifyMessage(expectedMessage, messageTopic);
 
         // Verify message fetched via get message for user
-        WillieNet.Message memory messageUser = isApp
-            ? net.getMessageForAppUser(userMessagesLength, app, user)
-            : net.getMessageForUser(userMessagesLength, user);
+        WillieNet.Message memory messageUser = net.getMessageForAppUser(
+            userMessagesLength,
+            app,
+            user
+        );
         verifyMessage(expectedMessage, messageUser);
 
         // TODO maybe add check for app topic user
