@@ -87,10 +87,11 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
 
         // TODO should user topic be stored here as well?
 
-        hashToMessageIndexes[keccak256(bytes(topic))].push(messagesLength);
-        hashToMessageIndexes[keccak256(abi.encodePacked(msg.sender))].push(
-            messagesLength
-        );
+        hashToMessageIndexes[keccak256(abi.encodePacked(address(0), topic))]
+            .push(messagesLength);
+        hashToMessageIndexes[
+            keccak256(abi.encodePacked(address(0), msg.sender))
+        ].push(messagesLength);
 
         // Emit message sent using current messages length as the index
         emit MessageSent(msg.sender, topic, messagesLength);
@@ -118,14 +119,20 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 idx,
         string calldata topic
     ) external view returns (uint256) {
-        return hashToMessageIndexes[keccak256(bytes(topic))][idx];
+        return
+            hashToMessageIndexes[
+                keccak256(abi.encodePacked(address(0), topic))
+            ][idx];
     }
 
     function getMessageIdxForUser(
         uint256 idx,
         address user
     ) external view returns (uint256) {
-        return hashToMessageIndexes[keccak256(abi.encodePacked(user))][idx];
+        return
+            hashToMessageIndexes[keccak256(abi.encodePacked(address(0), user))][
+                idx
+            ];
     }
 
     function getMessageIdxForApp(
@@ -175,7 +182,12 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 idx,
         string calldata topic
     ) external view returns (Message memory) {
-        return messages[hashToMessageIndexes[keccak256(bytes(topic))][idx]];
+        return
+            messages[
+                hashToMessageIndexes[
+                    keccak256(abi.encodePacked(address(0), topic))
+                ][idx]
+            ];
     }
 
     function getMessageForUser(
@@ -184,7 +196,9 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     ) external view returns (Message memory) {
         return
             messages[
-                hashToMessageIndexes[keccak256(abi.encodePacked(user))][idx]
+                hashToMessageIndexes[
+                    keccak256(abi.encodePacked(address(0), user))
+                ][idx]
             ];
     }
 
