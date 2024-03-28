@@ -298,7 +298,7 @@ contract WillieNetTest is
             }
         }
 
-        // TODO query using other range functions
+        // TODO check querying various ranges in each
     }
 
     function testSendEmptyMessageExpectsRevert(

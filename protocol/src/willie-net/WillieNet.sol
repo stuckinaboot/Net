@@ -36,25 +36,25 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 messagesLength = messages.length;
 
         // App messages
-        hashToMessageIndexes[keccak256(bytes(abi.encodePacked(msg.sender)))]
-            .push(messagesLength);
+        hashToMessageIndexes[keccak256(abi.encodePacked(msg.sender))].push(
+            messagesLength
+        );
 
         // App-user messages
-        hashToMessageIndexes[
-            keccak256(bytes(abi.encodePacked(msg.sender, sender)))
-        ].push(messagesLength);
+        hashToMessageIndexes[keccak256(abi.encodePacked(msg.sender, sender))]
+            .push(messagesLength);
 
         // App-topic messages
         hashToMessageIndexes[
             // msg.sender is the app id
-            keccak256(bytes(abi.encodePacked(msg.sender, topic)))
+            keccak256(abi.encodePacked(msg.sender, topic))
         ].push(messagesLength);
         // TODO use bytes instead of address
 
         // App-user-topic messages
         // TODO is this one needed?
         hashToMessageIndexes[
-            keccak256(bytes(abi.encodePacked(msg.sender, sender, topic)))
+            keccak256(abi.encodePacked(msg.sender, sender, topic))
         ].push(messagesLength);
 
         // Emit message sent using current messages length as the index
