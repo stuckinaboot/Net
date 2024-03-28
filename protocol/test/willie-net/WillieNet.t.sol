@@ -244,43 +244,42 @@ contract WillieNetTest is
 
         // Check querying all messages works properly
         {
+            uint256 maxEndIdx = net.getTotalMessagesCount();
             WillieNet.Message[] memory expectedMessages = net
-                .getMessagesInRange(0, net.getTotalMessagesCount());
+                .getMessagesInRange(0, maxEndIdx);
             for (uint256 i; i < expectedMessages.length; i++) {
                 verifyMessage(expectedMessages[i], sentMsgs[i]);
             }
         }
 
         {
+            uint256 maxEndIdx = net.getTotalMessagesForAppCount(app);
             WillieNet.Message[] memory expectedMessages = net
-                .getMessagesInRangeForApp(
-                    0,
-                    net.getTotalMessagesForAppCount(app),
-                    app
-                );
+                .getMessagesInRangeForApp(0, maxEndIdx, app);
             for (uint256 i; i < expectedMessages.length; i++) {
                 verifyMessage(expectedMessages[i], sentMsgs[i]);
             }
         }
 
         {
+            uint256 maxEndIdx = net.getTotalMessagesForAppUserCount(app, user);
             WillieNet.Message[] memory expectedMessages = net
-                .getMessagesInRangeForAppUser(
-                    0,
-                    net.getTotalMessagesForAppUserCount(app, user),
-                    app,
-                    user
-                );
+                .getMessagesInRangeForAppUser(0, maxEndIdx, app, user);
             for (uint256 i; i < expectedMessages.length; i++) {
                 verifyMessage(expectedMessages[i], sentMsgs[i]);
             }
         }
 
         {
+            uint256 maxEndIdx = net.getTotalMessagesForAppUserTopicCount(
+                app,
+                user,
+                topic
+            );
             WillieNet.Message[] memory expectedMessages = net
                 .getMessagesInRangeForAppUserTopic(
                     0,
-                    net.getTotalMessagesForAppUserTopicCount(app, user, topic),
+                    maxEndIdx,
                     app,
                     user,
                     topic
