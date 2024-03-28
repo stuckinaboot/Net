@@ -11,12 +11,7 @@ export default function SendMessageButton(props: {
       functionName="sendMessage"
       abi={WILLIE_NET_CONTRACT.abi}
       to={WILLIE_NET_CONTRACT.address}
-      args={[
-        BigInt(props.tokenId || 0),
-        "0x0000000000000000000000000000000000000000000000000000000000000000",
-        props.message,
-        props.topic,
-      ]}
+      args={[props.message, props.topic, ""]}
       messages={{
         toasts: {
           title: "Messages",

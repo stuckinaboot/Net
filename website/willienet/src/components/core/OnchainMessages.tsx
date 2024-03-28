@@ -10,7 +10,7 @@ type OnchainMessage = {
   extraData: string;
   message: string;
   sender: string;
-  senderTokenId: BigInt;
+  app: string;
   timestamp: BigInt;
   topic: string;
 };
@@ -57,7 +57,6 @@ export default function OnchainMessages() {
     ...message,
     sender: truncateEthAddress(message.sender),
     timestamp: +message.timestamp.toString(),
-    senderTokenId: message.senderTokenId.toString(),
   }));
 
   return (
@@ -75,7 +74,7 @@ export default function OnchainMessages() {
           <p className="text-left">{message.message}</p>
           <p className="text-right">
             <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
-            {message.sender} | Token #{message.senderTokenId}
+            {message.sender}
           </p>
         </p>
       ))}
