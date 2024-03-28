@@ -217,6 +217,70 @@ contract WillieNetTest is
         sendAndVerifyMessage(users[2], app3, "message 3.3", "t3", extraData);
     }
 
+    function testSendMultipleMessagesAndQueryMessageRangeSingleUser(
+        address app,
+        bytes calldata extraData
+    ) public {
+        address user = users[0];
+        string memory topic = "topic";
+        WillieNet.Message[] memory sentMsgs = new WillieNet.Message[](3);
+        for (uint256 i; i < sentMsgs.length; i++) {
+            sentMsgs[i] = IWillieNet.Message({
+                app: app,
+                sender: user,
+                timestamp: block.timestamp,
+                extraData: extraData,
+                message: Strings.toString(i),
+                topic: topic
+            });
+            sendAndVerifyMessage(
+                user,
+                app,
+                sentMsgs[i].message,
+                sentMsgs[i].topic,
+                extraData
+            );
+        }
+
+        // Check querying all messages works properly
+        {
+            WillieNet.Message[] memory expectedMessages = net
+                .getMessagesInRange(0, net.getTotalMessagesCount());
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i]);
+            }
+        }
+
+        {
+            WillieNet.Message[] memory expectedMessages = net
+                .getMessagesInRangeForAppUser(
+                    0,
+                    net.getTotalMessagesForAppUserCount(app, user),
+                    app,
+                    user
+                );
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i]);
+            }
+        }
+
+        {
+            WillieNet.Message[] memory expectedMessages = net
+                .getMessagesInRangeForAppUserTopic(
+                    0,
+                    net.getTotalMessagesForAppUserTopicCount(app, user, topic),
+                    app,
+                    user,
+                    topic
+                );
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i]);
+            }
+        }
+
+        // TODO query using other range functions
+    }
+
     function testSendEmptyMessageExpectsRevert(
         address app,
         bytes calldata extraData

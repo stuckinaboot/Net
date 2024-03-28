@@ -254,12 +254,20 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         if (messages.length == 0) {
             return messagesSlice;
         }
-        uint256 idxInMessages = endIdx;
+        // uint256 idxInMessages = endIdx;
+        // unchecked {
+        //     for (uint256 i; i < length && idxInMessages > startIdx; ) {
+        //         --idxInMessages;
+        //         messagesSlice[i] = messages[idxInMessages];
+        //         ++i;
+        //     }
+        // }
+        uint256 idxInMessages = startIdx;
         unchecked {
-            for (uint256 i; i < length && idxInMessages > startIdx; ) {
-                --idxInMessages;
+            for (uint256 i; i < length && idxInMessages < endIdx; ) {
                 messagesSlice[i] = messages[idxInMessages];
                 ++i;
+                ++idxInMessages;
             }
         }
         return messagesSlice;
@@ -277,14 +285,24 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         if (messages.length == 0) {
             return messagesSlice;
         }
-        uint256 idxInMessages = endIdx;
+        // uint256 idxInMessages = endIdx;
+        // unchecked {
+        //     for (uint256 i; i < length && idxInMessages > startIdx; ) {
+        //         --idxInMessages;
+        //         messagesSlice[i] = messages[
+        //             hashToMessageIndexes[hashVal][idxInMessages]
+        //         ];
+        //         ++i;
+        //     }
+        // }
+        uint256 idxInMessages = startIdx;
         unchecked {
-            for (uint256 i; i < length && idxInMessages > startIdx; ) {
-                --idxInMessages;
+            for (uint256 i; i < length && idxInMessages < endIdx; ) {
                 messagesSlice[i] = messages[
                     hashToMessageIndexes[hashVal][idxInMessages]
                 ];
                 ++i;
+                ++idxInMessages;
             }
         }
         return messagesSlice;
@@ -318,7 +336,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     //         );
     // }
 
-    function getMessagesInRangeForAppUser(
+    function getMessagesInRangeForApp(
         uint256 startIdx,
         uint256 endIdx,
         address app
