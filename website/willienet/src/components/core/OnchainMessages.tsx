@@ -59,24 +59,31 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  function checkAndUpdateShouldShowScrollToBottomButton() {
+    const scrollContainer = scrollContainerRef.current;
+    const targetDiv = messagesEndRef.current;
+    if (targetDiv == null || scrollContainer == null) {
+      return;
+    }
+
+    const containerTop = scrollContainer.getBoundingClientRect().top;
+    const { top, bottom } = targetDiv.getBoundingClientRect();
+    setShowScrollButton(
+      top > containerTop && bottom > containerTop + scrollContainer.clientHeight
+    );
+  }
+
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
-    const handleScroll = () => {
-      const targetDiv = messagesEndRef.current;
-      if (targetDiv == null || scrollContainer == null) {
-        return;
-      }
-
-      const containerTop = scrollContainer.getBoundingClientRect().top;
-      const { top, bottom } = targetDiv.getBoundingClientRect();
-      setShowScrollButton(
-        top > containerTop &&
-          bottom > containerTop + scrollContainer.clientHeight
-      );
-    };
-    scrollContainer?.addEventListener("scroll", handleScroll);
+    scrollContainer?.addEventListener(
+      "scroll",
+      checkAndUpdateShouldShowScrollToBottomButton
+    );
     return () => {
-      scrollContainer?.removeEventListener("scroll", handleScroll);
+      scrollContainer?.removeEventListener(
+        "scroll",
+        checkAndUpdateShouldShowScrollToBottomButton
+      );
     };
   }, []);
 
@@ -138,6 +145,13 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
     // the flicker of loading messages
     setMessages(sanitizedOnchainMessages);
   }, [sanitizedOnchainMessages.length]);
+
+  useEffect(() => {
+    if (messages.length === 0) {
+      return;
+    }
+    checkAndUpdateShouldShowScrollToBottomButton();
+  }, [messages.length]);
 
   const nftMsgSendersResult = useReadContract({
     abi: NFT_GATED_CHAT_CONTRACT.abi,

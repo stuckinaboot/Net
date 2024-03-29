@@ -50,7 +50,6 @@ export default function SubmitTransactionButton(props: {
       functionName: props.functionName,
       args: props.args,
     });
-    console.log("CALLING");
     props.onTransactionConfirmed && props.onTransactionConfirmed(txnHash);
   }
 
