@@ -1,0 +1,63 @@
+[
+  {
+    "type": "constructor",
+    "inputs": [
+      { "name": "willieNet", "type": "address", "internalType": "address" }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getMessageSender",
+    "inputs": [
+      { "name": "nftContract", "type": "address", "internalType": "address" },
+      { "name": "idx", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getMessageSendersInRange",
+    "inputs": [
+      { "name": "nftContract", "type": "address", "internalType": "address" },
+      { "name": "startIdx", "type": "uint256", "internalType": "uint256" },
+      { "name": "endIdx", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [
+      { "name": "", "type": "uint256[]", "internalType": "uint256[]" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "nftMessageSenders",
+    "inputs": [
+      { "name": "nftContract", "type": "address", "internalType": "address" },
+      { "name": "", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "sendMessage",
+    "inputs": [
+      { "name": "nftContract", "type": "address", "internalType": "address" },
+      { "name": "nftTokenId", "type": "uint256", "internalType": "uint256" },
+      { "name": "message", "type": "string", "internalType": "string" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  { "type": "error", "name": "InvalidRange", "inputs": [] },
+  { "type": "error", "name": "MsgSenderNotOwnerOfNft", "inputs": [] },
+  {
+    "type": "error",
+    "name": "StringsInsufficientHexLength",
+    "inputs": [
+      { "name": "value", "type": "uint256", "internalType": "uint256" },
+      { "name": "length", "type": "uint256", "internalType": "uint256" }
+    ]
+  }
+]

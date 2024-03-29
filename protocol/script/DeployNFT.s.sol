@@ -2,9 +2,8 @@
 pragma solidity >=0.8.17 .0;
 
 import {Script, console} from "forge-std/Script.sol";
-import {OnchainSteamboatWillie} from "../src/willie-net/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
+import {OnchainSteamboatWillie} from "../src/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
 
-/// @dev See the Solidity Scripting tutorial: https://book.getfoundry.sh/tutorials/solidity-scripting
 contract DeployNFT is Script {
     address internal deployer;
     OnchainSteamboatWillie internal nft;
@@ -29,12 +28,10 @@ contract DeployNFT is Script {
             string.concat(root, "/assets/art2.txt")
         );
 
-        // TODO update AL mint cap
         uint16 ALLOWLIST_MINT_CAP = 500;
         uint8 ALLOWLIST_MINT_MAX_PER_WALLET = 15;
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
-        // vm.startBroadcast();
+
+        vm.startBroadcast();
         nft = new OnchainSteamboatWillie(
             allowListMerkleRoot,
             ALLOWLIST_MINT_CAP,
@@ -47,11 +44,7 @@ contract DeployNFT is Script {
         // Now that it's already deployed, always enable public mint for testing
         nft.updatePublicMintEnabled(true);
 
-        // TODO remove the public mint enabled and mint
-        // nft.updatePublicMintEnabled(true);
-        // nft.mintPublic{ value: 0.005 ether }(1);
+        nft.mintPublic{value: 0.005 ether}(1);
         vm.stopBroadcast();
-
-        // console.log(nft.tokenURI(1));
     }
 }

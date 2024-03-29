@@ -18,6 +18,8 @@ export default function SubmitTransactionButton(props: {
     button: { default: string; pending: string; success: string };
   };
   useDefaultButtonMessageOnSuccess?: boolean;
+  className?: string;
+  onTransactionConfirmed?: (transactionHash: string) => void;
 }) {
   const { toast } = useToast();
 
@@ -42,17 +44,19 @@ export default function SubmitTransactionButton(props: {
   }, [receipt.isSuccess]);
 
   async function performTransaction() {
-    await writeContractAsync({
+    const txnHash = await writeContractAsync({
       address: props.to as any,
       abi: props.abi,
       functionName: props.functionName,
       args: props.args,
     });
+    console.log("CALLING");
+    props.onTransactionConfirmed && props.onTransactionConfirmed(txnHash);
   }
 
   return (
     <>
-      <Button onClick={performTransaction}>
+      <Button onClick={performTransaction} className={props.className}>
         {status === "idle" ||
         (receipt.isSuccess && props.useDefaultButtonMessageOnSuccess)
           ? props.messages.button.default

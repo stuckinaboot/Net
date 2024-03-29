@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
     "@rainbow-me/rainbowkit": "^2.0.2",
@@ -25,6 +26,7 @@
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "truncate-eth-address": "^1.0.2",
+    "use-async-effect": "^2.2.7",
     "viem": "2.x",
     "wagmi": "^2.5.7"
   },
@@ -33,8 +35,10 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "encoding": "^0.1.13",
     "eslint": "^8",
     "eslint-config-next": "14.1.3",
+    "pino-pretty": "^11.0.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"

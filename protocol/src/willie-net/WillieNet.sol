@@ -1,82 +1,108 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17 .0;
 
-// TODO copy in the relevant files
-import {ERC721A} from "@erc721a/ERC721A.sol";
-import {NFTEventsAndErrors} from "./NFTEventsAndErrors.sol";
+import {EventsAndErrors} from "./EventsAndErrors.sol";
 import {Constants} from "./Constants.sol";
-import {LibString} from "../utils/LibString.sol";
-import {SVG} from "../utils/SVG.sol";
-import {TwoStepOwnable} from "../utils/TwoStepOwnable.sol";
-import {IERC721} from "forge-std/interfaces/IERC721.sol";
-import {OnchainSteamboatWillie} from "./onchain-steamboat-willie/OnchainSteamboatWillie.sol";
 import {IWillieNet} from "./IWillieNet.sol";
 import {Utils} from "./Utils.sol";
 
 /// @title WillieNet
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
-/// @notice Fully decentralized onchain NFT-based messaging protocol.
-contract WillieNet is
-    IWillieNet,
-    ERC721A,
-    NFTEventsAndErrors,
-    Constants,
-    TwoStepOwnable
-{
-    using LibString for uint16;
-
-    address public immutable onchainSteamboatWillie;
-    mapping(uint256 tokenId => bool special) public tokenToNotable;
-
-    mapping(bytes32 topicHash => uint256[] messageIndexes)
-        public topicToMessageIndexes;
-    mapping(address sender => uint256[] messageIndexes)
-        public userToMessageIndexes;
-    mapping(uint256 tokenId => uint256[] messageIndexes)
-        public senderTokenIdToMessageIndexes;
+/// @notice Fully decentralized onchain messaging protocol.
+contract WillieNet is IWillieNet, EventsAndErrors, Constants {
+    // Use a single global mapping to map hashes to message indexes
+    // TODO use address(0) to represent non-app messages
+    mapping(bytes32 hashVal => uint256[] messageIndexes)
+        public hashToMessageIndexes;
 
     Message[] public messages;
 
-    // ***********
-    // Constructor
-    // ***********
-
-    constructor(
-        address onchainSteamboatWillieAddr
-    ) ERC721A("WillieNet", "WNET") {
-        onchainSteamboatWillie = onchainSteamboatWillieAddr;
-    }
+    bytes32 constant ZERO_HASH = keccak256(abi.encodePacked(address(0)));
 
     // ************
     // Send message
     // ************
 
-    function sendMessage(
-        uint256 tokenId,
-        bytes32 extraData,
+    function sendMessageViaApp(
+        address sender,
         string calldata message,
-        string calldata topic
+        string calldata topic,
+        bytes calldata extraData
     ) external {
-        // Check user owns token
-        if (ownerOf(tokenId) != msg.sender) {
-            revert UserNotTokenOwner();
+        // Revert if message length is none to prevent empty messages
+        if (bytes(message).length == 0) {
+            revert MsgEmpty();
         }
-
-        // TODO revert if message length is none to prevent empty messages
 
         // Track message index in topic and user mappings
         uint256 messagesLength = messages.length;
-        topicToMessageIndexes[keccak256(bytes(topic))].push(messagesLength);
-        userToMessageIndexes[msg.sender].push(messagesLength);
-        senderTokenIdToMessageIndexes[tokenId].push(messagesLength);
+
+        // App messages
+        hashToMessageIndexes[keccak256(abi.encodePacked(msg.sender))].push(
+            messagesLength
+        );
+
+        // App-user messages
+        hashToMessageIndexes[keccak256(abi.encodePacked(msg.sender, sender))]
+            .push(messagesLength);
+
+        // App-topic messages
+        hashToMessageIndexes[
+            // msg.sender is the app id
+            keccak256(abi.encodePacked(msg.sender, topic))
+        ].push(messagesLength);
+
+        // App-user-topic messages
+        // TODO is this one needed?
+        hashToMessageIndexes[
+            keccak256(abi.encodePacked(msg.sender, sender, topic))
+        ].push(messagesLength);
 
         // Emit message sent using current messages length as the index
-        emit MessageSent(topic, msg.sender, messagesLength);
+        emit MessageSentViaApp(msg.sender, sender, topic, messagesLength);
 
         // Store message
         messages.push(
             Message({
-                senderTokenId: tokenId,
+                app: msg.sender,
+                sender: sender,
+                extraData: extraData,
+                message: message,
+                topic: topic,
+                timestamp: block.timestamp
+            })
+        );
+    }
+
+    function sendMessage(
+        string calldata message,
+        string calldata topic,
+        bytes calldata extraData
+    ) external {
+        // Revert if message length is none to prevent empty messages
+        if (bytes(message).length == 0) {
+            revert MsgEmpty();
+        }
+
+        // Track message index in topic and user mappings
+        uint256 messagesLength = messages.length;
+
+        // TODO should user topic be stored here as well?
+
+        hashToMessageIndexes[ZERO_HASH].push(messagesLength);
+        hashToMessageIndexes[keccak256(abi.encodePacked(address(0), topic))]
+            .push(messagesLength);
+        hashToMessageIndexes[
+            keccak256(abi.encodePacked(address(0), msg.sender))
+        ].push(messagesLength);
+
+        // Emit message sent using current messages length as the index
+        emit MessageSent(msg.sender, topic, messagesLength);
+
+        // Store message
+        messages.push(
+            Message({
+                app: address(0),
                 sender: msg.sender,
                 extraData: extraData,
                 message: message,
@@ -92,25 +118,61 @@ contract WillieNet is
 
     // Fetch message indexes
 
-    function getMessageIdxForTopic(
+    // function getMessageIdxForTopic(
+    //     uint256 idx,
+    //     string calldata topic
+    // ) external view returns (uint256) {
+    //     return
+    //         hashToMessageIndexes[
+    //             keccak256(abi.encodePacked(address(0), topic))
+    //         ][idx];
+    // }
+
+    // function getMessageIdxForUser(
+    //     uint256 idx,
+    //     address user
+    // ) external view returns (uint256) {
+    //     return
+    //         hashToMessageIndexes[keccak256(abi.encodePacked(address(0), user))][
+    //             idx
+    //         ];
+    // }
+
+    function getMessageIdxForApp(
         uint256 idx,
-        string calldata topic
+        address app
     ) external view returns (uint256) {
-        return topicToMessageIndexes[keccak256(bytes(topic))][idx];
+        return hashToMessageIndexes[keccak256(abi.encodePacked(app))][idx];
     }
 
-    function getMessageIdxForUser(
+    function getMessageIdxForAppUser(
         uint256 idx,
+        address app,
         address user
     ) external view returns (uint256) {
-        return userToMessageIndexes[user][idx];
+        return
+            hashToMessageIndexes[keccak256(abi.encodePacked(app, user))][idx];
     }
 
-    function getMessageIdxForSenderTokenId(
+    function getMessageIdxForAppTopic(
         uint256 idx,
-        uint256 senderTokenId
+        address app,
+        string calldata topic
     ) external view returns (uint256) {
-        return senderTokenIdToMessageIndexes[senderTokenId][idx];
+        return
+            hashToMessageIndexes[keccak256(abi.encodePacked(app, topic))][idx];
+    }
+
+    function getMessageIdxForAppUserTopic(
+        uint256 idx,
+        address app,
+        address user,
+        string calldata topic
+    ) external view returns (uint256) {
+        return
+            hashToMessageIndexes[keccak256(abi.encodePacked(app, user, topic))][
+                idx
+            ];
     }
 
     // Fetch single message
@@ -119,26 +181,54 @@ contract WillieNet is
         return messages[idx];
     }
 
-    // TODO should there be function for getting message indexes rather than message itself?
-    function getMessageForTopic(
+    function getMessageForApp(
         uint256 idx,
-        string calldata topic
+        address app
     ) external view returns (Message memory) {
-        return messages[topicToMessageIndexes[keccak256(bytes(topic))][idx]];
+        return
+            messages[
+                hashToMessageIndexes[keccak256(abi.encodePacked(app))][idx]
+            ];
     }
 
-    function getMessageForUser(
+    function getMessageForAppUser(
         uint256 idx,
+        address app,
         address user
     ) external view returns (Message memory) {
-        return messages[userToMessageIndexes[user][idx]];
+        return
+            messages[
+                hashToMessageIndexes[keccak256(abi.encodePacked(app, user))][
+                    idx
+                ]
+            ];
     }
 
-    function getMessageForSender(
+    function getMessageForAppTopic(
         uint256 idx,
-        uint256 senderTokenId
+        address app,
+        string calldata topic
     ) external view returns (Message memory) {
-        return messages[senderTokenIdToMessageIndexes[senderTokenId][idx]];
+        return
+            messages[
+                hashToMessageIndexes[keccak256(abi.encodePacked(app, topic))][
+                    idx
+                ]
+            ];
+    }
+
+    function getMessageForAppUserTopic(
+        uint256 idx,
+        address app,
+        address user,
+        string calldata topic
+    ) external view returns (Message memory) {
+        return
+            messages[
+                hashToMessageIndexes[
+                    keccak256(abi.encodePacked(app, user, topic))
+                ][idx]
+            ];
     }
 
     // Fetch multiple messages
@@ -147,98 +237,107 @@ contract WillieNet is
         uint256 startIdx,
         uint256 endIdx
     ) external view returns (Message[] memory) {
-        // TODO consider adding error for startIdx, endIdx invalid
+        if (startIdx >= endIdx) {
+            revert InvalidRange();
+        }
 
         uint256 length = endIdx - startIdx;
         Message[] memory messagesSlice = new Message[](length);
         if (messages.length == 0) {
             return messagesSlice;
         }
-        uint256 idxInMessages = endIdx;
+        uint256 idxInMessages = startIdx;
         unchecked {
-            for (uint256 i; i < length && idxInMessages > startIdx; ) {
-                --idxInMessages;
+            for (uint256 i; i < length && idxInMessages < endIdx; ) {
                 messagesSlice[i] = messages[idxInMessages];
                 ++i;
+                ++idxInMessages;
             }
         }
         return messagesSlice;
     }
 
-    function getMessagesInRangeForTopic(
+    function getMessagesInRangeForHash(
         uint256 startIdx,
         uint256 endIdx,
-        string calldata topic
-    ) external view returns (Message[] memory) {
-        // TODO consider adding error for startIdx, endIdx invalid
+        bytes32 hashVal
+    ) public view returns (Message[] memory) {
+        if (startIdx >= endIdx) {
+            revert InvalidRange();
+        }
 
         uint256 length = endIdx - startIdx;
         Message[] memory messagesSlice = new Message[](length);
         if (messages.length == 0) {
             return messagesSlice;
         }
-        uint256 idxInMessages = endIdx;
-        bytes32 topicHash = keccak256(bytes(topic));
+        uint256 idxInMessages = startIdx;
         unchecked {
-            for (uint256 i; i < length && idxInMessages > startIdx; ) {
-                --idxInMessages;
+            for (uint256 i; i < length && idxInMessages < endIdx; ) {
                 messagesSlice[i] = messages[
-                    topicToMessageIndexes[topicHash][idxInMessages]
+                    hashToMessageIndexes[hashVal][idxInMessages]
                 ];
                 ++i;
+                ++idxInMessages;
             }
         }
         return messagesSlice;
     }
 
-    function getMessagesInRangeForUser(
+    function getMessagesInRangeForApp(
         uint256 startIdx,
         uint256 endIdx,
+        address app
+    ) external view returns (Message[] memory) {
+        return
+            getMessagesInRangeForHash(
+                startIdx,
+                endIdx,
+                keccak256(abi.encodePacked(app))
+            );
+    }
+
+    function getMessagesInRangeForAppUser(
+        uint256 startIdx,
+        uint256 endIdx,
+        address app,
         address user
     ) external view returns (Message[] memory) {
-        // TODO consider adding error for startIdx, endIdx invalid
-
-        uint256 length = endIdx - startIdx;
-        Message[] memory messagesSlice = new Message[](length);
-        if (messages.length == 0) {
-            return messagesSlice;
-        }
-        uint256 idxInMessages = endIdx;
-        unchecked {
-            for (uint256 i; i < length && idxInMessages > startIdx; ) {
-                --idxInMessages;
-                messagesSlice[i] = messages[
-                    userToMessageIndexes[user][idxInMessages]
-                ];
-                ++i;
-            }
-        }
-        return messagesSlice;
+        return
+            getMessagesInRangeForHash(
+                startIdx,
+                endIdx,
+                keccak256(abi.encodePacked(app, user))
+            );
     }
 
-    function getMessagesInRangeForSenderTokenId(
+    function getMessagesInRangeForAppTopic(
         uint256 startIdx,
         uint256 endIdx,
-        uint256 senderTokenId
+        address app,
+        string calldata topic
     ) external view returns (Message[] memory) {
-        // TODO consider adding error for startIdx, endIdx invalid
+        return
+            getMessagesInRangeForHash(
+                startIdx,
+                endIdx,
+                keccak256(abi.encodePacked(app, topic))
+            );
+    }
 
-        uint256 length = endIdx - startIdx;
-        Message[] memory messagesSlice = new Message[](length);
-        if (messages.length == 0) {
-            return messagesSlice;
-        }
-        uint256 idxInMessages = endIdx;
-        unchecked {
-            for (uint256 i; i < length && idxInMessages > startIdx; ) {
-                --idxInMessages;
-                messagesSlice[i] = messages[
-                    senderTokenIdToMessageIndexes[senderTokenId][idxInMessages]
-                ];
-                ++i;
-            }
-        }
-        return messagesSlice;
+    function getMessagesInRangeForAppUserTopic(
+        uint256 startIdx,
+        uint256 endIdx,
+        address app,
+        address user,
+        string calldata topic
+    ) external view returns (Message[] memory) {
+        return
+            getMessagesInRangeForHash(
+                startIdx,
+                endIdx,
+                keccak256(abi.encodePacked(app, user, topic))
+            );
     }
 
     // **************
@@ -249,120 +348,46 @@ contract WillieNet is
         return messages.length;
     }
 
-    function getTotalMessagesForTopicCount(
-        string calldata topic
-    ) external view returns (uint256) {
-        return topicToMessageIndexes[keccak256(bytes(topic))].length;
+    function getTotalMessagesForHashCount(
+        bytes32 hashVal
+    ) public view returns (uint256) {
+        return hashToMessageIndexes[hashVal].length;
     }
 
-    function getTotalMessagesForUserCount(
+    function getTotalMessagesForAppCount(
+        address app
+    ) external view returns (uint256) {
+        return getTotalMessagesForHashCount(keccak256(abi.encodePacked(app)));
+    }
+
+    function getTotalMessagesForAppUserCount(
+        address app,
         address user
     ) external view returns (uint256) {
-        return userToMessageIndexes[user].length;
-    }
-
-    function getTotalMessagesForSenderTokenIdCount(
-        uint256 senderTokenId
-    ) external view returns (uint256) {
-        return senderTokenIdToMessageIndexes[senderTokenId].length;
-    }
-
-    // ***
-    // NFT
-    // ***
-
-    /// @notice Mint tokens.
-    /// @param amount amount of tokens to mint
-    function mintPublic(uint8 amount) external {
-        // Checks
-        unchecked {
-            // TODO consider open edition
-            if (MAX_SUPPLY + 1 < _nextTokenId() + amount) {
-                // Check max supply not exceeded
-                revert MaxSupplyReached();
-            }
-        }
-
-        // Mint NFTs
-        _mint(msg.sender, amount);
-    }
-
-    /// @notice Mint notable tokens.
-    /// @param amount amount of tokens to mint
-    function mintPublicNotable(uint8 amount) external payable {
-        // Checks
-        unchecked {
-            if (amount * PRICE != msg.value) {
-                // Check payment by sender is correct
-                revert IncorrectPayment();
-            }
-        }
-
-        unchecked {
-            // TODO consider open edition
-            uint256 nextTokenId = _nextTokenId();
-            if (MAX_SUPPLY + 1 < nextTokenId + amount) {
-                // Check max supply not exceeded
-                revert MaxSupplyReached();
-            }
-
-            // Mark minted tokens as notable
-            for (uint256 i; i < nextTokenId + amount; ++i) {
-                tokenToNotable[i] = true;
-            }
-        }
-
-        // Mint NFTs
-        _mint(msg.sender, amount);
-
-        // TODO could do free mint is one color art for sender, paid is another
-
-        // Mint willies
-        OnchainSteamboatWillie(onchainSteamboatWillie).mintPublic{
-            value: msg.value
-        }(amount);
-    }
-
-    function _startTokenId() internal pure override returns (uint256) {
-        return 1;
-    }
-
-    /// @notice Get token uri for token.
-    /// @param tokenId token id
-    /// @return tokenURI
-    function tokenURI(
-        uint256 tokenId
-    ) public view virtual override returns (string memory) {
-        if (!_exists(tokenId)) {
-            revert URIQueryForNonexistentToken();
-        }
-
-        string memory artSvg = "TODO";
-
         return
-            Utils.formatTokenURI(
-                tokenId,
-                string.concat(
-                    "data:image/svg+xml;base64,",
-                    Utils.encodeBase64(bytes(artSvg))
-                ),
-                string.concat(
-                    "data:text/html;base64,",
-                    Utils.encodeBase64(
-                        bytes(
-                            string.concat(
-                                '<html style="overflow:hidden"><body style="margin:0">',
-                                "",
-                                "</body></html>"
-                            )
-                        )
-                    )
-                ),
-                string.concat(
-                    "[",
-                    Utils.getTrait("Hue", "todo", true, false),
-                    "]"
-                )
+            getTotalMessagesForHashCount(
+                keccak256(abi.encodePacked(app, user))
+            );
+    }
+
+    function getTotalMessagesForAppTopicCount(
+        address app,
+        string calldata topic
+    ) external view returns (uint256) {
+        return
+            getTotalMessagesForHashCount(
+                keccak256(abi.encodePacked(app, topic))
+            );
+    }
+
+    function getTotalMessagesForAppUserTopicCount(
+        address app,
+        address user,
+        string calldata topic
+    ) external view returns (uint256) {
+        return
+            getTotalMessagesForHashCount(
+                keccak256(abi.encodePacked(app, user, topic))
             );
     }
 }
