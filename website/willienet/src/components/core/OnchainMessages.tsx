@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAccount, useReadContract } from "wagmi";
 import {
   NFT_GATED_CHAT_CONTRACT,
@@ -39,6 +39,13 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
   const { isConnected, address: userAddress } = useAccount();
   const [ownedNftTokenIds, setOwnedNftTokenIds] = useState([]);
   const [nftMsgSenderImages, setNftMsgSenderImages] = useState<string[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [finishedInitialScrollToBottom, setFinishedInitialScrollToBottom] =
+    useState(false);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const isValidNftAddress = props.nftAddress
     ? isAddress(props.nftAddress)
@@ -122,6 +129,17 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
     setNftMsgSenderImages(images);
   }, [nftMsgSenderTokenIds?.length]);
 
+  useEffect(() => {
+    if (
+      finishedInitialScrollToBottom ||
+      sanitizedOnchainMessages.length === 0
+    ) {
+      return;
+    }
+    setFinishedInitialScrollToBottom(true);
+    scrollToBottom();
+  }, [sanitizedOnchainMessages.length, finishedInitialScrollToBottom]);
+
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-col">
@@ -140,8 +158,10 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
           className={cn(
             "whitespace-break-spaces",
             "font-mono",
-            "max-h-60 overflow-y-auto",
-            "w-full"
+            "max-h-60",
+            "w-full",
+            "overflow-y-scroll",
+            "overflow-x-hidden"
           )}
         >
           {sanitizedOnchainMessages.map((message, idx) => (
@@ -163,6 +183,7 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
               </p>
             </div>
           ))}
+          <div ref={messagesEndRef} />
         </div>
       </CardContent>
       <CardFooter className="flex flex-col">
