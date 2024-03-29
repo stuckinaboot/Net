@@ -19,8 +19,8 @@ import { testnetsEnabled } from "./constants";
 const { wallets } = getDefaultWallets();
 
 const config = getDefaultConfig({
-  appName: "RainbowKit demo",
-  projectId: "YOUR_PROJECT_ID",
+  appName: "WillieNet",
+  projectId: "523f4710aaff1415b43afb567a95046e",
   wallets,
   chains: testnetsEnabled ? [baseSepolia] : [base],
   ssr: true,
