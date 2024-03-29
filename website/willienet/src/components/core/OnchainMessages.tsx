@@ -35,17 +35,51 @@ type OnchainMessage = {
   topic: string;
 };
 
+type SanitizedOnchainMessage = {
+  sender: string;
+  timestamp: number;
+  extraData: string;
+  message: string;
+  app: string;
+  topic: string;
+};
+
 export default function OnchainMessages(props: { nftAddress?: string }) {
   const { isConnected, address: userAddress } = useAccount();
   const [ownedNftTokenIds, setOwnedNftTokenIds] = useState([]);
   const [nftMsgSenderImages, setNftMsgSenderImages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [finishedInitialScrollToBottom, setFinishedInitialScrollToBottom] =
     useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    const handleScroll = () => {
+      const targetDiv = messagesEndRef.current;
+      if (targetDiv == null || scrollContainer == null) {
+        return;
+      }
+
+      const containerTop = scrollContainer.getBoundingClientRect().top;
+      const { top, bottom } = targetDiv.getBoundingClientRect();
+      setShowScrollButton(
+        top > containerTop &&
+          bottom > containerTop + scrollContainer.clientHeight
+      );
+    };
+
+    scrollContainer?.addEventListener("scroll", handleScroll);
+    return () => {
+      scrollContainer?.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const isValidNftAddress = props.nftAddress
     ? isAddress(props.nftAddress)
@@ -91,11 +125,20 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
   const messagesResult = useReadContract(messagesResultsReadContractArgs);
   const onchainMessages =
     (messagesResult.data as OnchainMessage[] | undefined) || [];
-  const sanitizedOnchainMessages = onchainMessages.map((message) => ({
-    ...message,
-    sender: truncateEthAddress(message.sender),
-    timestamp: +message.timestamp.toString(),
-  }));
+  const sanitizedOnchainMessages: SanitizedOnchainMessage[] =
+    onchainMessages.map((message) => ({
+      ...message,
+      sender: truncateEthAddress(message.sender),
+      timestamp: +message.timestamp.toString(),
+    }));
+  useEffect(() => {
+    if (messagesResult.data == null) {
+      return;
+    }
+    // Updating messages using state and skipping when message result is undefined
+    // the flicker of loading messages
+    setMessages(sanitizedOnchainMessages);
+  }, [sanitizedOnchainMessages.length]);
 
   const nftMsgSendersResult = useReadContract({
     abi: NFT_GATED_CHAT_CONTRACT.abi,
@@ -140,6 +183,19 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
     scrollToBottom();
   }, [sanitizedOnchainMessages.length, finishedInitialScrollToBottom]);
 
+  const FloatingScrollToBottomButton = () => {
+    return (
+      <div className="relative">
+        <button
+          onClick={scrollToBottom}
+          className="absolute opacity-50 right-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-full shadow-md"
+        >
+          ↓
+        </button>
+      </div>
+    );
+  };
+
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-col">
@@ -163,8 +219,9 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
             "overflow-y-scroll",
             "overflow-x-hidden"
           )}
+          ref={scrollContainerRef}
         >
-          {sanitizedOnchainMessages.map((message, idx) => (
+          {messages.map((message, idx) => (
             <div key={idx}>
               <p className="text-left">{message.message}</p>
               <p className="text-right">
@@ -185,6 +242,7 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
           ))}
           <div ref={messagesEndRef} />
         </div>
+        {showScrollButton && <FloatingScrollToBottomButton />}
       </CardContent>
       <CardFooter className="flex flex-col">
         <Separator className="m-3" />
