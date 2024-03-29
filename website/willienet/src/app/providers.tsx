@@ -16,7 +16,7 @@ const { wallets } = getDefaultWallets();
 const config = getDefaultConfig({
   appName: "WillieNet",
   // TODO move to env var
-  projectId: "523f4710aaff1415b43afb567a95046e",
+  projectId: "e30601719b43774a0f0ba554aa131083",
   wallets,
   chains: testnetsEnabled ? [baseSepolia] : [base],
   ssr: true,
