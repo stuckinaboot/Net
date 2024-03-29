@@ -44,8 +44,8 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
     ? isAddress(props.nftAddress)
     : false;
 
-  const totalMessagesResult = props.nftAddress
-    ? useReadContract({
+  const totalMessagesReadContractArgs = props.nftAddress
+    ? {
         abi: WILLIE_NET_CONTRACT.abi,
         address: WILLIE_NET_CONTRACT.address as any,
         functionName: "getTotalMessagesForAppTopicCount",
@@ -53,17 +53,18 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
           refetchInterval: 2000,
         },
         args: [NFT_GATED_CHAT_CONTRACT.address, props.nftAddress],
-      })
-    : useReadContract({
+      }
+    : {
         abi: WILLIE_NET_CONTRACT.abi,
         address: WILLIE_NET_CONTRACT.address as any,
         functionName: "getTotalMessagesCount",
         query: {
           refetchInterval: 2000,
         },
-      });
-  const messagesResult = props.nftAddress
-    ? useReadContract({
+      };
+  const totalMessagesResult = useReadContract(totalMessagesReadContractArgs);
+  const messagesResultsReadContractArgs = props.nftAddress
+    ? {
         abi: WILLIE_NET_CONTRACT.abi,
         address: WILLIE_NET_CONTRACT.address as any,
         functionName: "getMessagesInRangeForAppTopic",
@@ -73,13 +74,14 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
           NFT_GATED_CHAT_CONTRACT.address,
           props.nftAddress,
         ],
-      })
-    : useReadContract({
+      }
+    : {
         abi: WILLIE_NET_CONTRACT.abi,
         address: WILLIE_NET_CONTRACT.address as any,
         functionName: "getMessagesInRange",
         args: [BigInt(0), totalMessagesResult.data],
-      });
+      };
+  const messagesResult = useReadContract(messagesResultsReadContractArgs);
   const onchainMessages =
     (messagesResult.data as OnchainMessage[] | undefined) || [];
   const sanitizedOnchainMessages = onchainMessages.map((message) => ({
@@ -88,14 +90,12 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
     timestamp: +message.timestamp.toString(),
   }));
 
-  const nftMsgSendersResult = isValidNftAddress
-    ? useReadContract({
-        abi: NFT_GATED_CHAT_CONTRACT.abi,
-        address: NFT_GATED_CHAT_CONTRACT.address as any,
-        functionName: "getMessageSendersInRange",
-        args: [props.nftAddress, BigInt(0), totalMessagesResult.data],
-      })
-    : undefined;
+  const nftMsgSendersResult = useReadContract({
+    abi: NFT_GATED_CHAT_CONTRACT.abi,
+    address: NFT_GATED_CHAT_CONTRACT.address as any,
+    functionName: "getMessageSendersInRange",
+    args: [props.nftAddress, BigInt(0), totalMessagesResult.data],
+  });
   const nftMsgSenderTokenIds = nftMsgSendersResult?.data as
     | BigInt[]
     | undefined;
