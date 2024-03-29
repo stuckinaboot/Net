@@ -22,8 +22,7 @@ const { wallets } = getDefaultWallets();
 const config = getDefaultConfig({
   appName: "WillieNet Dapp",
   // TODO move to env var
-  // projectId: "e30601719b43774a0f0ba554aa131083",
-  projectId: "YOUR_PROJECT_ID",
+  projectId: "e30601719b43774a0f0ba554aa131083",
   wallets: [
     ...wallets,
     {
