@@ -5,19 +5,51 @@ import {
   RainbowKitProvider,
   getDefaultWallets,
   getDefaultConfig,
+  connectorsForWallets,
 } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
   trustWallet,
   ledgerWallet,
   walletConnectWallet,
+  rainbowWallet,
+  metaMaskWallet,
+  coinbaseWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { base, baseSepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider } from "wagmi";
+import { WagmiProvider, createConfig, http } from "wagmi";
 import { testnetsEnabled } from "./constants";
 
 const { wallets } = getDefaultWallets();
+
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: "Recommended",
+      wallets: [
+        metaMaskWallet,
+        rainbowWallet,
+        coinbaseWallet,
+        walletConnectWallet,
+      ],
+    },
+  ],
+  {
+    appName: "WillieNet Dapp",
+    projectId: "e30601719b43774a0f0ba554aa131083",
+  }
+);
+
+const config2 = createConfig({
+  connectors,
+  chains: testnetsEnabled ? [baseSepolia] : [base],
+  ssr: true,
+  transports: {
+    [base.id]: http(),
+    [baseSepolia.id]: http(),
+  },
+});
 
 const config = getDefaultConfig({
   appName: "WillieNet Dapp",
@@ -38,7 +70,7 @@ const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={config2}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>{children}</RainbowKitProvider>
       </QueryClientProvider>
