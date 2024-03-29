@@ -7,7 +7,11 @@ import {
 import truncateEthAddress from "truncate-eth-address";
 import { cn } from "@/lib/utils";
 import TimeAgo from "react-timeago";
-import { chainTimeToMilliseconds, getOwnedNftTokenIds } from "@/app/utils";
+import {
+  chainTimeToMilliseconds,
+  getNftImages,
+  getOwnedNftTokenIds,
+} from "@/app/utils";
 import {
   Card,
   CardContent,
@@ -34,6 +38,7 @@ type OnchainMessage = {
 export default function OnchainMessages(props: { nftAddress?: string }) {
   const { isConnected, address: userAddress } = useAccount();
   const [ownedNftTokenIds, setOwnedNftTokenIds] = useState([]);
+  const [nftMsgSenderImages, setNftMsgSenderImages] = useState<string[]>([]);
 
   const isValidNftAddress = props.nftAddress
     ? isAddress(props.nftAddress)
@@ -91,13 +96,8 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
         args: [props.nftAddress, BigInt(0), totalMessagesResult.data],
       })
     : undefined;
-  console.log("HIT!", nftMsgSendersResult, NFT_GATED_CHAT_CONTRACT, [
-    props.nftAddress,
-    BigInt(0),
-    totalMessagesResult.data,
-  ]);
   const nftMsgSenderTokenIds = nftMsgSendersResult?.data as
-    | number[]
+    | BigInt[]
     | undefined;
 
   useAsyncEffect(async () => {
@@ -110,6 +110,17 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
     });
     setOwnedNftTokenIds(tokenIds);
   }, [isConnected]);
+
+  useAsyncEffect(async () => {
+    if (props.nftAddress == null || nftMsgSenderTokenIds == null) {
+      return;
+    }
+    const images = await getNftImages({
+      contractAddress: props.nftAddress,
+      tokenIds: nftMsgSenderTokenIds.map((tokenId) => tokenId.toString()),
+    });
+    setNftMsgSenderImages(images);
+  }, [nftMsgSenderTokenIds?.length]);
 
   return (
     <Card className="w-full">
@@ -138,10 +149,17 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
               <p className="text-left">{message.message}</p>
               <p className="text-right">
                 <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
-                {message.sender}{" "}
-                {nftMsgSenderTokenIds != null
-                  ? `Token #${nftMsgSenderTokenIds[idx].toString()}`
-                  : ""}
+                {nftMsgSenderTokenIds != null ? (
+                  <>
+                    Willie #{nftMsgSenderTokenIds[idx].toString()}{" "}
+                    <img
+                      src={nftMsgSenderImages[idx]}
+                      className="inline w-12"
+                    />
+                  </>
+                ) : (
+                  message.sender
+                )}
               </p>
             </div>
           ))}
@@ -153,7 +171,7 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
         props.nftAddress &&
         ownedNftTokenIds.length > 0 ? (
           <SendMessageSection
-            nft={{ address: props.nftAddress, tokenId: ownedNftTokenIds[0] }}
+            nft={{ address: props.nftAddress, tokenId: ownedNftTokenIds[2] }}
           />
         ) : !isValidNftAddress ? (
           <SendMessageSection />
