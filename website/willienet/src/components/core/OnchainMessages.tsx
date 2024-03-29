@@ -74,7 +74,6 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
           bottom > containerTop + scrollContainer.clientHeight
       );
     };
-
     scrollContainer?.addEventListener("scroll", handleScroll);
     return () => {
       scrollContainer?.removeEventListener("scroll", handleScroll);
@@ -179,8 +178,12 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
     ) {
       return;
     }
-    setFinishedInitialScrollToBottom(true);
-    scrollToBottom();
+    // Attempt to scroll after a short timeout to ensure everything has been rendered before
+    // we attempt to scroll. Otherwise, we won't scroll at all
+    setTimeout(() => {
+      setFinishedInitialScrollToBottom(true);
+      scrollToBottom();
+    }, 250);
   }, [sanitizedOnchainMessages.length, finishedInitialScrollToBottom]);
 
   const FloatingScrollToBottomButton = () => {
