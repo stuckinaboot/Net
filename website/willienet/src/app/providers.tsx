@@ -10,6 +10,7 @@ import {
   argentWallet,
   trustWallet,
   ledgerWallet,
+  walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { base, baseSepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -26,7 +27,7 @@ const config = getDefaultConfig({
     ...wallets,
     {
       groupName: "Other",
-      wallets: [argentWallet, trustWallet, ledgerWallet],
+      wallets: [walletConnectWallet, argentWallet, trustWallet, ledgerWallet],
     },
   ],
   chains: testnetsEnabled ? [baseSepolia] : [base],
