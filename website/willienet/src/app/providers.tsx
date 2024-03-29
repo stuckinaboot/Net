@@ -24,11 +24,11 @@ const config = getDefaultConfig({
   // TODO move to env var
   projectId: "e30601719b43774a0f0ba554aa131083",
   wallets: [
+    ...wallets,
     {
       groupName: "Other",
       wallets: [walletConnectWallet, argentWallet, trustWallet, ledgerWallet],
     },
-    ...wallets,
   ],
   chains: testnetsEnabled ? [baseSepolia] : [base],
   ssr: true,
