@@ -171,7 +171,7 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
         props.nftAddress &&
         ownedNftTokenIds.length > 0 ? (
           <SendMessageSection
-            nft={{ address: props.nftAddress, tokenId: ownedNftTokenIds[2] }}
+            nft={{ address: props.nftAddress, tokenId: ownedNftTokenIds[0] }}
           />
         ) : !isValidNftAddress ? (
           <SendMessageSection />
