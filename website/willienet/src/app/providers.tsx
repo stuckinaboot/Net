@@ -20,7 +20,7 @@ import { testnetsEnabled } from "./constants";
 const { wallets } = getDefaultWallets();
 
 const config = getDefaultConfig({
-  appName: "WillieNet",
+  appName: "WillieNet Dapp",
   // TODO move to env var
   projectId: "e30601719b43774a0f0ba554aa131083",
   wallets: [
