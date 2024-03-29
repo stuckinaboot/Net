@@ -28,7 +28,7 @@
     "truncate-eth-address": "^1.0.2",
     "use-async-effect": "^2.2.7",
     "viem": "2.x",
-    "wagmi": "^2.5.7"
+    "wagmi": "^2.5.16"
   },
   "devDependencies": {
     "@types/node": "^20",
