@@ -6,11 +6,6 @@ import {
   getDefaultWallets,
   getDefaultConfig,
 } from "@rainbow-me/rainbowkit";
-import {
-  argentWallet,
-  trustWallet,
-  ledgerWallet,
-} from "@rainbow-me/rainbowkit/wallets";
 import { base, baseSepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
@@ -20,6 +15,7 @@ const { wallets } = getDefaultWallets();
 
 const config = getDefaultConfig({
   appName: "WillieNet",
+  // TODO move to env var
   projectId: "523f4710aaff1415b43afb567a95046e",
   wallets,
   chains: testnetsEnabled ? [baseSepolia] : [base],
