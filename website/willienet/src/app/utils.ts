@@ -25,3 +25,14 @@ export async function getNftImages(params: {
   const resJson = await res.json();
   return resJson.images;
 }
+
+export async function getDisplayableErrorMessageFromSubmitTransactionError(
+  e: Error
+) {
+  const msg = e.message;
+  const periodIdx = e.message.indexOf(".");
+  if (periodIdx === -1) {
+    return msg;
+  }
+  return msg.substring(0, periodIdx);
+}

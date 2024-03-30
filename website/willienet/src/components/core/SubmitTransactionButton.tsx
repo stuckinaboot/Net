@@ -2,6 +2,7 @@ import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
+import { getDisplayableErrorMessageFromSubmitTransactionError } from "@/app/utils";
 
 // TODO implement this helper class and modify MintButton and SendMessageButton to use it
 
@@ -20,6 +21,7 @@ export default function SubmitTransactionButton(props: {
   useDefaultButtonMessageOnSuccess?: boolean;
   className?: string;
   onTransactionConfirmed?: (transactionHash: string) => void;
+  prePerformTransasctionValidation?: () => string | undefined;
 }) {
   const { toast } = useToast();
 
@@ -44,19 +46,43 @@ export default function SubmitTransactionButton(props: {
   }, [receipt.isSuccess]);
 
   async function performTransaction() {
-    const txnHash = await writeContractAsync({
-      address: props.to as any,
-      abi: props.abi,
-      functionName: props.functionName,
-      args: props.args,
-    });
-    props.onTransactionConfirmed && props.onTransactionConfirmed(txnHash);
+    if (props.prePerformTransasctionValidation) {
+      const validationError = props.prePerformTransasctionValidation();
+      if (validationError) {
+        toast({
+          title: "Error",
+          description: validationError,
+        });
+        return;
+      }
+    }
+    if (status === "pending") {
+      // Don't allow pressing the button again if status is pending
+      return;
+    }
+    try {
+      const txnHash = await writeContractAsync({
+        address: props.to as any,
+        abi: props.abi,
+        functionName: props.functionName,
+        args: props.args,
+      });
+      props.onTransactionConfirmed && props.onTransactionConfirmed(txnHash);
+    } catch (e) {
+      if (e instanceof Error) {
+        toast({
+          title: "Error",
+          description: getDisplayableErrorMessageFromSubmitTransactionError(e),
+        });
+      }
+    }
   }
 
   return (
     <>
       <Button onClick={performTransaction} className={props.className}>
         {status === "idle" ||
+        status === "error" ||
         (receipt.isSuccess && props.useDefaultButtonMessageOnSuccess)
           ? props.messages.button.default
           : receipt.isSuccess

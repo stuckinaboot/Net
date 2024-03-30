@@ -25,6 +25,12 @@ export default function SendMessageButton(props: {
   nft?: Nft;
   onTransactionConfirmed?: (transactionHash: string) => void;
 }) {
+  function validatePrePerformTransasction() {
+    if (props.message.length === 0) {
+      return "Message cannot be empty";
+    }
+  }
+
   if (props.nft) {
     return (
       <SubmitTransactionButton
@@ -36,6 +42,7 @@ export default function SendMessageButton(props: {
         messages={{ toasts: TOASTS, button: BUTTONS }}
         useDefaultButtonMessageOnSuccess={true}
         onTransactionConfirmed={props.onTransactionConfirmed}
+        prePerformTransasctionValidation={validatePrePerformTransasction}
       />
     );
   }
@@ -50,6 +57,7 @@ export default function SendMessageButton(props: {
       messages={{ toasts: TOASTS, button: BUTTONS }}
       useDefaultButtonMessageOnSuccess={true}
       onTransactionConfirmed={props.onTransactionConfirmed}
+      prePerformTransasctionValidation={validatePrePerformTransasction}
     />
   );
 }
