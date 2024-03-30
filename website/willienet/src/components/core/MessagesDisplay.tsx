@@ -67,10 +67,6 @@ export default function MessagesDisplay(props: { nftAddress?: string }) {
     };
   }, []);
 
-  const isValidNftAddress = props.nftAddress
-    ? isAddress(props.nftAddress)
-    : false;
-
   const totalMessagesReadContractArgs = props.nftAddress
     ? {
         abi: WILLIE_NET_CONTRACT.abi,
