@@ -188,13 +188,12 @@ export default function MessagesDisplay(props: { nftAddress?: string }) {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col max-h-80">
       <div
         className={cn(
           "flex",
           "flex-col",
           "whitespace-break-spaces",
-          "max-h-80",
           "w-full",
           "overflow-y-auto",
           "overflow-x-hidden"
