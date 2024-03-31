@@ -9,7 +9,6 @@ import { isAddress } from "viem";
 import { useReadContract } from "wagmi";
 import isHtml from "is-html";
 import IframeRenderer from "./IFrameRenderer";
-import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
 
 type OnchainMessage = {
   extraData: string;
@@ -37,42 +36,7 @@ export default function MessagesDisplay(props: {
 }) {
   const [nftMsgSenderImages, setNftMsgSenderImages] = useState<string[]>([]);
   const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [firstLoadedMessages, setFirstLoadedMessages] = useState(false);
-  const [showScrollButton, setShowScrollButton] = useState(false);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  function checkAndUpdateShouldShowScrollToBottomButton() {
-    const scrollContainer = scrollContainerRef.current;
-    const targetDiv = messagesEndRef.current;
-    if (targetDiv == null || scrollContainer == null) {
-      return;
-    }
-
-    const containerTop = scrollContainer.getBoundingClientRect().top;
-    const { top, bottom } = targetDiv.getBoundingClientRect();
-    setShowScrollButton(
-      top > containerTop && bottom > containerTop + scrollContainer.clientHeight
-    );
-  }
-
-  useEffect(() => {
-    const scrollContainer = scrollContainerRef.current;
-    scrollContainer?.addEventListener(
-      "scroll",
-      checkAndUpdateShouldShowScrollToBottomButton
-    );
-    return () => {
-      scrollContainer?.removeEventListener(
-        "scroll",
-        checkAndUpdateShouldShowScrollToBottomButton
-      );
-    };
-  }, []);
 
   const totalMessagesReadContractArgs = props.nftAddress
     ? {
@@ -129,13 +93,6 @@ export default function MessagesDisplay(props: {
     setMessages(sanitizedOnchainMessages);
   }, [sanitizedOnchainMessages.length]);
 
-  useEffect(() => {
-    if (messages.length === 0) {
-      return;
-    }
-    checkAndUpdateShouldShowScrollToBottomButton();
-  }, [messages.length]);
-
   const nftMsgSendersResult = useReadContract({
     abi: NFT_GATED_CHAT_CONTRACT.abi,
     address: NFT_GATED_CHAT_CONTRACT.address as any,
@@ -165,7 +122,6 @@ export default function MessagesDisplay(props: {
     // we attempt to scroll. Otherwise, we won't scroll at all
     setTimeout(() => {
       setFirstLoadedMessages(true);
-      scrollToBottom();
       props.scrollToBottom();
     }, 250);
   }, [sanitizedOnchainMessages.length, firstLoadedMessages]);
@@ -187,7 +143,6 @@ export default function MessagesDisplay(props: {
           "w-full",
           "overflow-x-hidden"
         )}
-        ref={scrollContainerRef}
       >
         {messages.map((message, idx) => (
           <div key={idx} className="flex flex-col">
@@ -207,11 +162,7 @@ export default function MessagesDisplay(props: {
             </p>
           </div>
         ))}
-        <div ref={messagesEndRef} />
       </div>
-      {/* {showScrollButton && (
-        <FloatingScrollToBottomButton onClick={scrollToBottom} />
-      )} */}
     </div>
   );
 }
