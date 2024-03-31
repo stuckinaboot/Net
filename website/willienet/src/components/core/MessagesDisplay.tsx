@@ -7,6 +7,8 @@ import truncateEthAddress from "truncate-eth-address";
 import useAsyncEffect from "use-async-effect";
 import { isAddress } from "viem";
 import { useReadContract } from "wagmi";
+import isHtml from "is-html";
+import IframeRenderer from "./IFrameRenderer";
 
 type OnchainMessage = {
   extraData: string;
@@ -178,6 +180,13 @@ export default function MessagesDisplay(props: { nftAddress?: string }) {
     );
   };
 
+  function getRenderedMessage(message: string) {
+    if (isHtml(message)) {
+      return <IframeRenderer htmlString={message} />;
+    }
+    return message;
+  }
+
   return (
     <div className="flex flex-col">
       <div
@@ -194,7 +203,9 @@ export default function MessagesDisplay(props: { nftAddress?: string }) {
       >
         {messages.map((message, idx) => (
           <div key={idx} className="flex flex-col">
-            <p className="flex text-left">{message.message}</p>
+            <p className="flex text-left">
+              {getRenderedMessage(message.message)}
+            </p>
             <p className="flex justify-end">
               <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
               {nftMsgSenderTokenIds != null ? (
