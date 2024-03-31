@@ -170,7 +170,7 @@ export default function MessagesDisplay(props: { nftAddress?: string }) {
       <div className="relative">
         <button
           onClick={scrollToBottom}
-          className="absolute opacity-50 right-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-full shadow-md"
+          className="absolute opacity-50 right-1 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded-full shadow-md"
         >
           ↓
         </button>
@@ -179,22 +179,23 @@ export default function MessagesDisplay(props: { nftAddress?: string }) {
   };
 
   return (
-    <>
+    <div className="flex flex-col">
       <div
         className={cn(
+          "flex",
+          "flex-col",
           "whitespace-break-spaces",
-          "font-mono",
-          "max-h-60",
+          "max-h-80",
           "w-full",
-          "overflow-y-scroll",
+          "overflow-y-auto",
           "overflow-x-hidden"
         )}
         ref={scrollContainerRef}
       >
         {messages.map((message, idx) => (
-          <div key={idx}>
-            <p className="text-left">{message.message}</p>
-            <p className="text-right">
+          <div key={idx} className="flex flex-col">
+            <p className="flex text-left">{message.message}</p>
+            <p className="flex justify-end">
               <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
               {nftMsgSenderTokenIds != null ? (
                 <>
@@ -210,6 +211,6 @@ export default function MessagesDisplay(props: { nftAddress?: string }) {
         <div ref={messagesEndRef} />
       </div>
       {showScrollButton && <FloatingScrollToBottomButton />}
-    </>
+    </div>
   );
 }
