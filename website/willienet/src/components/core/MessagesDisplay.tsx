@@ -170,7 +170,7 @@ export default function MessagesDisplay(props: { nftAddress?: string }) {
       <div className="relative">
         <button
           onClick={scrollToBottom}
-          className="absolute opacity-50 right-1 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded-full shadow-md"
+          className="absolute opacity-50 right-1 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-full shadow-md"
         >
           ↓
         </button>
