@@ -36,7 +36,7 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
   }, [isConnected]);
 
   return (
-    <Card className="w-full">
+    <Card className="w-full h-full flex flex-col">
       <CardHeader className="flex flex-col">
         <div className="flex flex-row justify-between">
           <CardTitle>
@@ -48,10 +48,10 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
           All messages are stored and read onchain and are publicly accessible.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1 flex-col">
         <MessagesDisplay nftAddress={props.nftAddress} />
       </CardContent>
-      <CardFooter className="flex flex-col">
+      <CardFooter className="flex flex-col justify-end">
         <Separator className="m-3" />
         {isValidNftAddress &&
         props.nftAddress &&
