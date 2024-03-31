@@ -9,6 +9,7 @@ import { isAddress } from "viem";
 import { useReadContract } from "wagmi";
 import isHtml from "is-html";
 import IframeRenderer from "./IFrameRenderer";
+import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
 
 type OnchainMessage = {
   extraData: string;
@@ -30,13 +31,15 @@ type SanitizedOnchainMessage = {
 
 const RENDER_HTML = false;
 
-export default function MessagesDisplay(props: { nftAddress?: string }) {
+export default function MessagesDisplay(props: {
+  nftAddress?: string;
+  scrollToBottom: () => void;
+}) {
   const [nftMsgSenderImages, setNftMsgSenderImages] = useState<string[]>([]);
   const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const [finishedInitialScrollToBottom, setFinishedInitialScrollToBottom] =
-    useState(false);
+  const [firstLoadedMessages, setFirstLoadedMessages] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
   const scrollToBottom = () => {
@@ -155,32 +158,17 @@ export default function MessagesDisplay(props: { nftAddress?: string }) {
   }, [nftMsgSenderTokenIds?.length]);
 
   useEffect(() => {
-    if (
-      finishedInitialScrollToBottom ||
-      sanitizedOnchainMessages.length === 0
-    ) {
+    if (firstLoadedMessages || sanitizedOnchainMessages.length === 0) {
       return;
     }
     // Attempt to scroll after a short timeout to ensure everything has been rendered before
     // we attempt to scroll. Otherwise, we won't scroll at all
     setTimeout(() => {
-      setFinishedInitialScrollToBottom(true);
+      setFirstLoadedMessages(true);
       scrollToBottom();
+      props.scrollToBottom();
     }, 250);
-  }, [sanitizedOnchainMessages.length, finishedInitialScrollToBottom]);
-
-  const FloatingScrollToBottomButton = () => {
-    return (
-      <div className="relative">
-        <button
-          onClick={scrollToBottom}
-          className="absolute opacity-50 right-1 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-full shadow-md"
-        >
-          ↓
-        </button>
-      </div>
-    );
-  };
+  }, [sanitizedOnchainMessages.length, firstLoadedMessages]);
 
   function getRenderedMessage(message: string) {
     if (RENDER_HTML && isHtml(message)) {
@@ -190,14 +178,13 @@ export default function MessagesDisplay(props: { nftAddress?: string }) {
   }
 
   return (
-    <div className="flex flex-col max-h-80">
+    <div className="flex flex-col">
       <div
         className={cn(
           "flex",
           "flex-col",
           "whitespace-break-spaces",
           "w-full",
-          "overflow-y-auto",
           "overflow-x-hidden"
         )}
         ref={scrollContainerRef}
@@ -222,7 +209,9 @@ export default function MessagesDisplay(props: { nftAddress?: string }) {
         ))}
         <div ref={messagesEndRef} />
       </div>
-      {showScrollButton && <FloatingScrollToBottomButton />}
+      {/* {showScrollButton && (
+        <FloatingScrollToBottomButton onClick={scrollToBottom} />
+      )} */}
     </div>
   );
 }

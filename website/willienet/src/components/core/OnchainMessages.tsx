@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAccount } from "wagmi";
 import { getOwnedNftTokenIds } from "@/app/utils";
 import {
@@ -15,10 +15,49 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { isAddress } from "viem";
 import useAsyncEffect from "use-async-effect";
 import MessagesDisplay from "./MessagesDisplay";
+import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
 
 export default function OnchainMessages(props: { nftAddress?: string }) {
   const { isConnected, address: userAddress } = useAccount();
   const [ownedNftTokenIds, setOwnedNftTokenIds] = useState([]);
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const [finishedInitialScrollToBottom, setFinishedInitialScrollToBottom] =
+    useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  function checkAndUpdateShouldShowScrollToBottomButton() {
+    const scrollContainer = scrollContainerRef.current;
+    const targetDiv = messagesEndRef.current;
+    if (targetDiv == null || scrollContainer == null) {
+      return;
+    }
+
+    const containerTop = scrollContainer.getBoundingClientRect().top;
+    const { top, bottom } = targetDiv.getBoundingClientRect();
+    setShowScrollButton(
+      top > containerTop && bottom > containerTop + scrollContainer.clientHeight
+    );
+  }
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    scrollContainer?.addEventListener(
+      "scroll",
+      checkAndUpdateShouldShowScrollToBottomButton
+    );
+    return () => {
+      scrollContainer?.removeEventListener(
+        "scroll",
+        checkAndUpdateShouldShowScrollToBottomButton
+      );
+    };
+  }, []);
 
   const isValidNftAddress = props.nftAddress
     ? isAddress(props.nftAddress)
@@ -48,9 +87,21 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
           All messages are stored and read onchain and are publicly accessible.
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 flex-col">
-        <MessagesDisplay nftAddress={props.nftAddress} />
+      <CardContent
+        className="flex-1 flex-col overflow-y-auto"
+        ref={scrollContainerRef}
+      >
+        <MessagesDisplay
+          nftAddress={props.nftAddress}
+          scrollToBottom={scrollToBottom}
+        />
+        <div ref={messagesEndRef} />
       </CardContent>
+      <div className="flex flex-col">
+        {showScrollButton && (
+          <FloatingScrollToBottomButton onClick={scrollToBottom} />
+        )}
+      </div>
       <CardFooter className="flex flex-col justify-end">
         <Separator className="m-3" />
         {isValidNftAddress &&
