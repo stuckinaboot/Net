@@ -28,6 +28,8 @@ type SanitizedOnchainMessage = {
   topic: string;
 };
 
+const RENDER_HTML = false;
+
 export default function MessagesDisplay(props: { nftAddress?: string }) {
   const [nftMsgSenderImages, setNftMsgSenderImages] = useState<string[]>([]);
   const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
@@ -181,7 +183,7 @@ export default function MessagesDisplay(props: { nftAddress?: string }) {
   };
 
   function getRenderedMessage(message: string) {
-    if (isHtml(message)) {
+    if (RENDER_HTML && isHtml(message)) {
       return <IframeRenderer htmlString={message} />;
     }
     return message;
