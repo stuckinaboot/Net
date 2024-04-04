@@ -138,6 +138,14 @@ contract WillieNetTest is
             );
             verifyMessage(expectedMessage, messageApp);
 
+            // Check get message via hash count to ensure this returns same value as getting message via app count
+            assertEq(
+                net.getTotalMessagesForAppCount(app),
+                net.getTotalMessagesForHashCount(
+                    keccak256(abi.encodePacked(app))
+                )
+            );
+
             uint256 msgIdx = net.getMessageIdxForApp(
                 net.getTotalMessagesForAppCount(app) - 1,
                 app
@@ -338,6 +346,43 @@ contract WillieNetTest is
         bytes calldata extraData
     ) public {
         sendAndVerifyMessage(users[0], app, "", "Topic", extraData);
+    }
+
+    function testGetMessagesInRangeInvalidRangeReverts(
+        uint256 startIdx,
+        uint256 endIdx,
+        bytes32 hashVal,
+        address app,
+        address user,
+        string calldata topic
+    ) public {
+        vm.assume(startIdx < 100);
+        vm.assume(endIdx < 100);
+        vm.assume(startIdx >= endIdx);
+
+        vm.expectRevert(EventsAndErrors.InvalidRange.selector);
+        net.getMessagesInRange(startIdx, endIdx);
+
+        vm.expectRevert(EventsAndErrors.InvalidRange.selector);
+        net.getMessagesInRangeForApp(startIdx, endIdx, app);
+
+        vm.expectRevert(EventsAndErrors.InvalidRange.selector);
+        net.getMessagesInRangeForAppUser(startIdx, endIdx, app, user);
+
+        vm.expectRevert(EventsAndErrors.InvalidRange.selector);
+        net.getMessagesInRangeForAppTopic(startIdx, endIdx, app, topic);
+
+        vm.expectRevert(EventsAndErrors.InvalidRange.selector);
+        net.getMessagesInRangeForAppUserTopic(
+            startIdx,
+            endIdx,
+            app,
+            user,
+            topic
+        );
+
+        vm.expectRevert(EventsAndErrors.InvalidRange.selector);
+        net.getMessagesInRangeForHash(startIdx, endIdx, hashVal);
     }
 
     // Helpers
