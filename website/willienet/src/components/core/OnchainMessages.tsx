@@ -16,15 +16,21 @@ import { isAddress } from "viem";
 import useAsyncEffect from "use-async-effect";
 import MessagesDisplay from "./MessagesDisplay";
 import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
+import ChatSelectorDropdown from "./ChatSelectorDropdown";
+
+const CHAT_ROOM_ITEMS = [
+  "Global",
+  "Onchain Steamboat Willies",
+  "Onchain Dinos",
+];
 
 export default function OnchainMessages(props: { nftAddress?: string }) {
   const { isConnected, address: userAddress } = useAccount();
   const [ownedNftTokenIds, setOwnedNftTokenIds] = useState([]);
+  const [chatRoom, setChatRoom] = useState(CHAT_ROOM_ITEMS[0]);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
-  const [finishedInitialScrollToBottom, setFinishedInitialScrollToBottom] =
-    useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
   const scrollToBottom = () => {
@@ -85,6 +91,12 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
         </div>
         <CardDescription>
           All messages are stored and read onchain and are publicly accessible.
+          <ChatSelectorDropdown
+            className="flex flex-col justify-end"
+            items={CHAT_ROOM_ITEMS}
+            selected={chatRoom}
+            onItemClicked={(item) => setChatRoom(item)}
+          />
         </CardDescription>
       </CardHeader>
       <CardContent
