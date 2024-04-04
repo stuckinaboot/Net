@@ -24,6 +24,7 @@ export default function SendMessageButton(props: {
   className?: string;
   nft?: Nft;
   onTransactionConfirmed?: (transactionHash: string) => void;
+  disabled?: boolean;
 }) {
   function validatePrePerformTransasction() {
     if (props.message.length === 0) {
@@ -43,6 +44,7 @@ export default function SendMessageButton(props: {
         useDefaultButtonMessageOnSuccess={true}
         onTransactionConfirmed={props.onTransactionConfirmed}
         prePerformTransasctionValidation={validatePrePerformTransasction}
+        disabled={props.disabled}
       />
     );
   }
@@ -58,6 +60,7 @@ export default function SendMessageButton(props: {
       useDefaultButtonMessageOnSuccess={true}
       onTransactionConfirmed={props.onTransactionConfirmed}
       prePerformTransasctionValidation={validatePrePerformTransasction}
+      disabled={props.disabled}
     />
   );
 }

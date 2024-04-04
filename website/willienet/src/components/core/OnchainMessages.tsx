@@ -36,16 +36,10 @@ function nftAddressFromChatRoomItem(chatRoomItem: string) {
       ? "0x788d33297f559337bf42136ec86d1de75f24b2aa"
       : "todo";
   }
-  if (chatRoomItem === ONCHAIN_DINOS_CHAT_ROOM_ITEM) {
-    return testnetsEnabled
-      ? "0x788d33297f559337bf42136ec86d1de75f24b2aa"
-      : "todo";
-  }
 }
 
 export default function OnchainMessages(props: { nftAddress?: string }) {
   const { isConnected, address: userAddress } = useAccount();
-  const [ownedNftTokenIds, setOwnedNftTokenIds] = useState<string[]>([]);
   const [chatRoom, setChatRoom] = useState(CHAT_ROOM_ITEMS[0]);
   const [selectedNftTokenId, setSelectedNftTokenId] = useState<string>();
 
@@ -89,19 +83,9 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
     ? isAddress(props.nftAddress)
     : false;
 
-  useAsyncEffect(async () => {
-    if (props.nftAddress == null || !isConnected) {
-      return;
-    }
-    const tokenIds = await getOwnedNftTokenIds({
-      userAddress: userAddress as string,
-      contractAddress: props.nftAddress,
-    });
-    setOwnedNftTokenIds(tokenIds);
-  }, [isConnected]);
-
   const nftAddressFromItem = nftAddressFromChatRoomItem(chatRoom);
 
+  const disableSendMessageSection = !isConnected;
   return (
     <Card className="w-full h-full flex flex-col">
       <CardHeader className="flex flex-col">
@@ -156,9 +140,10 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
               address: nftAddressFromItem,
               tokenId: selectedNftTokenId,
             }}
+            disabled={disableSendMessageSection}
           />
         ) : (
-          <SendMessageSection />
+          <SendMessageSection disabled={disableSendMessageSection} />
         )}
       </CardFooter>
     </Card>

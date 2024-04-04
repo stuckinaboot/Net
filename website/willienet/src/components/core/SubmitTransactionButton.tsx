@@ -22,6 +22,7 @@ export default function SubmitTransactionButton(props: {
   className?: string;
   onTransactionConfirmed?: (transactionHash: string) => void;
   prePerformTransasctionValidation?: () => string | undefined;
+  disabled?: boolean;
 }) {
   const { toast } = useToast();
 
@@ -80,7 +81,11 @@ export default function SubmitTransactionButton(props: {
 
   return (
     <>
-      <Button onClick={performTransaction} className={props.className}>
+      <Button
+        onClick={performTransaction}
+        className={props.className}
+        disabled={props.disabled}
+      >
         {status === "idle" ||
         status === "error" ||
         (receipt.isSuccess && props.useDefaultButtonMessageOnSuccess)

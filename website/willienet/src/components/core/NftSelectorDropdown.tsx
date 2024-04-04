@@ -38,7 +38,10 @@ export default function NftSelectorDropdown(props: {
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
           {props.items.map((item) => (
-            <DropdownMenuItem onClick={() => props.onItemClicked(item)}>
+            <DropdownMenuItem
+              key={item.tokenId}
+              onClick={() => props.onItemClicked(item)}
+            >
               {renderItem(item)}
             </DropdownMenuItem>
           ))}

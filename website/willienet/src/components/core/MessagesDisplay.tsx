@@ -97,6 +97,7 @@ export default function MessagesDisplay(props: {
     // the flicker of loading messages
     setMessages(sanitizedOnchainMessages);
   }, [sanitizedOnchainMessages.length]);
+  console.log("MESSAGES!", totalMessagesResult.data, messages.length, messages);
 
   const nftMsgSendersResult = useReadContract({
     abi: NFT_GATED_CHAT_CONTRACT.abi,

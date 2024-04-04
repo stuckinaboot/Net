@@ -27,6 +27,10 @@ export default function NftSelector(props: {
       }))
       .filter((item) => item.imgSrc != null) as NftSelectorItem[];
     setNfts(items);
+    if (props.selectedTokenId == null) {
+      // Click on first token id to simulate it being selected when nfts are loaded
+      props.onTokenIdClicked(items[0].tokenId);
+    }
   }, [props.contractAddress, props.userAddress]);
 
   const selectedNft =
