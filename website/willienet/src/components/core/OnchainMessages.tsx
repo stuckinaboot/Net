@@ -17,17 +17,39 @@ import useAsyncEffect from "use-async-effect";
 import MessagesDisplay from "./MessagesDisplay";
 import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
 import ChatSelectorDropdown from "./ChatSelectorDropdown";
+import NftSelector from "./NftSelector";
+import { testnetsEnabled } from "@/app/constants";
 
+const GLOBAL_CHAT_ROOM_ITEM = "Global";
+const ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM = "Onchain Steamboat Willies";
+const ONCHAIN_DINOS_CHAT_ROOM_ITEM = "Onchain Dinos";
 const CHAT_ROOM_ITEMS = [
-  "Global",
-  "Onchain Steamboat Willies",
-  "Onchain Dinos",
+  GLOBAL_CHAT_ROOM_ITEM,
+  ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM,
+  ONCHAIN_DINOS_CHAT_ROOM_ITEM,
 ];
+
+function nftAddressFromChatRoomItem(chatRoomItem: string) {
+  if (chatRoomItem === GLOBAL_CHAT_ROOM_ITEM) {
+    return null;
+  }
+  if (chatRoomItem === ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM) {
+    return testnetsEnabled
+      ? "0x788d33297f559337bf42136ec86d1de75f24b2aa"
+      : "todo";
+  }
+  if (chatRoomItem === ONCHAIN_DINOS_CHAT_ROOM_ITEM) {
+    return testnetsEnabled
+      ? "0x788d33297f559337bf42136ec86d1de75f24b2aa"
+      : "todo";
+  }
+}
 
 export default function OnchainMessages(props: { nftAddress?: string }) {
   const { isConnected, address: userAddress } = useAccount();
-  const [ownedNftTokenIds, setOwnedNftTokenIds] = useState([]);
+  const [ownedNftTokenIds, setOwnedNftTokenIds] = useState<string[]>([]);
   const [chatRoom, setChatRoom] = useState(CHAT_ROOM_ITEMS[0]);
+  const [selectedNftTokenId, setSelectedNftTokenId] = useState<string>();
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -80,6 +102,8 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
     setOwnedNftTokenIds(tokenIds);
   }, [isConnected]);
 
+  const nftAddressFromItem = nftAddressFromChatRoomItem(chatRoom);
+
   return (
     <Card className="w-full h-full flex flex-col">
       <CardHeader className="flex flex-col">
@@ -97,6 +121,18 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
             selected={chatRoom}
             onItemClicked={(item) => setChatRoom(item)}
           />
+          {chatRoom !== GLOBAL_CHAT_ROOM_ITEM &&
+            userAddress &&
+            nftAddressFromItem && (
+              <NftSelector
+                userAddress={userAddress}
+                contractAddress={nftAddressFromItem}
+                onTokenIdClicked={(tokenId: string) =>
+                  setSelectedNftTokenId(tokenId)
+                }
+                selectedTokenId={selectedNftTokenId}
+              />
+            )}
         </CardDescription>
       </CardHeader>
       <CardContent

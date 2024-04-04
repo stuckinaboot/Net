@@ -10,27 +10,36 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export default function ChatSelectorDropdown(props: {
-  items: string[];
-  selected: string;
-  onItemClicked: (item: string) => void;
+export type NftSelectorItem = { tokenId: string; imgSrc: string };
+
+export default function NftSelectorDropdown(props: {
+  items: NftSelectorItem[];
+  selectedItem: NftSelectorItem;
+  onItemClicked: (item: NftSelectorItem) => void;
   className?: string;
 }) {
+  function renderItem(item: NftSelectorItem) {
+    return (
+      <div>
+        #{item.tokenId}
+        <img src={item.imgSrc} className="inline w-8" />
+      </div>
+    );
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className={cn("min-w-56", props.className)} variant="outline">
-          Chat Room: {props.selected}
+          Sending messages as
+          <div className="px-1" /> {renderItem(props.selectedItem)}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
           {props.items.map((item) => (
-            <DropdownMenuItem
-              key={item}
-              onClick={() => props.onItemClicked(item)}
-            >
-              {item}
+            <DropdownMenuItem onClick={() => props.onItemClicked(item)}>
+              {renderItem(item)}
             </DropdownMenuItem>
           ))}
         </DropdownMenuGroup>
