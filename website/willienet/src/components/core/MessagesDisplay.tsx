@@ -144,24 +144,32 @@ export default function MessagesDisplay(props: {
           "overflow-x-hidden"
         )}
       >
-        {messages.map((message, idx) => (
-          <div key={idx} className="flex flex-col">
-            <p className="flex text-left">
-              {getRenderedMessage(message.message)}
-            </p>
-            <p className="flex justify-end">
-              <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
-              {nftMsgSenderTokenIds != null ? (
-                <>
-                  Willie #{nftMsgSenderTokenIds[idx].toString()}{" "}
-                  <img src={nftMsgSenderImages[idx]} className="inline w-12" />
-                </>
-              ) : (
-                message.sender
-              )}
-            </p>
-          </div>
-        ))}
+        {nftMsgSenderTokenIds != null &&
+        nftMsgSenderTokenIds.length !== messages.length ? (
+          <p className="flex text-left">Loading messages in NFT chat</p>
+        ) : (
+          messages.map((message, idx) => (
+            <div key={idx} className="flex flex-col">
+              <p className="flex text-left">
+                {getRenderedMessage(message.message)}
+              </p>
+              <p className="flex justify-end">
+                <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
+                {nftMsgSenderTokenIds != null ? (
+                  <>
+                    Willie #{nftMsgSenderTokenIds[idx].toString()}{" "}
+                    <img
+                      src={nftMsgSenderImages[idx]}
+                      className="inline w-12"
+                    />
+                  </>
+                ) : (
+                  message.sender
+                )}
+              </p>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

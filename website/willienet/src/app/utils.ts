@@ -16,7 +16,7 @@ export async function getOwnedNftTokenIds(params: {
 export async function getNftImages(params: {
   contractAddress: string;
   tokenIds: string[];
-}): Promise<(string | undefined)[]> {
+}): Promise<string[]> {
   const res = await fetch(
     `/api/getImagesForTokenIdsInCollection?contractAddress=${
       params.contractAddress

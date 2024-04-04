@@ -140,7 +140,7 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
         ref={scrollContainerRef}
       >
         <MessagesDisplay
-          nftAddress={props.nftAddress}
+          nftAddress={nftAddressFromItem ? nftAddressFromItem : undefined}
           scrollToBottom={scrollToBottom}
         />
         <div ref={messagesEndRef} />
@@ -152,16 +152,15 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
       </div>
       <CardFooter className="flex flex-col justify-end">
         <Separator className="m-3" />
-        {isValidNftAddress &&
-        props.nftAddress &&
-        ownedNftTokenIds.length > 0 ? (
+        {nftAddressFromItem != null && selectedNftTokenId != null ? (
           <SendMessageSection
-            nft={{ address: props.nftAddress, tokenId: ownedNftTokenIds[0] }}
+            nft={{
+              address: nftAddressFromItem,
+              tokenId: selectedNftTokenId,
+            }}
           />
-        ) : !isValidNftAddress ? (
-          <SendMessageSection />
         ) : (
-          <p>No NFTs owned in {props.nftAddress}</p>
+          <SendMessageSection />
         )}
       </CardFooter>
     </Card>
