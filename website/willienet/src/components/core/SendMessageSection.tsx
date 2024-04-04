@@ -18,6 +18,7 @@ export default function SendMessageSection(props: { nft?: Nft }) {
         }}
         value={message}
       />
+      <div className="m-1" />
       <SendMessageButton
         nft={props.nft}
         className="w-full"
