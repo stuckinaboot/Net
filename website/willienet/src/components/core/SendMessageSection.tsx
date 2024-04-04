@@ -10,7 +10,7 @@ export default function SendMessageSection(props: {
   disabled?: boolean;
 }) {
   const [message, setMessage] = useState("");
-  console.log("NFT IS", props.nft);
+
   return (
     <div className="flex flex-col items-center justify-between w-full">
       <Textarea
