@@ -385,44 +385,80 @@ contract WillieNetTest is
         net.getMessagesInRangeForHash(startIdx, endIdx, hashVal);
     }
 
-    function testGetMessagesInRangeNoMessages(
+    function testGetMessagesInRangeNoMessagesInvalidStartIndex(
         uint256 startIdx,
         uint256 endIdx,
         address app,
         address user,
         string calldata topic
     ) public {
-        vm.assume(startIdx < 10);
-        vm.assume(endIdx < 10);
+        vm.assume(startIdx < 100);
+        vm.assume(endIdx < 100);
         vm.assume(startIdx < endIdx);
 
-        assertEq(net.getMessagesInRange(startIdx, endIdx).length, 0);
+        vm.expectRevert(EventsAndErrors.InvalidStartIndex.selector);
+        net.getMessagesInRange(startIdx, endIdx);
 
-        assertEq(net.getMessagesInRangeForApp(startIdx, endIdx, app).length, 0);
-        assertEq(
-            net
-                .getMessagesInRangeForAppUser(startIdx, endIdx, app, user)
-                .length,
-            0
+        vm.expectRevert(EventsAndErrors.InvalidStartIndex.selector);
+        net.getMessagesInRangeForApp(startIdx, endIdx, app);
+
+        vm.expectRevert(EventsAndErrors.InvalidStartIndex.selector);
+        net.getMessagesInRangeForAppUser(startIdx, endIdx, app, user);
+
+        vm.expectRevert(EventsAndErrors.InvalidStartIndex.selector);
+        net.getMessagesInRangeForAppUserTopic(
+            startIdx,
+            endIdx,
+            app,
+            user,
+            topic
         );
-        assertEq(
-            net
-                .getMessagesInRangeForAppUserTopic(
-                    startIdx,
-                    endIdx,
-                    app,
-                    user,
-                    topic
-                )
-                .length,
-            0
+
+        vm.expectRevert(EventsAndErrors.InvalidStartIndex.selector);
+        net.getMessagesInRangeForAppTopic(startIdx, endIdx, app, topic);
+    }
+
+    function testGetMessagesInRangeOneMessageInvalidEndIndex(
+        uint256 endIdx,
+        address app,
+        address user,
+        string calldata topic,
+        bool sendMessageViaApp
+    ) public {
+        vm.assume(endIdx > 1 && endIdx < 10);
+        uint256 startIdx = 0;
+
+        if (sendMessageViaApp) {
+            vm.startPrank(app);
+            net.sendMessageViaApp(user, "hi", topic, "");
+            vm.stopPrank();
+        } else {
+            app = address(0);
+            vm.startPrank(user);
+            net.sendMessage("hi", topic, "");
+            vm.stopPrank();
+        }
+
+        vm.expectRevert(EventsAndErrors.InvalidEndIndex.selector);
+        net.getMessagesInRange(startIdx, endIdx);
+
+        vm.expectRevert(EventsAndErrors.InvalidEndIndex.selector);
+        net.getMessagesInRangeForApp(startIdx, endIdx, app);
+
+        vm.expectRevert(EventsAndErrors.InvalidEndIndex.selector);
+        net.getMessagesInRangeForAppUser(startIdx, endIdx, app, user);
+
+        vm.expectRevert(EventsAndErrors.InvalidEndIndex.selector);
+        net.getMessagesInRangeForAppUserTopic(
+            startIdx,
+            endIdx,
+            app,
+            user,
+            topic
         );
-        assertEq(
-            net
-                .getMessagesInRangeForAppTopic(startIdx, endIdx, app, topic)
-                .length,
-            0
-        );
+
+        vm.expectRevert(EventsAndErrors.InvalidEndIndex.selector);
+        net.getMessagesInRangeForAppTopic(startIdx, endIdx, app, topic);
     }
 
     // Helpers

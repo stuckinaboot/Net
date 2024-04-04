@@ -19,6 +19,14 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
 
     bytes32 constant ZERO_HASH = keccak256(abi.encodePacked(address(0)));
 
+    // Empty topic "" will not impact a hash, which could result in collisions
+    // between hash values that use topic and don't use topic. For that reason,
+    // we prefix the relevant hash topic keys with these values to ensure collisions don't occur
+    // Example if this prefix didn't exist:
+    // keccak256(abi.encodePacked(address(0))) == keccak256(abi.encodePacked(address(0), "" /* where "" represents topic */)) evaluates to true
+    uint8 constant APP_TOPIC_HASH_PREFIX = 1;
+    uint8 constant APP_USER_TOPIC_HASH_PREFIX = 2;
+
     // ************
     // Send message
     // ************
@@ -49,13 +57,22 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         // App-topic messages
         hashToMessageIndexes[
             // msg.sender is the app id
-            keccak256(abi.encodePacked(msg.sender, topic))
+            keccak256(
+                abi.encodePacked(APP_TOPIC_HASH_PREFIX, msg.sender, topic)
+            )
         ].push(messagesLength);
 
         // App-user-topic messages
         // TODO is this one needed?
         hashToMessageIndexes[
-            keccak256(abi.encodePacked(msg.sender, sender, topic))
+            keccak256(
+                abi.encodePacked(
+                    APP_USER_TOPIC_HASH_PREFIX,
+                    msg.sender,
+                    sender,
+                    topic
+                )
+            )
         ].push(messagesLength);
 
         // Emit message sent using current messages length as the index
@@ -88,14 +105,24 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 messagesLength = messages.length;
 
         hashToMessageIndexes[ZERO_HASH].push(messagesLength);
-        hashToMessageIndexes[keccak256(abi.encodePacked(address(0), topic))]
-            .push(messagesLength);
+        hashToMessageIndexes[
+            keccak256(
+                abi.encodePacked(APP_TOPIC_HASH_PREFIX, address(0), topic)
+            )
+        ].push(messagesLength);
         hashToMessageIndexes[
             keccak256(abi.encodePacked(address(0), msg.sender))
         ].push(messagesLength);
         // TODO is app user topic necessary
         hashToMessageIndexes[
-            keccak256(abi.encodePacked(address(0), msg.sender, topic))
+            keccak256(
+                abi.encodePacked(
+                    APP_USER_TOPIC_HASH_PREFIX,
+                    address(0),
+                    msg.sender,
+                    topic
+                )
+            )
         ].push(messagesLength);
 
         // Emit message sent using current messages length as the index
@@ -162,7 +189,9 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         string calldata topic
     ) external view returns (uint256) {
         return
-            hashToMessageIndexes[keccak256(abi.encodePacked(app, topic))][idx];
+            hashToMessageIndexes[
+                keccak256(abi.encodePacked(APP_TOPIC_HASH_PREFIX, app, topic))
+            ][idx];
     }
 
     function getMessageIdxForAppUserTopic(
@@ -172,9 +201,16 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         string calldata topic
     ) external view returns (uint256) {
         return
-            hashToMessageIndexes[keccak256(abi.encodePacked(app, user, topic))][
-                idx
-            ];
+            hashToMessageIndexes[
+                keccak256(
+                    abi.encodePacked(
+                        APP_USER_TOPIC_HASH_PREFIX,
+                        app,
+                        user,
+                        topic
+                    )
+                )
+            ][idx];
     }
 
     // Fetch single message
@@ -213,9 +249,11 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     ) external view returns (Message memory) {
         return
             messages[
-                hashToMessageIndexes[keccak256(abi.encodePacked(app, topic))][
-                    idx
-                ]
+                hashToMessageIndexes[
+                    keccak256(
+                        abi.encodePacked(APP_TOPIC_HASH_PREFIX, app, topic)
+                    )
+                ][idx]
             ];
     }
 
@@ -228,7 +266,14 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         return
             messages[
                 hashToMessageIndexes[
-                    keccak256(abi.encodePacked(app, user, topic))
+                    keccak256(
+                        abi.encodePacked(
+                            APP_USER_TOPIC_HASH_PREFIX,
+                            app,
+                            user,
+                            topic
+                        )
+                    )
                 ][idx]
             ];
     }
@@ -242,8 +287,13 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         if (startIdx >= endIdx) {
             revert InvalidRange();
         }
-        // TODO check startIdx exceeds messages length -1
-        // TODO check endIdx exceeds messages length
+        uint256 querySetLength = messages.length;
+        if (startIdx + 1 > querySetLength) {
+            revert InvalidStartIndex();
+        }
+        if (endIdx > querySetLength) {
+            revert InvalidEndIndex();
+        }
 
         uint256 length = endIdx - startIdx;
         Message[] memory messagesSlice = new Message[](length);
@@ -254,7 +304,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
                 uint256 i;
                 i < length &&
                     idxInMessages < endIdx &&
-                    idxInMessages < messages.length;
+                    idxInMessages < querySetLength;
 
             ) {
                 messagesSlice[i] = messages[idxInMessages];
@@ -278,8 +328,13 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         if (startIdx >= endIdx) {
             revert InvalidRange();
         }
-        // TODO check startIdx exceeds messages length -1
-        // TODO check endIdx exceeds messages length
+        uint256 querySetLength = hashToMessageIndexes[hashVal].length;
+        if (startIdx + 1 > querySetLength) {
+            revert InvalidStartIndex();
+        }
+        if (endIdx > querySetLength) {
+            revert InvalidEndIndex();
+        }
 
         uint256 length = endIdx - startIdx;
         Message[] memory messagesSlice = new Message[](length);
@@ -290,7 +345,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
                 uint256 i;
                 i < length &&
                     idxInMessages < endIdx &&
-                    idxInMessages < hashToMessageIndexes[hashVal].length;
+                    idxInMessages < querySetLength;
 
             ) {
                 messagesSlice[i] = messages[
@@ -345,7 +400,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
             getMessagesInRangeForHash(
                 startIdx,
                 endIdx,
-                keccak256(abi.encodePacked(app, topic))
+                keccak256(abi.encodePacked(APP_TOPIC_HASH_PREFIX, app, topic))
             );
     }
 
@@ -360,7 +415,14 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
             getMessagesInRangeForHash(
                 startIdx,
                 endIdx,
-                keccak256(abi.encodePacked(app, user, topic))
+                keccak256(
+                    abi.encodePacked(
+                        APP_USER_TOPIC_HASH_PREFIX,
+                        app,
+                        user,
+                        topic
+                    )
+                )
             );
     }
 
@@ -400,7 +462,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     ) external view returns (uint256) {
         return
             getTotalMessagesForHashCount(
-                keccak256(abi.encodePacked(app, topic))
+                keccak256(abi.encodePacked(APP_TOPIC_HASH_PREFIX, app, topic))
             );
     }
 
@@ -411,7 +473,14 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     ) external view returns (uint256) {
         return
             getTotalMessagesForHashCount(
-                keccak256(abi.encodePacked(app, user, topic))
+                keccak256(
+                    abi.encodePacked(
+                        APP_USER_TOPIC_HASH_PREFIX,
+                        app,
+                        user,
+                        topic
+                    )
+                )
             );
     }
 }
