@@ -80,10 +80,10 @@ contract WillieNetTest is
             app,
             topic
         );
-        uint256 userMessagesLength = net.getTotalMessagesForAppUserCount(
-            app,
-            user
-        );
+        // uint256 userMessagesLength = net.getTotalMessagesForAppUserCount(
+        //     app,
+        //     user
+        // );
 
         if (app != address(0)) {
             // Send message via app
@@ -137,6 +137,12 @@ contract WillieNetTest is
                 app
             );
             verifyMessage(expectedMessage, messageApp);
+
+            uint256 msgIdx = net.getMessageIdxForApp(
+                net.getTotalMessagesForAppCount(app) - 1,
+                app
+            );
+            assertEq(msgIdx, currMessagesLength);
         }
 
         // Verify message fetched via get message for topic
@@ -158,22 +164,45 @@ contract WillieNetTest is
 
         // Verify message fetched via get message for user
         {
+            uint256 userMessagesLength = net.getTotalMessagesForAppUserCount(
+                app,
+                user
+            );
             WillieNet.Message memory messageUser = net.getMessageForAppUser(
-                userMessagesLength,
+                userMessagesLength - 1,
                 app,
                 user
             );
             verifyMessage(expectedMessage, messageUser);
 
             uint256 msgIdx = net.getMessageIdxForAppUser(
-                userMessagesLength,
+                userMessagesLength - 1,
                 app,
                 user
             );
             assertEq(msgIdx, currMessagesLength);
         }
 
-        // TODO maybe add check for app topic user
+        // Verify message fetched via app user topic
+        {
+            uint256 appUserTopicMessagesLength = net
+                .getTotalMessagesForAppUserTopicCount(app, user, topic);
+            WillieNet.Message memory messageAppUserTopic = net
+                .getMessageForAppUserTopic(
+                    appUserTopicMessagesLength - 1,
+                    app,
+                    user,
+                    topic
+                );
+            verifyMessage(expectedMessage, messageAppUserTopic);
+            uint256 msgIdx = net.getMessageIdxForAppUserTopic(
+                appUserTopicMessagesLength - 1,
+                app,
+                user,
+                topic
+            );
+            assertEq(msgIdx, currMessagesLength);
+        }
     }
 
     function testSendOneMessage(

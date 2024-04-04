@@ -87,13 +87,15 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         // Track message index in topic and user mappings
         uint256 messagesLength = messages.length;
 
-        // TODO should user topic be stored here as well?
-
         hashToMessageIndexes[ZERO_HASH].push(messagesLength);
         hashToMessageIndexes[keccak256(abi.encodePacked(address(0), topic))]
             .push(messagesLength);
         hashToMessageIndexes[
             keccak256(abi.encodePacked(address(0), msg.sender))
+        ].push(messagesLength);
+        // TODO is app user topic necessary
+        hashToMessageIndexes[
+            keccak256(abi.encodePacked(address(0), msg.sender, topic))
         ].push(messagesLength);
 
         // Emit message sent using current messages length as the index
