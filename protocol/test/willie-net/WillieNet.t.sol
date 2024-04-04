@@ -385,6 +385,46 @@ contract WillieNetTest is
         net.getMessagesInRangeForHash(startIdx, endIdx, hashVal);
     }
 
+    function testGetMessagesInRangeNoMessages(
+        uint256 startIdx,
+        uint256 endIdx,
+        address app,
+        address user,
+        string calldata topic
+    ) public {
+        vm.assume(startIdx < 10);
+        vm.assume(endIdx < 10);
+        vm.assume(startIdx < endIdx);
+
+        assertEq(net.getMessagesInRange(startIdx, endIdx).length, 0);
+
+        assertEq(net.getMessagesInRangeForApp(startIdx, endIdx, app).length, 0);
+        assertEq(
+            net
+                .getMessagesInRangeForAppUser(startIdx, endIdx, app, user)
+                .length,
+            0
+        );
+        assertEq(
+            net
+                .getMessagesInRangeForAppUserTopic(
+                    startIdx,
+                    endIdx,
+                    app,
+                    user,
+                    topic
+                )
+                .length,
+            0
+        );
+        assertEq(
+            net
+                .getMessagesInRangeForAppTopic(startIdx, endIdx, app, topic)
+                .length,
+            0
+        );
+    }
+
     // Helpers
 
     function onERC721Received(
