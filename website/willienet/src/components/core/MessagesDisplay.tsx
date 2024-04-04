@@ -1,4 +1,8 @@
-import { NFT_GATED_CHAT_CONTRACT, WILLIE_NET_CONTRACT } from "@/app/constants";
+import {
+  NFT_GATED_CHAT_CONTRACT,
+  NULL_ADDRESS,
+  WILLIE_NET_CONTRACT,
+} from "@/app/constants";
 import { chainTimeToMilliseconds, getNftImages } from "@/app/utils";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
@@ -51,10 +55,11 @@ export default function MessagesDisplay(props: {
     : {
         abi: WILLIE_NET_CONTRACT.abi,
         address: WILLIE_NET_CONTRACT.address as any,
-        functionName: "getTotalMessagesCount",
+        functionName: "getTotalMessagesForAppCount",
         query: {
           refetchInterval: 2000,
         },
+        args: [NULL_ADDRESS],
       };
   const totalMessagesResult = useReadContract(totalMessagesReadContractArgs);
   const messagesResultsReadContractArgs = props.nftAddress
@@ -72,8 +77,8 @@ export default function MessagesDisplay(props: {
     : {
         abi: WILLIE_NET_CONTRACT.abi,
         address: WILLIE_NET_CONTRACT.address as any,
-        functionName: "getMessagesInRange",
-        args: [BigInt(0), totalMessagesResult.data],
+        functionName: "getMessagesInRangeForApp",
+        args: [BigInt(0), totalMessagesResult.data, NULL_ADDRESS],
       };
   const messagesResult = useReadContract(messagesResultsReadContractArgs);
   const onchainMessages =

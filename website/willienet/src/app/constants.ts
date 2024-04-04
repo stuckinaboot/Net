@@ -17,3 +17,5 @@ export const NFT_GATED_CHAT_CONTRACT = {
     : "0xabc",
   abi: nftGatedChatAbi,
 };
+
+export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";

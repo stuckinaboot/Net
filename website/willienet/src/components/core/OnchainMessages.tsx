@@ -22,11 +22,9 @@ import { testnetsEnabled } from "@/app/constants";
 
 const GLOBAL_CHAT_ROOM_ITEM = "Global";
 const ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM = "Onchain Steamboat Willies";
-const ONCHAIN_DINOS_CHAT_ROOM_ITEM = "Onchain Dinos";
 const CHAT_ROOM_ITEMS = [
   GLOBAL_CHAT_ROOM_ITEM,
   ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM,
-  ONCHAIN_DINOS_CHAT_ROOM_ITEM,
 ];
 
 function nftAddressFromChatRoomItem(chatRoomItem: string) {
