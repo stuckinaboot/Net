@@ -30,7 +30,10 @@ export default function NftSelectorDropdown(props: {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className={cn("min-w-56", props.className)} variant="outline">
+        <Button
+          className={cn("min-w-56 hover:bg-transparent", props.className)}
+          variant="outline"
+        >
           Sending messages as
           <div className="px-1" /> {renderItem(props.selectedItem)}
         </Button>

@@ -19,7 +19,10 @@ export default function ChatSelectorDropdown(props: {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className={cn("min-w-56", props.className)} variant="outline">
+        <Button
+          className={cn("min-w-56 hover:bg-transparent", props.className)}
+          variant="outline"
+        >
           Chat Room: {props.selected}
         </Button>
       </DropdownMenuTrigger>

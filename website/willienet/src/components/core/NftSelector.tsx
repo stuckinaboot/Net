@@ -10,8 +10,10 @@ export default function NftSelector(props: {
   onTokenIdClicked: (tokenId: string) => void;
 }) {
   const [nfts, setNfts] = useState<NftSelectorItem[]>([]);
+  const [loadingNfts, setLoadingNfts] = useState(false);
 
   useAsyncEffect(async () => {
+    setLoadingNfts(true);
     const ownedTokenIds = await getOwnedNftTokenIds({
       userAddress: props.userAddress,
       contractAddress: props.contractAddress,
@@ -27,6 +29,7 @@ export default function NftSelector(props: {
       }))
       .filter((item) => item.imgSrc != null) as NftSelectorItem[];
     setNfts(items);
+    setLoadingNfts(false);
     if (props.selectedTokenId == null && items.length > 0) {
       // Click on first token id to simulate it being selected when nfts are loaded
       props.onTokenIdClicked(items[0].tokenId);
@@ -38,7 +41,9 @@ export default function NftSelector(props: {
       ? nfts[0]
       : nfts.find((nft) => nft.tokenId === props.selectedTokenId) || nfts[0];
 
-  return nfts.length === 0 ? (
+  return loadingNfts ? (
+    "Loading your NFTs..."
+  ) : nfts.length === 0 ? (
     "We did not find any NFTs you own in this collection"
   ) : (
     <NftSelectorDropdown
