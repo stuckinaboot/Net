@@ -163,6 +163,7 @@ export default function MessagesDisplay(props: {
                 {nftMsgSenderTokenIds != null ? (
                   <>
                     Willie #{nftMsgSenderTokenIds[idx].toString()}{" "}
+                    {/* Making the image too big causes weird scroll issues on message send */}
                     <img src={nftMsgSenderImages[idx]} className="inline w-6" />
                   </>
                 ) : (
