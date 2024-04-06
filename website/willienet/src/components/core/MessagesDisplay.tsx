@@ -163,10 +163,7 @@ export default function MessagesDisplay(props: {
                 {nftMsgSenderTokenIds != null ? (
                   <>
                     Willie #{nftMsgSenderTokenIds[idx].toString()}{" "}
-                    <img
-                      src={nftMsgSenderImages[idx]}
-                      className="inline w-12"
-                    />
+                    <img src={nftMsgSenderImages[idx]} className="inline w-6" />
                   </>
                 ) : (
                   message.sender
