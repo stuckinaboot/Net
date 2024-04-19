@@ -276,19 +276,14 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 length = endIdx - startIdx;
         Message[] memory messagesSlice = new Message[](length);
         uint256 idxInMessages = startIdx;
-        uint256 actualSliceLength = 0;
         unchecked {
             for (uint256 i; i < length && idxInMessages < endIdx; ) {
                 messagesSlice[i] = messages[idxInMessages];
                 ++i;
                 ++idxInMessages;
-                ++actualSliceLength;
             }
         }
-        assembly {
-            // TODO check if need to add one or if this fine
-            mstore(messagesSlice, actualSliceLength)
-        }
+
         return messagesSlice;
     }
 
@@ -311,7 +306,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 length = endIdx - startIdx;
         Message[] memory messagesSlice = new Message[](length);
         uint256 idxInMessages = startIdx;
-        uint256 actualSliceLength = 0;
         unchecked {
             for (uint256 i; i < length && idxInMessages < endIdx; ) {
                 messagesSlice[i] = messages[
@@ -319,13 +313,9 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
                 ];
                 ++i;
                 ++idxInMessages;
-                ++actualSliceLength;
             }
         }
-        assembly {
-            // TODO check if need to add one or if this fine
-            mstore(messagesSlice, actualSliceLength)
-        }
+
         return messagesSlice;
     }
 
