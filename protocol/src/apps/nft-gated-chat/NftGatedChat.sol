@@ -56,12 +56,16 @@ contract NftGatedChat is EventsAndErrors {
         if (startIdx >= endIdx) {
             revert InvalidRange();
         }
+        uint256 querySetLength = nftMessageSenders[nftContract].length;
+        if (startIdx + 1 > querySetLength) {
+            revert InvalidStartIndex();
+        }
+        if (endIdx > querySetLength) {
+            revert InvalidEndIndex();
+        }
 
         uint256 length = endIdx - startIdx;
         uint256[] memory sendersSlice = new uint256[](length);
-        if (nftMessageSenders[nftContract].length == 0) {
-            return sendersSlice;
-        }
         uint256 idxInSenders = startIdx;
         unchecked {
             for (uint256 i; i < length && idxInSenders < endIdx; ) {
