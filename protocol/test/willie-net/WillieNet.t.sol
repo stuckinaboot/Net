@@ -46,26 +46,6 @@ contract WillieNetTest is
         nft.updatePublicMintEnabled(true);
     }
 
-    // function verifyMessage(
-    //     WillieNet.Message memory expectedMessage,
-    //     WillieNet.Message memory actualMessage
-    // ) public {
-    //     assertEq(actualMessage.app, expectedMessage.app);
-    //     assertEq(actualMessage.sender, expectedMessage.sender);
-    //     assertEq(actualMessage.timestamp, expectedMessage.timestamp);
-    //     assertEq(actualMessage.extraData, expectedMessage.extraData);
-    //     assertEq(actualMessage.message, expectedMessage.message);
-    //     assertEq(actualMessage.topic, expectedMessage.topic);
-    // }
-
-    // function sendAndVerifyMessage(
-    //     address user,
-    //     string memory messageContents,
-    //     string memory topic
-    // ) public {
-    //     sendAndVerifyMessage(user, address(0), messageContents, topic);
-    // }
-
     function sendAndVerifyMessage(
         address user,
         address app,
@@ -219,9 +199,6 @@ contract WillieNetTest is
         string calldata topic,
         bytes calldata extraData
     ) public {
-        // string
-        //     memory messageContents = "hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello hell";
-        // string memory topic = "Topic";
         sendAndVerifyMessage(
             address(this),
             app,
@@ -269,24 +246,15 @@ contract WillieNetTest is
     ) public {
         address user = users[0];
         string memory topic = "topic";
-        WillieNet.Message[] memory sentMsgs = new WillieNet.Message[](3);
-        for (uint256 i; i < sentMsgs.length; i++) {
-            sentMsgs[i] = IWillieNet.Message({
-                app: app,
-                sender: user,
-                timestamp: block.timestamp,
-                extraData: extraData,
-                message: Strings.toString(i),
-                topic: topic
-            });
-            sendAndVerifyMessage(
-                user,
-                app,
-                sentMsgs[i].message,
-                sentMsgs[i].topic,
-                extraData
-            );
-        }
+        address user = users[0];
+        string memory topic = "topic";
+        WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
+            5,
+            app,
+            user,
+            topic,
+            extraData
+        );
 
         // Check querying all messages works properly
         {
