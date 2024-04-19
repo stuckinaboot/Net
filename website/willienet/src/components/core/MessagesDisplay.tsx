@@ -3,7 +3,11 @@ import {
   NULL_ADDRESS,
   WILLIE_NET_CONTRACT,
 } from "@/app/constants";
-import { chainTimeToMilliseconds, getNftImages } from "@/app/utils";
+import {
+  chainTimeToMilliseconds,
+  getNftImages,
+  getUrlForSpecificMessageIndex,
+} from "@/app/utils";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import TimeAgo from "react-timeago";
@@ -13,6 +17,10 @@ import { isAddress } from "viem";
 import { useReadContract } from "wagmi";
 import isHtml from "is-html";
 import IframeRenderer from "./IFrameRenderer";
+import { CopyIcon } from "@radix-ui/react-icons";
+import { useToast } from "@/components/ui/use-toast";
+import copy from "copy-to-clipboard";
+import Link from "next/link";
 
 type OnchainMessage = {
   extraData: string;
@@ -35,12 +43,15 @@ type SanitizedOnchainMessage = {
 const RENDER_HTML = false;
 
 export default function MessagesDisplay(props: {
-  nftAddress?: string;
   scrollToBottom: () => void;
+  nftAddress?: string;
+  initialVisibleMessageIndex?: number;
 }) {
   const [nftMsgSenderImages, setNftMsgSenderImages] = useState<string[]>([]);
   const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
   const [firstLoadedMessages, setFirstLoadedMessages] = useState(false);
+  const specificMessageRef = useRef<HTMLDivElement | null>(null);
+  const { toast } = useToast();
 
   const totalMessagesReadContractArgs = props.nftAddress
     ? {
@@ -127,7 +138,8 @@ export default function MessagesDisplay(props: {
     // we attempt to scroll. Otherwise, we won't scroll at all
     setTimeout(() => {
       setFirstLoadedMessages(true);
-      props.scrollToBottom();
+      // props.scrollToBottom();
+      specificMessageRef.current?.scrollIntoView({ behavior: "instant" });
     }, 250);
   }, [sanitizedOnchainMessages.length, firstLoadedMessages]);
 
@@ -154,7 +166,15 @@ export default function MessagesDisplay(props: {
           <p className="flex text-left">Loading messages in NFT chat</p>
         ) : (
           messages.map((message, idx) => (
-            <div key={idx} className="flex flex-col">
+            <div
+              key={idx}
+              className="flex flex-col"
+              ref={
+                idx == props.initialVisibleMessageIndex
+                  ? specificMessageRef
+                  : undefined
+              }
+            >
               <p className="flex text-left">
                 {getRenderedMessage(message.message)}
               </p>
@@ -168,7 +188,25 @@ export default function MessagesDisplay(props: {
                   </>
                 ) : (
                   message.sender
-                )}
+                )}{" "}
+                | Message #{idx}{" "}
+                <button
+                  onClick={() => {
+                    const url = getUrlForSpecificMessageIndex(idx);
+                    copy(url);
+                    toast({
+                      title: "Copied link",
+                      description: (
+                        <>
+                          Successfully copied the link to message #{idx} to your
+                          clipboard
+                        </>
+                      ),
+                    });
+                  }}
+                >
+                  <CopyIcon />
+                </button>
               </p>
             </div>
           ))

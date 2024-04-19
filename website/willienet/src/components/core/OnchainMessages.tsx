@@ -13,7 +13,6 @@ import SendMessageSection from "./SendMessageSection";
 import { Separator } from "@/components/ui/separator";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { isAddress } from "viem";
-import useAsyncEffect from "use-async-effect";
 import MessagesDisplay from "./MessagesDisplay";
 import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
 import ChatSelectorDropdown from "./ChatSelectorDropdown";
@@ -38,7 +37,10 @@ function nftAddressFromChatRoomItem(chatRoomItem: string) {
   }
 }
 
-export default function OnchainMessages(props: { nftAddress?: string }) {
+export default function OnchainMessages(props: {
+  nftAddress?: string;
+  specificMessageIndex?: number;
+}) {
   const { isConnected, address: userAddress } = useAccount();
   const [chatRoom, setChatRoom] = useState(CHAT_ROOM_ITEMS[0]);
   const [selectedNftTokenId, setSelectedNftTokenId] = useState<string>();
@@ -123,6 +125,7 @@ export default function OnchainMessages(props: { nftAddress?: string }) {
       >
         <MessagesDisplay
           nftAddress={nftAddressFromItem ? nftAddressFromItem : undefined}
+          initialVisibleMessageIndex={props.specificMessageIndex}
           scrollToBottom={scrollToBottom}
         />
         <div ref={messagesEndRef} />

@@ -1,5 +1,11 @@
+import { WEBSITE_BASE_URL } from "./constants";
+
 export function chainTimeToMilliseconds(chainTime: number) {
   return chainTime * 1000;
+}
+
+export function getUrlForSpecificMessageIndex(specificMessageIndex: number) {
+  return `${WEBSITE_BASE_URL}?specificMessageIndex=${specificMessageIndex}`;
 }
 
 export async function getOwnedNftTokenIds(params: {

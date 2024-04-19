@@ -19,3 +19,9 @@ export const NFT_GATED_CHAT_CONTRACT = {
 };
 
 export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
+
+export const IS_PROD = process.env.NODE_ENV === "production";
+
+export const WEBSITE_BASE_URL = IS_PROD
+  ? "https://willienet.vercel.app"
+  : "http://localhost:3000";
