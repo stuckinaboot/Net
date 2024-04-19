@@ -263,7 +263,7 @@ contract WillieNetTest is
         sendAndVerifyMessage(users[2], app3, "message 3.3", "t3", extraData);
     }
 
-    function testSendMultipleMessagesAndQueryMessageRangeSingleUser(
+    function testSendMultipleMessagesAndQueryFullMessageRangeSingleUser(
         address app,
         bytes calldata extraData
     ) public {
@@ -337,8 +337,223 @@ contract WillieNetTest is
                 verifyMessage(expectedMessages[i], sentMsgs[i]);
             }
         }
+    }
 
-        // TODO check querying various ranges in each
+    function testSendMultipleMessagesAndQueryPartialMessageRangeForAllMessagesSingleUser(
+        address app,
+        bytes calldata extraData
+    ) public {
+        address user = users[0];
+        string memory topic = "topic";
+        WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
+            5,
+            app,
+            user,
+            topic,
+            extraData
+        );
+
+        // Check querying all messages works properly
+        {
+            // Query partial range from start
+            WillieNet.Message[] memory expectedMessages = net
+                .getMessagesInRange(0, 2);
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i]);
+            }
+
+            // Query partial range in middle
+            expectedMessages = net.getMessagesInRange(1, 4);
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i + 1]);
+            }
+
+            // Query partial range at end
+            expectedMessages = net.getMessagesInRange(2, 5);
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i + 2]);
+            }
+        }
+    }
+
+    function testSendMultipleMessagesAndQueryPartialMessageRangeForAppMessagesSingleUser(
+        address app,
+        bytes calldata extraData
+    ) public {
+        address user = users[0];
+        string memory topic = "topic";
+        WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
+            5,
+            app,
+            user,
+            topic,
+            extraData
+        );
+
+        // Check querying all messages works properly
+        {
+            // Query partial range from start
+            WillieNet.Message[] memory expectedMessages = net
+                .getMessagesInRangeForApp(0, 2, app);
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i]);
+            }
+
+            // Query partial range in middle
+            expectedMessages = net.getMessagesInRangeForApp(1, 4, app);
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i + 1]);
+            }
+
+            // Query partial range at end
+            expectedMessages = net.getMessagesInRangeForApp(2, 5, app);
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i + 2]);
+            }
+        }
+    }
+
+    function testSendMultipleMessagesAndQueryPartialMessageRangeForAppTopicMessagesSingleUser(
+        address app,
+        bytes calldata extraData
+    ) public {
+        address user = users[0];
+        string memory topic = "topic";
+        WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
+            5,
+            app,
+            user,
+            topic,
+            extraData
+        );
+
+        // Check querying all messages works properly
+        {
+            // Query partial range from start
+            WillieNet.Message[] memory expectedMessages = net
+                .getMessagesInRangeForAppTopic(0, 2, app, topic);
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i]);
+            }
+
+            // Query partial range in middle
+            expectedMessages = net.getMessagesInRangeForAppTopic(
+                1,
+                4,
+                app,
+                topic
+            );
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i + 1]);
+            }
+
+            // Query partial range at end
+            expectedMessages = net.getMessagesInRangeForAppTopic(
+                2,
+                5,
+                app,
+                topic
+            );
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i + 2]);
+            }
+        }
+    }
+
+    function testSendMultipleMessagesAndQueryPartialMessageRangeForAppUserTopicMessagesSingleUser(
+        address app,
+        bytes calldata extraData
+    ) public {
+        address user = users[0];
+        string memory topic = "topic";
+        WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
+            5,
+            app,
+            user,
+            topic,
+            extraData
+        );
+
+        // Check querying all messages works properly
+        {
+            // Query partial range from start
+            WillieNet.Message[] memory expectedMessages = net
+                .getMessagesInRangeForAppUserTopic(0, 2, app, user, topic);
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i]);
+            }
+
+            // Query partial range in middle
+            expectedMessages = net.getMessagesInRangeForAppUserTopic(
+                1,
+                4,
+                app,
+                user,
+                topic
+            );
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i + 1]);
+            }
+
+            // Query partial range at end
+            expectedMessages = net.getMessagesInRangeForAppUserTopic(
+                2,
+                5,
+                app,
+                user,
+                topic
+            );
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i + 2]);
+            }
+        }
+    }
+
+    function testSendMultipleMessagesAndQueryPartialMessageRangeForAppUserMessagesSingleUser(
+        address app,
+        bytes calldata extraData
+    ) public {
+        address user = users[0];
+        string memory topic = "topic";
+        WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
+            5,
+            app,
+            user,
+            topic,
+            extraData
+        );
+
+        // Check querying all messages works properly
+        {
+            // Query partial range from start
+            WillieNet.Message[] memory expectedMessages = net
+                .getMessagesInRangeForAppUser(0, 2, app, user);
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i]);
+            }
+
+            // Query partial range in middle
+            expectedMessages = net.getMessagesInRangeForAppUser(
+                1,
+                4,
+                app,
+                user
+            );
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i + 1]);
+            }
+
+            // Query partial range at end
+            expectedMessages = net.getMessagesInRangeForAppUser(
+                2,
+                5,
+                app,
+                user
+            );
+            for (uint256 i; i < expectedMessages.length; i++) {
+                verifyMessage(expectedMessages[i], sentMsgs[i + 2]);
+            }
+        }
     }
 
     function testSendEmptyMessageExpectsRevert(
@@ -462,6 +677,36 @@ contract WillieNetTest is
     }
 
     // Helpers
+
+    function sendAndVerifyMultipleMessages(
+        uint256 numMessages,
+        address app,
+        address user,
+        string memory topic,
+        bytes calldata extraData
+    ) public returns (WillieNet.Message[] memory) {
+        WillieNet.Message[] memory sentMsgs = new WillieNet.Message[](
+            numMessages
+        );
+        for (uint256 i; i < sentMsgs.length; i++) {
+            sentMsgs[i] = IWillieNet.Message({
+                app: app,
+                sender: user,
+                timestamp: block.timestamp,
+                extraData: extraData,
+                message: Strings.toString(i),
+                topic: topic
+            });
+            sendAndVerifyMessage(
+                user,
+                app,
+                sentMsgs[i].message,
+                sentMsgs[i].topic,
+                extraData
+            );
+        }
+        return sentMsgs;
+    }
 
     function onERC721Received(
         address,

@@ -5,6 +5,16 @@ import {WillieNet} from "../src/willie-net/WillieNet.sol";
 import {PRBTest} from "@prb/test/PRBTest.sol";
 
 contract TestUtils is PRBTest {
+    function verifyMessages(
+        WillieNet.Message[] memory expectedMessages,
+        WillieNet.Message[] memory actualMessages
+    ) public {
+        assertEq(expectedMessages.length, actualMessages.length);
+        for (uint256 i; i < expectedMessages.length; i++) {
+            verifyMessage(expectedMessages[i], actualMessages[i]);
+        }
+    }
+
     function verifyMessage(
         WillieNet.Message memory expectedMessage,
         WillieNet.Message memory actualMessage
