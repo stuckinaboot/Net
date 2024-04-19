@@ -11,7 +11,6 @@ import {Utils} from "./Utils.sol";
 /// @notice Fully decentralized onchain messaging protocol.
 contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     // Use a single global mapping to map hashes to message indexes
-    // TODO use address(0) to represent non-app messages
     mapping(bytes32 hashVal => uint256[] messageIndexes)
         public hashToMessageIndexes;
 
@@ -63,7 +62,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         ].push(messagesLength);
 
         // App-user-topic messages
-        // TODO is this one needed?
         hashToMessageIndexes[
             keccak256(
                 abi.encodePacked(
@@ -104,6 +102,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         // Track message index in topic and user mappings
         uint256 messagesLength = messages.length;
 
+        // address(0) is used to represent messages sent from "no app"
         hashToMessageIndexes[ZERO_HASH].push(messagesLength);
         hashToMessageIndexes[
             keccak256(
@@ -113,7 +112,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         hashToMessageIndexes[
             keccak256(abi.encodePacked(address(0), msg.sender))
         ].push(messagesLength);
-        // TODO is app user topic necessary
         hashToMessageIndexes[
             keccak256(
                 abi.encodePacked(
@@ -146,26 +144,6 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     // **************
 
     // Fetch message indexes
-
-    // function getMessageIdxForTopic(
-    //     uint256 idx,
-    //     string calldata topic
-    // ) external view returns (uint256) {
-    //     return
-    //         hashToMessageIndexes[
-    //             keccak256(abi.encodePacked(address(0), topic))
-    //         ][idx];
-    // }
-
-    // function getMessageIdxForUser(
-    //     uint256 idx,
-    //     address user
-    // ) external view returns (uint256) {
-    //     return
-    //         hashToMessageIndexes[keccak256(abi.encodePacked(address(0), user))][
-    //             idx
-    //         ];
-    // }
 
     function getMessageIdxForApp(
         uint256 idx,
@@ -300,13 +278,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 idxInMessages = startIdx;
         uint256 actualSliceLength = 0;
         unchecked {
-            for (
-                uint256 i;
-                i < length &&
-                    idxInMessages < endIdx &&
-                    idxInMessages < querySetLength;
-
-            ) {
+            for (uint256 i; i < length && idxInMessages < endIdx; ) {
                 messagesSlice[i] = messages[idxInMessages];
                 ++i;
                 ++idxInMessages;
@@ -341,13 +313,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
         uint256 idxInMessages = startIdx;
         uint256 actualSliceLength = 0;
         unchecked {
-            for (
-                uint256 i;
-                i < length &&
-                    idxInMessages < endIdx &&
-                    idxInMessages < querySetLength;
-
-            ) {
+            for (uint256 i; i < length && idxInMessages < endIdx; ) {
                 messagesSlice[i] = messages[
                     hashToMessageIndexes[hashVal][idxInMessages]
                 ];

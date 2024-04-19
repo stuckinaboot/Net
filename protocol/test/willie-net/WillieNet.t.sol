@@ -246,8 +246,6 @@ contract WillieNetTest is
     ) public {
         address user = users[0];
         string memory topic = "topic";
-        address user = users[0];
-        string memory topic = "topic";
         WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
             5,
             app,
