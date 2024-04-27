@@ -1,0 +1,9 @@
+@prb/test/=lib/prb-test/src/
+forge-std/=lib/forge-std/src/
+src/=src/
+@erc721a/=lib/ERC721A/contracts/
+@openzeppelin/=lib/openzeppelin-contracts/
+openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/
+@solady/=lib/solady/src/
+solmate/=lib/solady/lib/solmate/src
+utility-contracts/=lib/utility-contracts/src/
