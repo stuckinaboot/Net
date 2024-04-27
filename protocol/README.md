@@ -1,75 +1,25 @@
-# Willienet
+# WillieNet
 
-### TODOs
-- TODO consider fee for long messages to disincentivize spam
-- TODO use renderer for associating name to sender (make sure it's public!), pfp to sender (make sure it's public),
-- TODO goal is new renderers built on top of old renderer can still use those values and functions (e.g. new renderer setName could point to old renderer's set name)
-- etc.
+WillieNet is an onchain decentralized messaging protocol for EVM blockchains. Anybody can read messages and send message on WillieNet, where all messages live fully onchain and are easily queryable onchain. There is no cost to interact with WillieNet outside of gas fees.
 
+WillieNet intentionally stores all messages onchain in order to allow both smart contracts and off-chains to trivially access stored messages. While this does increase the gas costs of sending messages on WillieNet, this simplifies access for developers and serves the purpose of providing a fully onchain messaging protocol that other onchain projects can use and build on top of.
 
-## Foundry
+## Getting started
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+### Install dependencies
 
-Foundry consists of:
+`forge install`
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+### Run tests
 
-## Documentation
+To run all WillieNet tests, run: `forge test`
 
-https://book.getfoundry.sh/
+### Explore the code
 
-## Usage
+The core code is in `src/willie-net/WillieNet.sol`.
 
-### Build
+## Deploy
 
-```shell
-$ forge build
-```
+To deploy WillieNet, run: `forge script script/DeployWillienet.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast`
 
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+**NOTE: prior to official mainnet launch, this deployment approach will be updated to use create2 so that the same address can be used across chains**
