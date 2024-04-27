@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense } from "react";
+
 import { useSearchParams } from "next/navigation";
 import OnchainMessages from "../components/core/OnchainMessages";
 
@@ -14,5 +16,9 @@ export default function Home() {
     specificMessageIndex = undefined;
   }
 
-  return <OnchainMessages specificMessageIndex={specificMessageIndex} />;
+  return (
+    <Suspense>
+      <OnchainMessages specificMessageIndex={specificMessageIndex} />
+    </Suspense>
+  );
 }
