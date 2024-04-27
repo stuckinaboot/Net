@@ -24,9 +24,7 @@ The core code is in `src/willie-net/WillieNet.sol`.
 
 To deploy WillieNet, run: `forge script script/DeployWillienet.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast`
 
-**NOTE: prior to official mainnet launch, this deployment approach will be updated to use create2 so that the same address can be used across chains**
-
-## Generate efficient address
+## Generate efficient address for deployment
 
 ### Init code
 
