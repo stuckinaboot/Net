@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import OnchainMessages from "../components/core/OnchainMessages";
 
-export default function Home() {
+function Core() {
   const searchParams = useSearchParams();
   const specificMessageIndexParam = searchParams.get("specificMessageIndex");
   let specificMessageIndex =
@@ -16,9 +16,13 @@ export default function Home() {
     specificMessageIndex = undefined;
   }
 
+  return <OnchainMessages specificMessageIndex={specificMessageIndex} />;
+}
+
+export default function Home() {
   return (
     <Suspense>
-      <OnchainMessages specificMessageIndex={specificMessageIndex} />
+      <Core />
     </Suspense>
   );
 }
