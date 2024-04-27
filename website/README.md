@@ -1,6 +1,6 @@
 # WillieNet Dapp
 
-The WillieNet dapp provides access to both send and view WillieNet messages.
+The WillieNet dapp allows anyone to send and view WillieNet messages.
 
 ## Getting started
 
