@@ -29,11 +29,10 @@ contract GetWillieNetCreationCode is Script {
         string memory root = vm.projectRoot();
 
         // https://ethereum.stackexchange.com/questions/76334/what-is-the-difference-between-bytecode-init-code-deployed-bytecode-creation
-        bytes memory initCode = type(WillieNet).creationCode;
-        bytes32 creationCodeHash = keccak256(initCode);
-        console.logString("Init code hash:");
-        console.logBytes32(creationCodeHash);
-
-        vm.writeFile("./script/out/creation-code.bin", vm.toString(initCode));
+        bytes memory creationCode = type(WillieNet).creationCode;
+        vm.writeFile(
+            "./script/out/creation-code.bin",
+            vm.toString(creationCode)
+        );
     }
 }
