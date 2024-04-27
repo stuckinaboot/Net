@@ -15,7 +15,7 @@ contract DeployWillieNet is Script {
         string memory root = vm.projectRoot();
 
         vm.startBroadcast();
-        willieNet = new WillieNet();
+        willieNet = new WillieNet{salt: bytes32(0)}();
         vm.stopBroadcast();
     }
 }
