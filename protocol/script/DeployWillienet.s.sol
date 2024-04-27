@@ -14,11 +14,29 @@ contract DeployWillieNet is Script {
     function run() public {
         string memory root = vm.projectRoot();
 
+        bytes32 salt = 0x19b3995d061bd58ff68999f72293078998278a7afe7ab263fff653c89cdf9e5a;
+        address predictedAddress = address(
+            uint160(
+                uint(
+                    keccak256(
+                        abi.encodePacked(
+                            bytes1(0xff),
+                            address(0x4e59b44847b379578588920cA78FbF26c0B4956C),
+                            salt,
+                            keccak256(
+                                abi.encodePacked(type(WillieNet).creationCode)
+                            )
+                        )
+                    )
+                )
+            )
+        );
+        console.logString("Predicted address:");
+        console.logAddress(predictedAddress);
+
         vm.startBroadcast();
-        willieNet = new WillieNet{
-            salt: 0x4e59b44847b379578588920ca78fbf26c0b4956cbbf060c25139e9eb46000018
-        }();
-        console.logString("Address:");
+        willieNet = new WillieNet{salt: salt}();
+        console.logString("Actual address:");
         console.logAddress(address(willieNet));
         vm.stopBroadcast();
     }

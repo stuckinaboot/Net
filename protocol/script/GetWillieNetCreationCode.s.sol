@@ -33,5 +33,7 @@ contract GetWillieNetCreationCode is Script {
         bytes32 creationCodeHash = keccak256(initCode);
         console.logString("Init code hash:");
         console.logBytes32(creationCodeHash);
+
+        vm.writeFile("./script/out/creation-code.bin", vm.toString(initCode));
     }
 }
