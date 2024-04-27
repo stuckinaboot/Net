@@ -16,7 +16,7 @@ contract DeployWillieNet is Script {
 
         vm.startBroadcast();
         willieNet = new WillieNet{
-            salt: 0x4e59b44847b379578588920ca78fbf26c0b4956c073919017544a0fed5260008
+            salt: 0x4e59b44847b379578588920ca78fbf26c0b4956cbbf060c25139e9eb46000018
         }();
         console.logString("Address:");
         console.logAddress(address(willieNet));
