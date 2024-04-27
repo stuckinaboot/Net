@@ -14,7 +14,7 @@ contract DeployWillieNet is Script {
     function run() public {
         string memory root = vm.projectRoot();
 
-        bytes32 salt = 0x19b3995d061bd58ff68999f72293078998278a7afe7ab263fff653c89cdf9e5a;
+        bytes32 salt = 0x60166827df91d5dca5dc80461987c8188b945961a18aac7d9c5d641661bf3248;
         address predictedAddress = address(
             uint160(
                 uint(
