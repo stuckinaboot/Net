@@ -16,3 +16,9 @@
 [submodule "protocol/lib/openzeppelin-contracts"]
 	path = protocol/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "protocol/utilities/protocol/utilities/create2crunch"]
+	path = protocol/utilities/protocol/utilities/create2crunch
+	url = https://github.com/0age/create2crunch
+[submodule "protocol/utilities/create2crunch"]
+	path = protocol/utilities/create2crunch
+	url = https://github.com/0age/create2crunch

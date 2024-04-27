@@ -14,7 +14,7 @@
   solc = "0.8.20"
   src = "src"
   test = "test"
-  fs_permissions = [{ access = "read", path = "./"}]
+  fs_permissions = [{ access = "read", path = "./"}, { access = "write", path = "./"}]
 
 [profile.ci]
   fuzz = { runs = 10_000 }
