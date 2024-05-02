@@ -2,7 +2,7 @@
 pragma solidity >=0.8.17 .0;
 
 // TODO decide if this interface is needed
-interface IWillieNet {
+interface INet {
     // TODO update to include all relevant functions from Willienet main
     struct Message {
         address app;

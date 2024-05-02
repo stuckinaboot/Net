@@ -3,13 +3,13 @@ pragma solidity >=0.8.17 .0;
 
 import {EventsAndErrors} from "./EventsAndErrors.sol";
 import {Constants} from "./Constants.sol";
-import {IWillieNet} from "./IWillieNet.sol";
+import {INet} from "./INet.sol";
 import {Utils} from "./Utils.sol";
 
-/// @title WillieNet
+/// @title Net
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
-/// @notice Fully decentralized onchain messaging protocol.
-contract WillieNet is IWillieNet, EventsAndErrors, Constants {
+/// @notice Fully decentralized onchain messaging protocol
+contract Net is INet, EventsAndErrors, Constants {
     // Use a single global mapping to map hashes to message indexes
     mapping(bytes32 hashVal => uint256[] messageIndexes)
         public hashToMessageIndexes;

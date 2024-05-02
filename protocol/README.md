@@ -1,6 +1,6 @@
-# WillieNet
+# Net (AKA WillieNet)
 
-WillieNet is an onchain decentralized messaging protocol for EVM blockchains. Anybody can read messages and send message on WillieNet, where all messages live fully onchain and are easily queryable onchain. There is no cost to interact with WillieNet outside of gas fees.
+WillieNet, also known as Net for short, is an onchain decentralized messaging protocol for EVM blockchains. Anybody can read messages and send message on WillieNet, where all messages live fully onchain and are easily queryable onchain. There is no cost to interact with WillieNet outside of gas fees.
 
 WillieNet intentionally stores all messages onchain in order to allow both smart contracts and off-chains to trivially access stored messages. Additionally, each message stores all relevant metadata related to that message. While this does increase the gas costs of sending messages on WillieNet, this simplifies access for developers and serves the purpose of providing a fully onchain messaging protocol that other onchain projects can use and build on top of. This also bets on the belief that gas costs will continue to decrease in the future.
 
@@ -18,7 +18,7 @@ To run all WillieNet tests, run: `forge test`
 
 ### Explore the code
 
-The core code is in `src/willie-net/WillieNet.sol`.
+The core code is in `src/net/Net.sol`.
 
 ## Deploy
 

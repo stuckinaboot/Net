@@ -5,17 +5,17 @@ import {PRBTest} from "@prb/test/PRBTest.sol";
 import {console2} from "forge-std/console2.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
 import {StdStorage, stdStorage} from "forge-std/StdStorage.sol";
-import {WillieNet} from "../../src/willie-net/WillieNet.sol";
-import {IWillieNet} from "../../src/willie-net/IWillieNet.sol";
-import {Constants} from "../../src/willie-net/Constants.sol";
-import {EventsAndErrors} from "../../src/willie-net/EventsAndErrors.sol";
+import {Net} from "../../src/net/Net.sol";
+import {INet} from "../../src/net/Net.sol";
+import {Constants} from "../../src/net/Constants.sol";
+import {EventsAndErrors} from "../../src/net/EventsAndErrors.sol";
 import {IERC721A} from "@erc721a/ERC721A.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/interfaces/IERC721Receiver.sol";
 import {TestUtils} from "../TestUtils.sol";
 import {OnchainSteamboatWillie} from "../../src/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
 
-contract WillieNetTest is
+contract NetTest is
     TestUtils,
     EventsAndErrors,
     Constants,
@@ -29,7 +29,7 @@ contract WillieNetTest is
     // Test users
     address[10] users;
 
-    WillieNet public net = new WillieNet();
+    Net public net = new Net();
     OnchainSteamboatWillie public nft =
         new OnchainSteamboatWillie(bytes32(0), 0, 0);
 
@@ -93,7 +93,7 @@ contract WillieNetTest is
             return;
         }
 
-        WillieNet.Message memory expectedMessage = IWillieNet.Message({
+        Net.Message memory expectedMessage = INet.Message({
             app: app,
             sender: user,
             timestamp: block.timestamp,
@@ -104,7 +104,7 @@ contract WillieNetTest is
 
         // Verify message fetched via get message
         {
-            WillieNet.Message memory messageGlobal = net.getMessage(
+            Net.Message memory messageGlobal = net.getMessage(
                 currMessagesLength
             );
             verifyMessage(expectedMessage, messageGlobal);
@@ -112,7 +112,7 @@ contract WillieNetTest is
 
         // Verify message fetched via get message for app
         {
-            WillieNet.Message memory messageApp = net.getMessageForApp(
+            Net.Message memory messageApp = net.getMessageForApp(
                 net.getTotalMessagesForAppCount(app) - 1,
                 app
             );
@@ -135,7 +135,7 @@ contract WillieNetTest is
 
         // Verify message fetched via get message for topic
         {
-            WillieNet.Message memory messageTopic = net.getMessageForAppTopic(
+            Net.Message memory messageTopic = net.getMessageForAppTopic(
                 topicMessagesLength,
                 app,
                 topic
@@ -156,7 +156,7 @@ contract WillieNetTest is
                 app,
                 user
             );
-            WillieNet.Message memory messageUser = net.getMessageForAppUser(
+            Net.Message memory messageUser = net.getMessageForAppUser(
                 userMessagesLength - 1,
                 app,
                 user
@@ -175,7 +175,7 @@ contract WillieNetTest is
         {
             uint256 appUserTopicMessagesLength = net
                 .getTotalMessagesForAppUserTopicCount(app, user, topic);
-            WillieNet.Message memory messageAppUserTopic = net
+            Net.Message memory messageAppUserTopic = net
                 .getMessageForAppUserTopic(
                     appUserTopicMessagesLength - 1,
                     app,
@@ -246,7 +246,7 @@ contract WillieNetTest is
     ) public {
         address user = users[0];
         string memory topic = "topic";
-        WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
+        Net.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
             5,
             app,
             user,
@@ -257,8 +257,10 @@ contract WillieNetTest is
         // Check querying all messages works properly
         {
             uint256 maxEndIdx = net.getTotalMessagesCount();
-            WillieNet.Message[] memory expectedMessages = net
-                .getMessagesInRange(0, maxEndIdx);
+            Net.Message[] memory expectedMessages = net.getMessagesInRange(
+                0,
+                maxEndIdx
+            );
             for (uint256 i; i < expectedMessages.length; i++) {
                 verifyMessage(expectedMessages[i], sentMsgs[i]);
             }
@@ -266,7 +268,7 @@ contract WillieNetTest is
 
         {
             uint256 maxEndIdx = net.getTotalMessagesForAppCount(app);
-            WillieNet.Message[] memory expectedMessages = net
+            Net.Message[] memory expectedMessages = net
                 .getMessagesInRangeForApp(0, maxEndIdx, app);
             for (uint256 i; i < expectedMessages.length; i++) {
                 verifyMessage(expectedMessages[i], sentMsgs[i]);
@@ -275,7 +277,7 @@ contract WillieNetTest is
 
         {
             uint256 maxEndIdx = net.getTotalMessagesForAppUserCount(app, user);
-            WillieNet.Message[] memory expectedMessages = net
+            Net.Message[] memory expectedMessages = net
                 .getMessagesInRangeForAppUser(0, maxEndIdx, app, user);
             for (uint256 i; i < expectedMessages.length; i++) {
                 verifyMessage(expectedMessages[i], sentMsgs[i]);
@@ -291,7 +293,7 @@ contract WillieNetTest is
             if (maxEndIdx == 0) {
                 vm.expectRevert(EventsAndErrors.InvalidRange.selector);
             }
-            WillieNet.Message[] memory expectedMessages = net
+            Net.Message[] memory expectedMessages = net
                 .getMessagesInRangeForAppUserTopic(
                     0,
                     maxEndIdx,
@@ -311,7 +313,7 @@ contract WillieNetTest is
     ) public {
         address user = users[0];
         string memory topic = "topic";
-        WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
+        Net.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
             5,
             app,
             user,
@@ -322,8 +324,10 @@ contract WillieNetTest is
         // Check querying all messages works properly
         {
             // Query partial range from start
-            WillieNet.Message[] memory expectedMessages = net
-                .getMessagesInRange(0, 2);
+            Net.Message[] memory expectedMessages = net.getMessagesInRange(
+                0,
+                2
+            );
             for (uint256 i; i < expectedMessages.length; i++) {
                 verifyMessage(expectedMessages[i], sentMsgs[i]);
             }
@@ -348,7 +352,7 @@ contract WillieNetTest is
     ) public {
         address user = users[0];
         string memory topic = "topic";
-        WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
+        Net.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
             5,
             app,
             user,
@@ -359,7 +363,7 @@ contract WillieNetTest is
         // Check querying all messages works properly
         {
             // Query partial range from start
-            WillieNet.Message[] memory expectedMessages = net
+            Net.Message[] memory expectedMessages = net
                 .getMessagesInRangeForApp(0, 2, app);
             for (uint256 i; i < expectedMessages.length; i++) {
                 verifyMessage(expectedMessages[i], sentMsgs[i]);
@@ -385,7 +389,7 @@ contract WillieNetTest is
     ) public {
         address user = users[0];
         string memory topic = "topic";
-        WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
+        Net.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
             5,
             app,
             user,
@@ -396,7 +400,7 @@ contract WillieNetTest is
         // Check querying all messages works properly
         {
             // Query partial range from start
-            WillieNet.Message[] memory expectedMessages = net
+            Net.Message[] memory expectedMessages = net
                 .getMessagesInRangeForAppTopic(0, 2, app, topic);
             for (uint256 i; i < expectedMessages.length; i++) {
                 verifyMessage(expectedMessages[i], sentMsgs[i]);
@@ -432,7 +436,7 @@ contract WillieNetTest is
     ) public {
         address user = users[0];
         string memory topic = "topic";
-        WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
+        Net.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
             5,
             app,
             user,
@@ -443,7 +447,7 @@ contract WillieNetTest is
         // Check querying all messages works properly
         {
             // Query partial range from start
-            WillieNet.Message[] memory expectedMessages = net
+            Net.Message[] memory expectedMessages = net
                 .getMessagesInRangeForAppUserTopic(0, 2, app, user, topic);
             for (uint256 i; i < expectedMessages.length; i++) {
                 verifyMessage(expectedMessages[i], sentMsgs[i]);
@@ -481,7 +485,7 @@ contract WillieNetTest is
     ) public {
         address user = users[0];
         string memory topic = "topic";
-        WillieNet.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
+        Net.Message[] memory sentMsgs = sendAndVerifyMultipleMessages(
             5,
             app,
             user,
@@ -492,7 +496,7 @@ contract WillieNetTest is
         // Check querying all messages works properly
         {
             // Query partial range from start
-            WillieNet.Message[] memory expectedMessages = net
+            Net.Message[] memory expectedMessages = net
                 .getMessagesInRangeForAppUser(0, 2, app, user);
             for (uint256 i; i < expectedMessages.length; i++) {
                 verifyMessage(expectedMessages[i], sentMsgs[i]);
@@ -650,12 +654,10 @@ contract WillieNetTest is
         address user,
         string memory topic,
         bytes calldata extraData
-    ) public returns (WillieNet.Message[] memory) {
-        WillieNet.Message[] memory sentMsgs = new WillieNet.Message[](
-            numMessages
-        );
+    ) public returns (Net.Message[] memory) {
+        Net.Message[] memory sentMsgs = new Net.Message[](numMessages);
         for (uint256 i; i < sentMsgs.length; i++) {
-            sentMsgs[i] = IWillieNet.Message({
+            sentMsgs[i] = INet.Message({
                 app: app,
                 sender: user,
                 timestamp: block.timestamp,

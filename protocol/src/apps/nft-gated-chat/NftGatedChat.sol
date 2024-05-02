@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17 .0;
 
-import {WillieNet} from "../../willie-net/WillieNet.sol";
+import {Net} from "../../net/Net.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {EventsAndErrors} from "./EventsAndErrors.sol";
@@ -9,13 +9,13 @@ import {EventsAndErrors} from "./EventsAndErrors.sol";
 /// @title NftGatedChat
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
 contract NftGatedChat is EventsAndErrors {
-    WillieNet net;
+    Net net;
 
     // Track a mapping of each NFT contract to message sender token id
     mapping(address nftContract => uint256[]) public nftMessageSenders;
 
-    constructor(address willieNet) {
-        net = WillieNet(willieNet);
+    constructor(address net) {
+        net = Net(net);
     }
 
     function sendMessage(

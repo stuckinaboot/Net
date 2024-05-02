@@ -2,12 +2,12 @@
 pragma solidity >=0.8.17 .0;
 
 import {Script, console} from "forge-std/Script.sol";
-import {WillieNet} from "../src/willie-net/WillieNet.sol";
+import {Net} from "../src/net/Net.sol";
 
 /// @dev See the Solidity Scripting tutorial: https://book.getfoundry.sh/tutorials/solidity-scripting
-contract DeployWillieNet is Script {
+contract DeployNet is Script {
     address internal deployer;
-    WillieNet internal willieNet;
+    Net internal willieNet;
 
     function setUp() public virtual {}
 
@@ -23,9 +23,7 @@ contract DeployWillieNet is Script {
                             bytes1(0xff),
                             address(0x4e59b44847b379578588920cA78FbF26c0B4956C),
                             salt,
-                            keccak256(
-                                abi.encodePacked(type(WillieNet).creationCode)
-                            )
+                            keccak256(abi.encodePacked(type(Net).creationCode))
                         )
                     )
                 )
@@ -35,7 +33,7 @@ contract DeployWillieNet is Script {
         console.logAddress(predictedAddress);
 
         vm.startBroadcast();
-        willieNet = new WillieNet{salt: salt}();
+        willieNet = new Net{salt: salt}();
         vm.stopBroadcast();
 
         console.logString("Actual address:");

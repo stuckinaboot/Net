@@ -3,7 +3,7 @@ pragma solidity >=0.8.17 .0;
 
 import {IRenderer} from "./IRenderer.sol";
 import {TwoStepOwnable} from "./TwoStepOwnable.sol";
-import {WillieNet} from "../willie-net/WillieNet.sol";
+import {Net} from "../net/Net.sol";
 import {EventsAndErrors} from "./EventsAndErrors.sol";
 import {IERC721} from "@openzeppelin/contracts/interfaces/IERC721.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
@@ -30,10 +30,10 @@ contract Renderer is ERC721A, EventsAndErrors, TwoStepOwnable {
     uint256 constant NUM_MESSAGES_TO_FETCH = 1000;
     uint256 constant MAX_MESSAGE_BYTES_LENGTH = 250;
 
-    WillieNet willieNet;
+    Net willieNet;
 
     constructor(address willieNetAddr) ERC721A("Test renderer", "RDR") {
-        willieNet = WillieNet(willieNetAddr);
+        willieNet = Net(willieNetAddr);
     }
 
     function _startTokenId() internal pure override returns (uint256) {
@@ -218,7 +218,7 @@ contract Renderer is ERC721A, EventsAndErrors, TwoStepOwnable {
                 totalMessagesRecordedInOutput < NUM_MESSAGES_TO_FETCH &&
                 currIdxInMessagesFromWillienet >= 0
             ) {
-                WillieNet.Message memory message = willieNet.getMessage(
+                Net.Message memory message = willieNet.getMessage(
                     currIdxInMessagesFromWillienet
                 );
                 if (bytes(message.message).length < MAX_MESSAGE_BYTES_LENGTH) {
