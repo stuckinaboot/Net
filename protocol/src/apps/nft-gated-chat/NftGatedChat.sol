@@ -14,8 +14,8 @@ contract NftGatedChat is EventsAndErrors {
     // Track a mapping of each NFT contract to message sender token id
     mapping(address nftContract => uint256[]) public nftMessageSenders;
 
-    constructor(address net) {
-        net = Net(net);
+    constructor(address netAddr) {
+        net = Net(netAddr);
     }
 
     function sendMessage(
