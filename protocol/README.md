@@ -22,7 +22,7 @@ The core code is in `src/net/Net.sol`.
 
 ## Deploy
 
-To deploy WillieNet, run: `forge script script/DeployWillienet.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast`
+To deploy WillieNet, run: `forge script script/DeployNet.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast`
 
 ## Generate efficient address for deployment
 
@@ -45,11 +45,11 @@ Salt: 0x19b3995d061bd58ff68999f72293078998278a7afe7ab263fff653c89cdf9e5a (116251
 
 ### Use the salt
 
-Copy the salt for the desired address you want WillieNet to deploy to the `salt` field in deploying the contract for DeployWillieNet.s.sol
+Copy the salt for the desired address you want WillieNet to deploy to the `salt` field in deploying the contract for DeployNet.s.sol
 
 ### Simulate deployment
 
-Run `forge script script/DeployWillienet.s.sol`. You should see the address for that particular salt that was found via create2 printed and should match the predicted address.
+Run `forge script script/DeployNet.s.sol`. You should see the address for that particular salt that was found via create2 printed and should match the predicted address.
 
 # References
 

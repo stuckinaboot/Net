@@ -6,7 +6,7 @@ import {Net} from "../src/net/Net.sol";
 import {NftGatedChat} from "../src/apps/nft-gated-chat/NftGatedChat.sol";
 
 /// @dev See the Solidity Scripting tutorial: https://book.getfoundry.sh/tutorials/solidity-scripting
-contract DeployWillieNetAndNftGatedChat is Script {
+contract DeployNetAndNftGatedChat is Script {
     address internal deployer;
     Net internal willieNet;
     NftGatedChat internal chat;

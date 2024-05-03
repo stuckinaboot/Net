@@ -4,7 +4,6 @@ pragma solidity >=0.8.17 .0;
 import {EventsAndErrors} from "./EventsAndErrors.sol";
 import {Constants} from "./Constants.sol";
 import {INet} from "./INet.sol";
-import {Utils} from "./Utils.sol";
 
 /// @title Net
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
