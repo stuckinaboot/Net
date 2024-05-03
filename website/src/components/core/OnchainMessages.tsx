@@ -48,6 +48,7 @@ export default function OnchainMessages(props: {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [ready, setReady] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -66,6 +67,11 @@ export default function OnchainMessages(props: {
       top > containerTop && bottom > containerTop + scrollContainer.clientHeight
     );
   }
+
+  useEffect(() => {
+    // Component mounted
+    setReady(true);
+  }, []);
 
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -87,7 +93,7 @@ export default function OnchainMessages(props: {
 
   const nftAddressFromItem = nftAddressFromChatRoomItem(chatRoom);
 
-  const disableSendMessageSection = !isConnected;
+  const disableSendMessageSection = ready && !isConnected;
   return (
     <Card className="w-full h-full flex flex-col">
       <CardHeader className="flex flex-col">
