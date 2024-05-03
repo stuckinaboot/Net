@@ -7,7 +7,6 @@ import {StdCheats} from "forge-std/StdCheats.sol";
 import {StdStorage, stdStorage} from "forge-std/StdStorage.sol";
 import {Net} from "../../src/net/Net.sol";
 import {INet} from "../../src/net/Net.sol";
-import {Constants} from "../../src/net/Constants.sol";
 import {EventsAndErrors} from "../../src/net/EventsAndErrors.sol";
 import {IERC721A} from "@erc721a/ERC721A.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
@@ -15,13 +14,7 @@ import {IERC721Receiver} from "@openzeppelin/contracts/interfaces/IERC721Receive
 import {TestUtils} from "../TestUtils.sol";
 import {OnchainSteamboatWillie} from "../../src/onchain-steamboat-willie/OnchainSteamboatWillie.sol";
 
-contract NetTest is
-    TestUtils,
-    EventsAndErrors,
-    Constants,
-    StdCheats,
-    IERC721Receiver
-{
+contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
     using stdStorage for StdStorage;
 
     StdStorage private stdstore;

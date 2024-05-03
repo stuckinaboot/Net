@@ -6,7 +6,6 @@ import {console2} from "forge-std/console2.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
 import {StdStorage, stdStorage} from "forge-std/StdStorage.sol";
 import {Net} from "../../src/net/Net.sol";
-import {Constants} from "../../src/net/Constants.sol";
 import {IERC721A} from "@erc721a/ERC721A.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Utils} from "../../src/renderer/Utils.sol";

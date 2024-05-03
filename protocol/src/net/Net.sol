@@ -2,13 +2,12 @@
 pragma solidity >=0.8.17 .0;
 
 import {EventsAndErrors} from "./EventsAndErrors.sol";
-import {Constants} from "./Constants.sol";
 import {INet} from "./INet.sol";
 
 /// @title Net
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
 /// @notice Fully decentralized onchain messaging protocol
-contract Net is INet, EventsAndErrors, Constants {
+contract Net is INet, EventsAndErrors {
     // Use a single global mapping to map hashes to message indexes
     mapping(bytes32 hashVal => uint256[] messageIndexes)
         public hashToMessageIndexes;
