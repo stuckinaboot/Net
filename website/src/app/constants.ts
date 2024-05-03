@@ -6,14 +6,14 @@ export const testnetsEnabled =
 
 export const WILLIE_NET_CONTRACT = {
   address: testnetsEnabled
-    ? "0xa84cc9d1814b41b32baf692dce1d3b15623e333f"
+    ? "0x000000dceb2eee94ed932c3d1d247fe89af0a5bd"
     : "0xabc",
   abi: willienetAbi,
 };
 
 export const NFT_GATED_CHAT_CONTRACT = {
   address: testnetsEnabled
-    ? "0xDB4EAB0C91ac1483d5c25E615dfa0b3993E442C2"
+    ? "0xbe70138e5478690302eed6044737ef081fcc6218"
     : "0xabc",
   abi: nftGatedChatAbi,
 };

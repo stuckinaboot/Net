@@ -1,63 +1,65 @@
 [
   {
-    "type": "constructor",
     "inputs": [
-      { "name": "willieNet", "type": "address", "internalType": "address" }
+      { "internalType": "address", "name": "netAddr", "type": "address" }
     ],
-    "stateMutability": "nonpayable"
+    "stateMutability": "nonpayable",
+    "type": "constructor"
   },
+  { "inputs": [], "name": "InvalidEndIndex", "type": "error" },
+  { "inputs": [], "name": "InvalidRange", "type": "error" },
+  { "inputs": [], "name": "InvalidStartIndex", "type": "error" },
+  { "inputs": [], "name": "MsgSenderNotOwnerOfNft", "type": "error" },
   {
-    "type": "function",
-    "name": "getMessageSender",
     "inputs": [
-      { "name": "nftContract", "type": "address", "internalType": "address" },
-      { "name": "idx", "type": "uint256", "internalType": "uint256" }
+      { "internalType": "uint256", "name": "value", "type": "uint256" },
+      { "internalType": "uint256", "name": "length", "type": "uint256" }
     ],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getMessageSendersInRange",
-    "inputs": [
-      { "name": "nftContract", "type": "address", "internalType": "address" },
-      { "name": "startIdx", "type": "uint256", "internalType": "uint256" },
-      { "name": "endIdx", "type": "uint256", "internalType": "uint256" }
-    ],
-    "outputs": [
-      { "name": "", "type": "uint256[]", "internalType": "uint256[]" }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "nftMessageSenders",
-    "inputs": [
-      { "name": "nftContract", "type": "address", "internalType": "address" },
-      { "name": "", "type": "uint256", "internalType": "uint256" }
-    ],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "sendMessage",
-    "inputs": [
-      { "name": "nftContract", "type": "address", "internalType": "address" },
-      { "name": "nftTokenId", "type": "uint256", "internalType": "uint256" },
-      { "name": "message", "type": "string", "internalType": "string" }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  { "type": "error", "name": "InvalidRange", "inputs": [] },
-  { "type": "error", "name": "MsgSenderNotOwnerOfNft", "inputs": [] },
-  {
-    "type": "error",
     "name": "StringsInsufficientHexLength",
+    "type": "error"
+  },
+  {
     "inputs": [
-      { "name": "value", "type": "uint256", "internalType": "uint256" },
-      { "name": "length", "type": "uint256", "internalType": "uint256" }
-    ]
+      { "internalType": "address", "name": "nftContract", "type": "address" },
+      { "internalType": "uint256", "name": "idx", "type": "uint256" }
+    ],
+    "name": "getMessageSender",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "nftContract", "type": "address" },
+      { "internalType": "uint256", "name": "startIdx", "type": "uint256" },
+      { "internalType": "uint256", "name": "endIdx", "type": "uint256" }
+    ],
+    "name": "getMessageSendersInRange",
+    "outputs": [
+      { "internalType": "uint256[]", "name": "", "type": "uint256[]" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "nftContract", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "name": "nftMessageSenders",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "nftContract", "type": "address" },
+      { "internalType": "uint256", "name": "nftTokenId", "type": "uint256" },
+      { "internalType": "string", "name": "message", "type": "string" }
+    ],
+    "name": "sendMessage",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   }
 ]
