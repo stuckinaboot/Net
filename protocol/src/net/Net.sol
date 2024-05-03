@@ -32,12 +32,12 @@ contract Net is INet, EventsAndErrors, Constants {
 
     function sendMessageViaApp(
         address sender,
-        string calldata message,
+        string calldata text,
         string calldata topic,
         bytes calldata extraData
     ) external {
         // Revert if message length is none to prevent empty messages
-        if (bytes(message).length == 0) {
+        if (bytes(text).length == 0 && bytes(extraData).length == 0) {
             revert MsgEmpty();
         }
 
@@ -82,7 +82,7 @@ contract Net is INet, EventsAndErrors, Constants {
                 app: msg.sender,
                 sender: sender,
                 extraData: extraData,
-                message: message,
+                text: text,
                 topic: topic,
                 timestamp: block.timestamp
             })
@@ -90,12 +90,12 @@ contract Net is INet, EventsAndErrors, Constants {
     }
 
     function sendMessage(
-        string calldata message,
+        string calldata text,
         string calldata topic,
         bytes calldata extraData
     ) external {
         // Revert if message length is none to prevent empty messages
-        if (bytes(message).length == 0) {
+        if (bytes(text).length == 0 && bytes(extraData).length == 0) {
             revert MsgEmpty();
         }
 
@@ -132,7 +132,7 @@ contract Net is INet, EventsAndErrors, Constants {
                 app: address(0),
                 sender: msg.sender,
                 extraData: extraData,
-                message: message,
+                text: text,
                 topic: topic,
                 timestamp: block.timestamp
             })

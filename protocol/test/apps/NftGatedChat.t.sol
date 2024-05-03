@@ -60,11 +60,11 @@ contract NftGatedChatTest is
             sender: users[0],
             timestamp: block.timestamp,
             extraData: "",
-            message: "Hello, world!",
+            text: "Hello, world!",
             topic: Strings.toHexString(uint160(address(nft)), 20)
         });
 
-        chat.sendMessage(address(nft), 1, expectedMessage.message);
+        chat.sendMessage(address(nft), 1, expectedMessage.text);
 
         verifyMessage(expectedMessage, net.getMessage(0));
         assertEq(chat.getMessageSender(address(nft), 0), 1);

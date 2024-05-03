@@ -221,7 +221,7 @@ contract Renderer is ERC721A, EventsAndErrors, TwoStepOwnable {
                 Net.Message memory message = willieNet.getMessage(
                     currIdxInMessagesFromWillienet
                 );
-                if (bytes(message.message).length < MAX_MESSAGE_BYTES_LENGTH) {
+                if (bytes(message.text).length < MAX_MESSAGE_BYTES_LENGTH) {
                     // TODO figure out if we want [ ] or { } or something for storing in JS
                     // Add comma and start quote
                     if (idxInOutput > 1) {
@@ -231,8 +231,8 @@ contract Renderer is ERC721A, EventsAndErrors, TwoStepOwnable {
                     output[idxInOutput++] = '"';
 
                     // Store message
-                    for (uint256 i; i < bytes(message.message).length; ++i) {
-                        output[idxInOutput] = bytes(message.message)[i];
+                    for (uint256 i; i < bytes(message.text).length; ++i) {
+                        output[idxInOutput] = bytes(message.text)[i];
                         ++idxInOutput;
                     }
                     // Add end quote

@@ -53,17 +53,14 @@ contract NetTest is
         string memory topic,
         bytes memory extraData
     ) public {
-        bool isEmptyMessageContents = bytes(messageContents).length == 0;
+        bool isEmptyMessageContents = bytes(messageContents).length == 0 &&
+            bytes(extraData).length == 0;
 
         uint256 currMessagesLength = net.getTotalMessagesCount();
         uint256 topicMessagesLength = net.getTotalMessagesForAppTopicCount(
             app,
             topic
         );
-        // uint256 userMessagesLength = net.getTotalMessagesForAppUserCount(
-        //     app,
-        //     user
-        // );
 
         if (app != address(0)) {
             // Send message via app
@@ -98,7 +95,7 @@ contract NetTest is
             sender: user,
             timestamp: block.timestamp,
             extraData: extraData,
-            message: messageContents,
+            text: messageContents,
             topic: topic
         });
 
@@ -528,9 +525,21 @@ contract NetTest is
 
     function testSendEmptyMessageExpectsRevert(
         address app,
+        string calldata text,
         bytes calldata extraData
     ) public {
+        vm.assume(bytes(text).length > 0);
+        vm.assume(bytes(extraData).length > 0);
+
+        // Just empty text
         sendAndVerifyMessage(users[0], app, "", "Topic", extraData);
+
+        // Just empty extraData
+        bytes memory empty;
+        sendAndVerifyMessage(users[0], app, text, "Topic", empty);
+
+        // Both empty text and extra data
+        sendAndVerifyMessage(users[0], app, "", "Topic", empty);
     }
 
     function testGetMessagesInRangeInvalidRangeReverts(
@@ -662,13 +671,13 @@ contract NetTest is
                 sender: user,
                 timestamp: block.timestamp,
                 extraData: extraData,
-                message: Strings.toString(i),
+                text: Strings.toString(i),
                 topic: topic
             });
             sendAndVerifyMessage(
                 user,
                 app,
-                sentMsgs[i].message,
+                sentMsgs[i].text,
                 sentMsgs[i].topic,
                 extraData
             );

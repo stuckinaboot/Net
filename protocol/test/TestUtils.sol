@@ -23,7 +23,7 @@ contract TestUtils is PRBTest {
         assertEq(actualMessage.sender, expectedMessage.sender);
         assertEq(actualMessage.timestamp, expectedMessage.timestamp);
         assertEq(actualMessage.extraData, expectedMessage.extraData);
-        assertEq(actualMessage.message, expectedMessage.message);
+        assertEq(actualMessage.text, expectedMessage.text);
         assertEq(actualMessage.topic, expectedMessage.topic);
     }
 }
