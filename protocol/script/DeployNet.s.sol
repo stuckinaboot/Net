@@ -14,7 +14,7 @@ contract DeployNet is Script {
     function run() public {
         string memory root = vm.projectRoot();
 
-        bytes32 salt = 0x55907c168c574e27db88b930067414f206b306245c0f5212497ad7aad3c0c8a4;
+        bytes32 salt = 0xeef2100da60bafc7402aacb06b31cff098a50e334bf4e6678bbf4ebe99c5b16e;
         address predictedAddress = address(
             uint160(
                 uint(
