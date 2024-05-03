@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 
 import { useSearchParams } from "next/navigation";
-import OnchainMessages from "../components/core/OnchainMessages";
+import WillieNetDapp from "../components/core/OnchainMessages";
 
 function Core() {
   const searchParams = useSearchParams();
@@ -16,7 +16,7 @@ function Core() {
     specificMessageIndex = undefined;
   }
 
-  return <OnchainMessages specificMessageIndex={specificMessageIndex} />;
+  return <WillieNetDapp specificMessageIndex={specificMessageIndex} />;
 }
 
 export default function Home() {

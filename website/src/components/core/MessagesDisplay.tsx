@@ -24,7 +24,7 @@ import Link from "next/link";
 
 type OnchainMessage = {
   extraData: string;
-  message: string;
+  text: string;
   sender: string;
   app: string;
   timestamp: BigInt;
@@ -35,7 +35,7 @@ type SanitizedOnchainMessage = {
   sender: string;
   timestamp: number;
   extraData: string;
-  message: string;
+  text: string;
   app: string;
   topic: string;
 };
@@ -176,7 +176,7 @@ export default function MessagesDisplay(props: {
               }
             >
               <p className="flex text-left">
-                {getRenderedMessage(message.message)}
+                {getRenderedMessage(message.text)}
               </p>
               <p className="flex justify-end">
                 <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}

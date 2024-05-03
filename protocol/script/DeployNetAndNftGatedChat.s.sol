@@ -17,8 +17,12 @@ contract DeployNetAndNftGatedChat is Script {
         string memory root = vm.projectRoot();
 
         vm.startBroadcast();
-        willieNet = new Net();
+        bytes32 salt = 0x55907c168c574e27db88b930067414f206b306245c0f5212497ad7aad3c0c8a4;
+        willieNet = new Net{salt: salt}();
         chat = new NftGatedChat(address(willieNet));
         vm.stopBroadcast();
+
+        console.logString("Net address:");
+        console.logAddress(address(willieNet));
     }
 }

@@ -7,7 +7,7 @@
       {
         "name": "",
         "type": "tuple",
-        "internalType": "struct IWillieNet.Message",
+        "internalType": "struct INet.Message",
         "components": [
           { "name": "app", "type": "address", "internalType": "address" },
           { "name": "sender", "type": "address", "internalType": "address" },
@@ -17,7 +17,7 @@
             "internalType": "uint256"
           },
           { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-          { "name": "message", "type": "string", "internalType": "string" },
+          { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
       }
@@ -35,7 +35,7 @@
       {
         "name": "",
         "type": "tuple",
-        "internalType": "struct IWillieNet.Message",
+        "internalType": "struct INet.Message",
         "components": [
           { "name": "app", "type": "address", "internalType": "address" },
           { "name": "sender", "type": "address", "internalType": "address" },
@@ -45,7 +45,7 @@
             "internalType": "uint256"
           },
           { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-          { "name": "message", "type": "string", "internalType": "string" },
+          { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
       }
@@ -64,7 +64,7 @@
       {
         "name": "",
         "type": "tuple",
-        "internalType": "struct IWillieNet.Message",
+        "internalType": "struct INet.Message",
         "components": [
           { "name": "app", "type": "address", "internalType": "address" },
           { "name": "sender", "type": "address", "internalType": "address" },
@@ -74,7 +74,7 @@
             "internalType": "uint256"
           },
           { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-          { "name": "message", "type": "string", "internalType": "string" },
+          { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
       }
@@ -93,7 +93,7 @@
       {
         "name": "",
         "type": "tuple",
-        "internalType": "struct IWillieNet.Message",
+        "internalType": "struct INet.Message",
         "components": [
           { "name": "app", "type": "address", "internalType": "address" },
           { "name": "sender", "type": "address", "internalType": "address" },
@@ -103,7 +103,7 @@
             "internalType": "uint256"
           },
           { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-          { "name": "message", "type": "string", "internalType": "string" },
+          { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
       }
@@ -123,7 +123,7 @@
       {
         "name": "",
         "type": "tuple",
-        "internalType": "struct IWillieNet.Message",
+        "internalType": "struct INet.Message",
         "components": [
           { "name": "app", "type": "address", "internalType": "address" },
           { "name": "sender", "type": "address", "internalType": "address" },
@@ -133,7 +133,7 @@
             "internalType": "uint256"
           },
           { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-          { "name": "message", "type": "string", "internalType": "string" },
+          { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
       }
@@ -195,7 +195,7 @@
       {
         "name": "",
         "type": "tuple[]",
-        "internalType": "struct IWillieNet.Message[]",
+        "internalType": "struct INet.Message[]",
         "components": [
           { "name": "app", "type": "address", "internalType": "address" },
           { "name": "sender", "type": "address", "internalType": "address" },
@@ -205,7 +205,7 @@
             "internalType": "uint256"
           },
           { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-          { "name": "message", "type": "string", "internalType": "string" },
+          { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
       }
@@ -224,7 +224,7 @@
       {
         "name": "",
         "type": "tuple[]",
-        "internalType": "struct IWillieNet.Message[]",
+        "internalType": "struct INet.Message[]",
         "components": [
           { "name": "app", "type": "address", "internalType": "address" },
           { "name": "sender", "type": "address", "internalType": "address" },
@@ -234,7 +234,7 @@
             "internalType": "uint256"
           },
           { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-          { "name": "message", "type": "string", "internalType": "string" },
+          { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
       }
@@ -254,7 +254,7 @@
       {
         "name": "",
         "type": "tuple[]",
-        "internalType": "struct IWillieNet.Message[]",
+        "internalType": "struct INet.Message[]",
         "components": [
           { "name": "app", "type": "address", "internalType": "address" },
           { "name": "sender", "type": "address", "internalType": "address" },
@@ -264,7 +264,7 @@
             "internalType": "uint256"
           },
           { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-          { "name": "message", "type": "string", "internalType": "string" },
+          { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
       }
@@ -284,7 +284,7 @@
       {
         "name": "",
         "type": "tuple[]",
-        "internalType": "struct IWillieNet.Message[]",
+        "internalType": "struct INet.Message[]",
         "components": [
           { "name": "app", "type": "address", "internalType": "address" },
           { "name": "sender", "type": "address", "internalType": "address" },
@@ -294,7 +294,7 @@
             "internalType": "uint256"
           },
           { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-          { "name": "message", "type": "string", "internalType": "string" },
+          { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
       }
@@ -315,7 +315,7 @@
       {
         "name": "",
         "type": "tuple[]",
-        "internalType": "struct IWillieNet.Message[]",
+        "internalType": "struct INet.Message[]",
         "components": [
           { "name": "app", "type": "address", "internalType": "address" },
           { "name": "sender", "type": "address", "internalType": "address" },
@@ -325,7 +325,7 @@
             "internalType": "uint256"
           },
           { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-          { "name": "message", "type": "string", "internalType": "string" },
+          { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
       }
@@ -344,7 +344,7 @@
       {
         "name": "",
         "type": "tuple[]",
-        "internalType": "struct IWillieNet.Message[]",
+        "internalType": "struct INet.Message[]",
         "components": [
           { "name": "app", "type": "address", "internalType": "address" },
           { "name": "sender", "type": "address", "internalType": "address" },
@@ -354,7 +354,7 @@
             "internalType": "uint256"
           },
           { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-          { "name": "message", "type": "string", "internalType": "string" },
+          { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
       }
@@ -440,7 +440,7 @@
       { "name": "sender", "type": "address", "internalType": "address" },
       { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
       { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-      { "name": "message", "type": "string", "internalType": "string" },
+      { "name": "text", "type": "string", "internalType": "string" },
       { "name": "topic", "type": "string", "internalType": "string" }
     ],
     "stateMutability": "view"
@@ -449,7 +449,7 @@
     "type": "function",
     "name": "sendMessage",
     "inputs": [
-      { "name": "message", "type": "string", "internalType": "string" },
+      { "name": "text", "type": "string", "internalType": "string" },
       { "name": "topic", "type": "string", "internalType": "string" },
       { "name": "extraData", "type": "bytes", "internalType": "bytes" }
     ],
@@ -461,7 +461,7 @@
     "name": "sendMessageViaApp",
     "inputs": [
       { "name": "sender", "type": "address", "internalType": "address" },
-      { "name": "message", "type": "string", "internalType": "string" },
+      { "name": "text", "type": "string", "internalType": "string" },
       { "name": "topic", "type": "string", "internalType": "string" },
       { "name": "extraData", "type": "bytes", "internalType": "bytes" }
     ],
@@ -524,8 +524,8 @@
     ],
     "anonymous": false
   },
-  { "type": "error", "name": "MessageExceedsMaxLength", "inputs": [] },
-  { "type": "error", "name": "MsgEmpty", "inputs": [] },
-  { "type": "error", "name": "MsgSenderNotNftOwner", "inputs": [] },
-  { "type": "error", "name": "TopicExceedsMaxLength", "inputs": [] }
+  { "type": "error", "name": "InvalidEndIndex", "inputs": [] },
+  { "type": "error", "name": "InvalidRange", "inputs": [] },
+  { "type": "error", "name": "InvalidStartIndex", "inputs": [] },
+  { "type": "error", "name": "MsgEmpty", "inputs": [] }
 ]

@@ -28,7 +28,7 @@ To deploy WillieNet, run: `forge script script/DeployNet.s.sol --rpc-url $RPC_UR
 
 ### Init code
 
-Get the init code for WillieNet by running `forge script script/GetWillieNetCreationCode.s.sol`, which will write the init code to `out/creation-code.bin`
+Get the init code for WillieNet by running `forge script script/GetNetCreationCode.s.sol`, which will write the init code to `out/creation-code.bin`
 
 ### Mine address
 

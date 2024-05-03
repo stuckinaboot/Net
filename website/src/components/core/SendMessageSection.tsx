@@ -10,7 +10,6 @@ export default function SendMessageSection(props: {
   disabled?: boolean;
 }) {
   const [message, setMessage] = useState("");
-
   return (
     <div className="flex flex-col items-center justify-between w-full">
       <Textarea

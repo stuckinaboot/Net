@@ -1,7 +1,7 @@
 "use client";
 
-import OnchainMessages from "@/components/core/OnchainMessages";
+import WillieNetDapp from "@/components/core/OnchainMessages";
 
 export default function Page({ params }: { params: { nftAddress: string } }) {
-  return <OnchainMessages nftAddress={params.nftAddress} />;
+  return <WillieNetDapp nftAddress={params.nftAddress} />;
 }
