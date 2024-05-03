@@ -37,7 +37,7 @@ function nftAddressFromChatRoomItem(chatRoomItem: string) {
   }
 }
 
-export default function OnchainMessages(props: {
+export default function WillieNetDapp(props: {
   nftAddress?: string;
   specificMessageIndex?: number;
 }) {
