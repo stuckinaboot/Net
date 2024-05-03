@@ -1,6 +1,6 @@
-# WillieNet
+# Net (AKA WillieNet)
 
-WillieNet is an onchain decentralized messaging protocol for EVM blockchains. Anybody can read messages and send message on WillieNet, where all messages live fully onchain and are easily queryable onchain. There is no cost to interact with WillieNet outside of gas fees.
+WillieNet, also known as Net, is an onchain decentralized messaging protocol for EVM blockchains. Anybody can read messages and send message on WillieNet, where all messages live fully onchain and are easily queryable onchain. There is no cost to interact with WillieNet outside of gas fees.
 
 WillieNet intentionally stores all messages onchain in order to allow both smart contracts and off-chains to trivially access stored messages. Additionally, each message stores all relevant metadata related to that message. While this does increase the gas costs of sending messages on WillieNet, this simplifies access for developers and serves the purpose of providing a fully onchain messaging protocol that other onchain projects can use and build on top of. This also bets on the belief that gas costs will continue to decrease in the future.
 
@@ -18,11 +18,11 @@ To run all WillieNet tests, run: `forge test`
 
 ### Explore the code
 
-The core code is in `src/willie-net/WillieNet.sol`.
+The core code is in `src/net/Net.sol`.
 
 ## Deploy
 
-To deploy WillieNet, run: `forge script script/DeployWillienet.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast`
+To deploy WillieNet, run: `forge script script/DeployNet.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast`
 
 ## Generate efficient address for deployment
 
@@ -45,11 +45,11 @@ Salt: 0x19b3995d061bd58ff68999f72293078998278a7afe7ab263fff653c89cdf9e5a (116251
 
 ### Use the salt
 
-Copy the salt for the desired address you want WillieNet to deploy to the `salt` field in deploying the contract for DeployWillieNet.s.sol
+Copy the salt for the desired address you want WillieNet to deploy to the `salt` field in deploying the contract for DeployNet.s.sol
 
 ### Simulate deployment
 
-Run `forge script script/DeployWillienet.s.sol`. You should see the address for that particular salt that was found via create2 printed and should match the predicted address.
+Run `forge script script/DeployNet.s.sol`. You should see the address for that particular salt that was found via create2 printed and should match the predicted address.
 
 # References
 

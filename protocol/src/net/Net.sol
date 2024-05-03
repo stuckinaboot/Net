@@ -2,14 +2,12 @@
 pragma solidity >=0.8.17 .0;
 
 import {EventsAndErrors} from "./EventsAndErrors.sol";
-import {Constants} from "./Constants.sol";
-import {IWillieNet} from "./IWillieNet.sol";
-import {Utils} from "./Utils.sol";
+import {INet} from "./INet.sol";
 
-/// @title WillieNet
+/// @title Net
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
-/// @notice Fully decentralized onchain messaging protocol.
-contract WillieNet is IWillieNet, EventsAndErrors, Constants {
+/// @notice Fully decentralized onchain messaging protocol
+contract Net is INet, EventsAndErrors {
     // Use a single global mapping to map hashes to message indexes
     mapping(bytes32 hashVal => uint256[] messageIndexes)
         public hashToMessageIndexes;
@@ -32,12 +30,12 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
 
     function sendMessageViaApp(
         address sender,
-        string calldata message,
+        string calldata text,
         string calldata topic,
         bytes calldata extraData
     ) external {
         // Revert if message length is none to prevent empty messages
-        if (bytes(message).length == 0) {
+        if (bytes(text).length == 0 && bytes(extraData).length == 0) {
             revert MsgEmpty();
         }
 
@@ -82,7 +80,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
                 app: msg.sender,
                 sender: sender,
                 extraData: extraData,
-                message: message,
+                text: text,
                 topic: topic,
                 timestamp: block.timestamp
             })
@@ -90,12 +88,12 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
     }
 
     function sendMessage(
-        string calldata message,
+        string calldata text,
         string calldata topic,
         bytes calldata extraData
     ) external {
         // Revert if message length is none to prevent empty messages
-        if (bytes(message).length == 0) {
+        if (bytes(text).length == 0 && bytes(extraData).length == 0) {
             revert MsgEmpty();
         }
 
@@ -132,7 +130,7 @@ contract WillieNet is IWillieNet, EventsAndErrors, Constants {
                 app: address(0),
                 sender: msg.sender,
                 extraData: extraData,
-                message: message,
+                text: text,
                 topic: topic,
                 timestamp: block.timestamp
             })
