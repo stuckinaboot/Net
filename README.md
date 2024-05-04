@@ -42,3 +42,8 @@ Below is a non-exhaustive list of off-chain apps that can be built on top of Wil
 1. Tipping: users can tip each other ERC20s for sending "good" messages
 1. Notebook: users can record their messages permanently onchain and can reference them later
 1. News: users can publish news onchain as censorship-resistant messages
+
+If you are interested in building an onchain or off-chain app on top of WillieNet, or have any ideas related to WillieNet, send me a message:
+
+- Warpcast: https://warpcast.com/aspyn
+- Twitter: https://twitter.com/AspynPalatnick
