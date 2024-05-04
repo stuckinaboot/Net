@@ -37,6 +37,8 @@ Below is a non-exhaustive list of onchain apps that can be built on top of Willi
 Below is a non-exhaustive list of off-chain apps that can be built on top of WillieNet.
 
 1. Censorship-resistant messaging site: users can send censorship-resistant messages and view each other's messages
+1. In-game chats: video games can allow public onchain chats between players
+1. File sharing: users can send onchain files, of any type, as bytes in messages
 1. Tipping: users can tip each other ERC20s for sending "good" messages
 1. Notebook: users can record their messages permanently onchain and can reference them later
 1. News: users can publish news onchain as censorship-resistant messages
