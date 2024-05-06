@@ -42,6 +42,8 @@ type SanitizedOnchainMessage = {
 
 const RENDER_HTML = false;
 
+const SHOW_COPY_MESSAGE_LINK_BUTTON = false;
+
 export default function MessagesDisplay(props: {
   scrollToBottom: () => void;
   checkAndUpdateShouldShowScrollToBottomButton: () => void;
@@ -217,23 +219,25 @@ export default function MessagesDisplay(props: {
                   message.sender
                 )}{" "}
                 | Message #{idx}{" "}
-                <button
-                  onClick={() => {
-                    const url = getUrlForSpecificMessageIndex(idx);
-                    copy(url);
-                    toast({
-                      title: "Copied link",
-                      description: (
-                        <>
-                          Successfully copied the link to message #{idx} to your
-                          clipboard
-                        </>
-                      ),
-                    });
-                  }}
-                >
-                  <CopyIcon />
-                </button>
+                {SHOW_COPY_MESSAGE_LINK_BUTTON && (
+                  <button
+                    onClick={() => {
+                      const url = getUrlForSpecificMessageIndex(idx);
+                      copy(url);
+                      toast({
+                        title: "Copied link",
+                        description: (
+                          <>
+                            Successfully copied the link to message #{idx} to
+                            your clipboard
+                          </>
+                        ),
+                      });
+                    }}
+                  >
+                    <CopyIcon />
+                  </button>
+                )}
               </p>
             </div>
           ))
