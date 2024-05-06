@@ -14,7 +14,7 @@ import TimeAgo from "react-timeago";
 import truncateEthAddress from "truncate-eth-address";
 import useAsyncEffect from "use-async-effect";
 import { isAddress } from "viem";
-import { useReadContract } from "wagmi";
+import { useChainId, useReadContract } from "wagmi";
 import isHtml from "is-html";
 import IframeRenderer from "./IFrameRenderer";
 import { CopyIcon } from "@radix-ui/react-icons";
@@ -51,6 +51,7 @@ export default function MessagesDisplay(props: {
   const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
   const [firstLoadedMessages, setFirstLoadedMessages] = useState(false);
   const specificMessageRef = useRef<HTMLDivElement | null>(null);
+  const chainId = useChainId();
   const { toast } = useToast();
 
   const totalMessagesReadContractArgs = props.nftAddress
@@ -100,14 +101,39 @@ export default function MessagesDisplay(props: {
       sender: truncateEthAddress(message.sender),
       timestamp: +message.timestamp.toString(),
     }));
+
+  function scrollToSpecificMessageAfterTimeout() {
+    // Attempt to scroll after a short timeout to ensure everything has been rendered before
+    // we attempt to scroll. Otherwise, we won't scroll at all
+    setTimeout(() => {
+      specificMessageRef.current?.scrollIntoView({ behavior: "instant" });
+    }, 250);
+  }
+
+  const [chainChanged, setChainChanged] = useState(false);
   useEffect(() => {
-    if (messagesResult.data == null) {
+    setChainChanged(true);
+  }, [chainId]);
+
+  useEffect(() => {
+    if (!chainChanged || !messagesResult.isFetched) {
       return;
     }
-    // Updating messages using state and skipping when message result is undefined
-    // the flicker of loading messages
+    setChainChanged(false);
+    // Scroll on chain changed and messages fetched
+    setTimeout(() => {
+      props.scrollToBottom();
+    }, 250);
+  }, [chainChanged, messagesResult.isFetched]);
+
+  useEffect(() => {
+    if (!messagesResult.isFetched) {
+      return;
+    }
+    // Updating messages using state and skipping when not fetched
+    // gets rid of the flicker of loading messages
     setMessages(sanitizedOnchainMessages);
-  }, [sanitizedOnchainMessages.length]);
+  }, [sanitizedOnchainMessages.length, messagesResult.isFetched]);
 
   const nftMsgSendersResult = useReadContract({
     abi: NFT_GATED_CHAT_CONTRACT.abi,
@@ -134,13 +160,7 @@ export default function MessagesDisplay(props: {
     if (firstLoadedMessages || sanitizedOnchainMessages.length === 0) {
       return;
     }
-    // Attempt to scroll after a short timeout to ensure everything has been rendered before
-    // we attempt to scroll. Otherwise, we won't scroll at all
-    setTimeout(() => {
-      setFirstLoadedMessages(true);
-      // props.scrollToBottom();
-      specificMessageRef.current?.scrollIntoView({ behavior: "instant" });
-    }, 250);
+    scrollToSpecificMessageAfterTimeout();
   }, [sanitizedOnchainMessages.length, firstLoadedMessages]);
 
   function getRenderedMessage(message: string) {

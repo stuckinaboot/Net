@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 import { getOwnedNftTokenIds } from "@/app/utils";
 import {
   Card,
@@ -42,6 +42,7 @@ export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
 }) {
   const { isConnected, address: userAddress } = useAccount();
+
   const [chatRoom, setChatRoom] = useState(CHAT_ROOM_ITEMS[0]);
   const [selectedNftTokenId, setSelectedNftTokenId] = useState<string>();
 
