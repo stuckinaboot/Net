@@ -23,6 +23,7 @@ const GLOBAL_CHAT_ROOM_ITEM = "Global";
 const ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM = "Onchain Steamboat Willies";
 const CHAT_ROOM_ITEMS = [
   GLOBAL_CHAT_ROOM_ITEM,
+  // TODO re-enable once nft chat is deployed to counterfactual address across chains
   // ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM,
 ];
 
