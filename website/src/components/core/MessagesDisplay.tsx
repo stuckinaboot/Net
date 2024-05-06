@@ -44,9 +44,11 @@ const RENDER_HTML = false;
 
 export default function MessagesDisplay(props: {
   scrollToBottom: () => void;
+  checkAndUpdateShouldShowScrollToBottomButton: () => void;
   nftAddress?: string;
   initialVisibleMessageIndex?: number;
 }) {
+  const [chainChanged, setChainChanged] = useState(false);
   const [nftMsgSenderImages, setNftMsgSenderImages] = useState<string[]>([]);
   const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
   const [firstLoadedMessages, setFirstLoadedMessages] = useState(false);
@@ -110,7 +112,6 @@ export default function MessagesDisplay(props: {
     }, 250);
   }
 
-  const [chainChanged, setChainChanged] = useState(false);
   useEffect(() => {
     setChainChanged(true);
   }, [chainId]);
@@ -134,6 +135,12 @@ export default function MessagesDisplay(props: {
     // gets rid of the flicker of loading messages
     setMessages(sanitizedOnchainMessages);
   }, [sanitizedOnchainMessages.length, messagesResult.isFetched]);
+
+  useEffect(() => {
+    // This is called whenever the state finishes being set, implying the messages
+    // are rendered.
+    props.checkAndUpdateShouldShowScrollToBottomButton();
+  }, [messages.length]);
 
   const nftMsgSendersResult = useReadContract({
     abi: NFT_GATED_CHAT_CONTRACT.abi,

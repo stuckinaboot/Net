@@ -49,13 +49,20 @@ export default function WillieNetDapp(props: {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [scrollingToBottom, setScrollingToBottom] = useState(false);
   const [ready, setReady] = useState(false);
 
   const scrollToBottom = () => {
+    setScrollingToBottom(true);
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    setScrollingToBottom(false);
   };
 
   function checkAndUpdateShouldShowScrollToBottomButton() {
+    console.log("SCROLL", scrollingToBottom);
+    if (scrollingToBottom) {
+      return;
+    }
     const scrollContainer = scrollContainerRef.current;
     const targetDiv = messagesEndRef.current;
     if (targetDiv == null || scrollContainer == null) {
@@ -64,9 +71,21 @@ export default function WillieNetDapp(props: {
 
     const containerTop = scrollContainer.getBoundingClientRect().top;
     const { top, bottom } = targetDiv.getBoundingClientRect();
-    setShowScrollButton(
-      top > containerTop && bottom > containerTop + scrollContainer.clientHeight
-    );
+
+    const shouldShowScrollBottomButton =
+      top > containerTop &&
+      bottom > containerTop + scrollContainer.clientHeight;
+    if (!showScrollButton && shouldShowScrollBottomButton) {
+      // If not currently showing scroll button and should show scroll button,
+      // implies we were previously scrolled to bottom to see latest message.
+      // So scroll to bottom again to see the new latest message and continue
+      // to not show scroll button
+      // scrollToBottom();
+      // TODO this isn't working
+      messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
+    } else {
+      setShowScrollButton(shouldShowScrollBottomButton);
+    }
   }
 
   useEffect(() => {
@@ -134,6 +153,9 @@ export default function WillieNetDapp(props: {
           nftAddress={nftAddressFromItem ? nftAddressFromItem : undefined}
           initialVisibleMessageIndex={props.specificMessageIndex}
           scrollToBottom={scrollToBottom}
+          checkAndUpdateShouldShowScrollToBottomButton={
+            checkAndUpdateShouldShowScrollToBottomButton
+          }
         />
         <div ref={messagesEndRef} />
       </CardContent>
