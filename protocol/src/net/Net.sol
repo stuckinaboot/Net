@@ -260,6 +260,7 @@ contract Net is INet, EventsAndErrors {
                 string
             )
         );
+        return message;
     }
 
     function decodeMessageAtIndex(
