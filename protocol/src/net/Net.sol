@@ -29,6 +29,11 @@ contract Net is INet, EventsAndErrors {
     // Send message
     // ************
 
+    /// @notice Send message via app
+    /// @param sender message sender
+    /// @param text message text
+    /// @param topic message topic
+    /// @param data message data
     function sendMessageViaApp(
         address sender,
         string calldata text,
@@ -96,6 +101,10 @@ contract Net is INet, EventsAndErrors {
         );
     }
 
+    /// @notice Send message
+    /// @param text message text
+    /// @param topic message topic
+    /// @param data message data
     function sendMessage(
         string calldata text,
         string calldata topic,
@@ -160,6 +169,9 @@ contract Net is INet, EventsAndErrors {
 
     // Fetch message indexes
 
+    /// @notice Get message index for app
+    /// @param idx message index
+    /// @param app app
     function getMessageIdxForApp(
         uint256 idx,
         address app
@@ -167,6 +179,10 @@ contract Net is INet, EventsAndErrors {
         return hashToMessageIndexes[keccak256(abi.encodePacked(app))][idx];
     }
 
+    /// @notice Get message index for app user
+    /// @param idx message index
+    /// @param app app
+    /// @param user user
     function getMessageIdxForAppUser(
         uint256 idx,
         address app,
@@ -176,6 +192,10 @@ contract Net is INet, EventsAndErrors {
             hashToMessageIndexes[keccak256(abi.encodePacked(app, user))][idx];
     }
 
+    /// @notice Get message index for app topic
+    /// @param idx message index
+    /// @param app app
+    /// @param topic topic
     function getMessageIdxForAppTopic(
         uint256 idx,
         address app,
@@ -187,6 +207,11 @@ contract Net is INet, EventsAndErrors {
             ][idx];
     }
 
+    /// @notice Get message index for app user topic
+    /// @param idx message index
+    /// @param app app
+    /// @param user user
+    /// @param topic topic
     function getMessageIdxForAppUserTopic(
         uint256 idx,
         address app,
@@ -208,6 +233,9 @@ contract Net is INet, EventsAndErrors {
 
     // Fetch single message
 
+    /// @notice Decode encoded message
+    /// @param encodedMessage encoded message
+    /// @return decodedMessage decoded message
     function decodeMessage(
         bytes memory encodedMessage
     ) public pure returns (Message memory) {
@@ -239,16 +267,26 @@ contract Net is INet, EventsAndErrors {
         return message;
     }
 
+    /// @notice Decode message at index in message pointers
+    /// @param index index
+    /// @return decodedMessage decoded message
     function decodeMessageAtIndex(
         uint256 index
     ) public view returns (Message memory) {
         return decodeMessage(SSTORE2.read(messagePointers[index]));
     }
 
+    /// @notice Get message
+    /// @param index index
+    /// @return message message
     function getMessage(uint256 idx) external view returns (Message memory) {
         return decodeMessageAtIndex(idx);
     }
 
+    /// @notice Get message for app
+    /// @param index index
+    /// @param app app
+    /// @return message message
     function getMessageForApp(
         uint256 idx,
         address app
@@ -259,6 +297,11 @@ contract Net is INet, EventsAndErrors {
             );
     }
 
+    /// @notice Get message for app user
+    /// @param index index
+    /// @param app app
+    /// @param user user
+    /// @return message message
     function getMessageForAppUser(
         uint256 idx,
         address app,
@@ -272,6 +315,11 @@ contract Net is INet, EventsAndErrors {
             );
     }
 
+    /// @notice Get message for app topic
+    /// @param index index
+    /// @param app app
+    /// @param topic topic
+    /// @return message message
     function getMessageForAppTopic(
         uint256 idx,
         address app,
@@ -287,6 +335,12 @@ contract Net is INet, EventsAndErrors {
             );
     }
 
+    /// @notice Get message for app user topic
+    /// @param index index
+    /// @param app app
+    /// @param user user
+    /// @param topic topic
+    /// @return message message
     function getMessageForAppUserTopic(
         uint256 idx,
         address app,
@@ -310,6 +364,10 @@ contract Net is INet, EventsAndErrors {
 
     // Fetch multiple messages
 
+    /// @notice Get messages in range
+    /// @param startIdx start index
+    /// @param endIdx end index
+    /// @return messages list of messages
     function getMessagesInRange(
         uint256 startIdx,
         uint256 endIdx
@@ -339,6 +397,11 @@ contract Net is INet, EventsAndErrors {
         return messagesSlice;
     }
 
+    /// @notice Get messages in range for hash
+    /// @param startIdx start index
+    /// @param endIdx end index
+    /// @param hashVal hash
+    /// @return messages list of messages
     function getMessagesInRangeForHash(
         uint256 startIdx,
         uint256 endIdx,
@@ -371,6 +434,11 @@ contract Net is INet, EventsAndErrors {
         return messagesSlice;
     }
 
+    /// @notice Get messages in range for app
+    /// @param startIdx start index
+    /// @param endIdx end index
+    /// @param app app
+    /// @return messages list of messages
     function getMessagesInRangeForApp(
         uint256 startIdx,
         uint256 endIdx,
@@ -384,6 +452,12 @@ contract Net is INet, EventsAndErrors {
             );
     }
 
+    /// @notice Get messages in range for app user
+    /// @param startIdx start index
+    /// @param endIdx end index
+    /// @param app app
+    /// @param user user
+    /// @return messages list of messages
     function getMessagesInRangeForAppUser(
         uint256 startIdx,
         uint256 endIdx,
@@ -398,6 +472,12 @@ contract Net is INet, EventsAndErrors {
             );
     }
 
+    /// @notice Get messages in range for app topic
+    /// @param startIdx start index
+    /// @param endIdx end index
+    /// @param app app
+    /// @param topic topic
+    /// @return messages list of messages
     function getMessagesInRangeForAppTopic(
         uint256 startIdx,
         uint256 endIdx,
@@ -412,6 +492,13 @@ contract Net is INet, EventsAndErrors {
             );
     }
 
+    /// @notice Get messages in range for app user topic
+    /// @param startIdx start index
+    /// @param endIdx end index
+    /// @param app app
+    /// @param user user
+    /// @param topic topic
+    /// @return messages list of messages
     function getMessagesInRangeForAppUserTopic(
         uint256 startIdx,
         uint256 endIdx,
@@ -438,22 +525,34 @@ contract Net is INet, EventsAndErrors {
     // Message counts
     // **************
 
+    /// @notice Get total messages count
+    /// @return count count
     function getTotalMessagesCount() external view returns (uint256) {
         return messagePointers.length;
     }
 
+    /// @notice Get total messages for hash count
+    /// @param hashVal hash
+    /// @return count count
     function getTotalMessagesForHashCount(
         bytes32 hashVal
     ) public view returns (uint256) {
         return hashToMessageIndexes[hashVal].length;
     }
 
+    /// @notice Get total messages for app count
+    /// @param app app
+    /// @return count count
     function getTotalMessagesForAppCount(
         address app
     ) external view returns (uint256) {
         return getTotalMessagesForHashCount(keccak256(abi.encodePacked(app)));
     }
 
+    /// @notice Get total messages for app user count
+    /// @param app app
+    /// @param user user
+    /// @return count count
     function getTotalMessagesForAppUserCount(
         address app,
         address user
@@ -464,6 +563,10 @@ contract Net is INet, EventsAndErrors {
             );
     }
 
+    /// @notice Get total messages for app topic count
+    /// @param app app
+    /// @param topic topic
+    /// @return count count
     function getTotalMessagesForAppTopicCount(
         address app,
         string calldata topic
@@ -474,6 +577,11 @@ contract Net is INet, EventsAndErrors {
             );
     }
 
+    /// @notice Get total messages for app user topic count
+    /// @param app app
+    /// @param user user
+    /// @param topic topic
+    /// @return count count
     function getTotalMessagesForAppUserTopicCount(
         address app,
         address user,
