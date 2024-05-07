@@ -384,9 +384,9 @@ contract Net is INet, EventsAndErrors {
         uint256 idxInMessages = startIdx;
         unchecked {
             for (uint256 i; i < length && idxInMessages < endIdx; ) {
-                messagesSlice[i] = messages[
+                messagesSlice[i] = decodeMessageAtIndex(
                     hashToMessageIndexes[hashVal][idxInMessages]
-                ];
+                );
                 ++i;
                 ++idxInMessages;
             }
