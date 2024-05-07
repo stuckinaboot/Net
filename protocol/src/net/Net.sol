@@ -211,7 +211,7 @@ contract Net is INet, EventsAndErrors {
 
     function decodeMessage(
         bytes memory encodedMessage
-    ) public view returns (Message memory) {
+    ) public pure returns (Message memory) {
         Message memory message;
         (
             message.app,
