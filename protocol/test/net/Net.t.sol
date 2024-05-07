@@ -198,7 +198,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
             sender,
             // Timestamp
             block.timestamp,
-            // Extra data
+            // Data
             data,
             // Text
             text,

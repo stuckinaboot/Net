@@ -85,7 +85,7 @@ contract Net is INet, EventsAndErrors {
                     sender,
                     // Timestamp
                     block.timestamp,
-                    // Extra data
+                    // Data
                     data,
                     // Text
                     text,
@@ -143,7 +143,7 @@ contract Net is INet, EventsAndErrors {
                     msg.sender,
                     // Timestamp
                     block.timestamp,
-                    // Extra data
+                    // Data
                     data,
                     // Text
                     text,
@@ -222,17 +222,17 @@ contract Net is INet, EventsAndErrors {
         ) = abi.decode(
             encodedMessage,
             (
-                // app
+                // App
                 address,
-                // sender
+                // Sender
                 address,
-                // timestamp
+                // Timestamp
                 uint256,
-                // extra data
+                // Data
                 bytes,
-                // text
+                // Text
                 string,
-                // topic
+                // Topic
                 string
             )
         );
