@@ -9,8 +9,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
 import { getDisplayableErrorMessageFromSubmitTransactionError } from "@/app/utils";
 
-// TODO implement this helper class and modify MintButton and SendMessageButton to use it
-
 const SHOW_TX_SUBMISSION_TEXT = false;
 const SHOW_TX_RECEIPT_TEXT = false;
 
