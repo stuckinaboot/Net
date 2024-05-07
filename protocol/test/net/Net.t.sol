@@ -231,6 +231,21 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
         );
     }
 
+    function testSendOneMessage(
+        address app,
+        string calldata messageContents,
+        string calldata topic,
+        bytes calldata extraData
+    ) public {
+        sendAndVerifyMessage(
+            address(this),
+            app,
+            messageContents,
+            topic,
+            extraData
+        );
+    }
+
     function testSendMultipleMessagesFromSameUserSameApp(
         address app,
         bytes calldata extraData
