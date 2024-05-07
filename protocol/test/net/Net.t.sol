@@ -44,10 +44,10 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
         address app,
         string memory messageContents,
         string memory topic,
-        bytes memory extraData
+        bytes memory data
     ) public {
         bool isEmptyMessageContents = bytes(messageContents).length == 0 &&
-            bytes(extraData).length == 0;
+            bytes(data).length == 0;
 
         uint256 currMessagesLength = net.getTotalMessagesCount();
         uint256 topicMessagesLength = net.getTotalMessagesForAppTopicCount(
@@ -64,7 +64,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
                 vm.expectEmit(true, true, true, false);
                 emit MessageSentViaApp(app, user, topic, currMessagesLength);
             }
-            net.sendMessageViaApp(user, messageContents, topic, extraData);
+            net.sendMessageViaApp(user, messageContents, topic, data);
             vm.stopPrank();
         } else {
             // Send message from user
@@ -75,7 +75,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
                 vm.expectEmit(true, true, true, false);
                 emit MessageSent(user, topic, currMessagesLength);
             }
-            net.sendMessage(messageContents, topic, extraData);
+            net.sendMessage(messageContents, topic, data);
             vm.stopPrank();
         }
 
@@ -87,7 +87,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
             app: app,
             sender: user,
             timestamp: block.timestamp,
-            extraData: extraData,
+            data: data,
             text: messageContents,
             topic: topic
         });
@@ -187,7 +187,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
         address app,
         address sender,
         uint256 timestamp,
-        bytes memory extraData,
+        bytes memory data,
         string memory topic,
         string memory text
     ) public {
@@ -199,7 +199,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
             // Timestamp
             block.timestamp,
             // Extra data
-            extraData,
+            data,
             // Text
             text,
             // Topic
@@ -209,7 +209,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
             app: app,
             sender: sender,
             timestamp: block.timestamp,
-            extraData: extraData,
+            data: data,
             text: text,
             topic: topic
         });
@@ -220,52 +220,46 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
         address app,
         string calldata messageContents,
         string calldata topic,
-        bytes calldata extraData
+        bytes calldata data
     ) public {
-        sendAndVerifyMessage(
-            address(this),
-            app,
-            messageContents,
-            topic,
-            extraData
-        );
+        sendAndVerifyMessage(address(this), app, messageContents, topic, data);
     }
 
     function testSendMultipleMessagesFromSameUserSameApp(
         address app,
-        bytes calldata extraData
+        bytes calldata data
     ) public {
-        sendAndVerifyMessage(address(this), app, "message 1", "t1", extraData);
-        sendAndVerifyMessage(address(this), app, "message 2", "t2", extraData);
-        sendAndVerifyMessage(address(this), app, "message 3", "t3", extraData);
+        sendAndVerifyMessage(address(this), app, "message 1", "t1", data);
+        sendAndVerifyMessage(address(this), app, "message 2", "t2", data);
+        sendAndVerifyMessage(address(this), app, "message 3", "t3", data);
     }
 
     function testSendMultipleMessagesFromDifferentUsersSameApp(
         address app,
-        bytes calldata extraData
+        bytes calldata data
     ) public {
-        sendAndVerifyMessage(users[0], app, "message 1", "t1", extraData);
-        sendAndVerifyMessage(users[1], app, "message 2", "t2", extraData);
-        sendAndVerifyMessage(users[2], app, "message 3", "t3", extraData);
+        sendAndVerifyMessage(users[0], app, "message 1", "t1", data);
+        sendAndVerifyMessage(users[1], app, "message 2", "t2", data);
+        sendAndVerifyMessage(users[2], app, "message 3", "t3", data);
     }
 
     function testSendMultipleMessagesFromDifferentUsersDifferentApp(
         address app1,
         address app2,
         address app3,
-        bytes calldata extraData
+        bytes calldata data
     ) public {
-        sendAndVerifyMessage(users[0], app1, "message 1", "t1", extraData);
-        sendAndVerifyMessage(users[0], app1, "message 1.1", "t1", extraData);
-        sendAndVerifyMessage(users[1], app2, "message 2", "t2", extraData);
-        sendAndVerifyMessage(users[1], app2, "message 2.2", "t2", extraData);
-        sendAndVerifyMessage(users[2], app3, "message 3", "t3", extraData);
-        sendAndVerifyMessage(users[2], app3, "message 3.3", "t3", extraData);
+        sendAndVerifyMessage(users[0], app1, "message 1", "t1", data);
+        sendAndVerifyMessage(users[0], app1, "message 1.1", "t1", data);
+        sendAndVerifyMessage(users[1], app2, "message 2", "t2", data);
+        sendAndVerifyMessage(users[1], app2, "message 2.2", "t2", data);
+        sendAndVerifyMessage(users[2], app3, "message 3", "t3", data);
+        sendAndVerifyMessage(users[2], app3, "message 3.3", "t3", data);
     }
 
     function testSendMultipleMessagesAndQueryFullMessageRangeSingleUser(
         address app,
-        bytes calldata extraData
+        bytes calldata data
     ) public {
         address user = users[0];
         string memory topic = "topic";
@@ -274,7 +268,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
             app,
             user,
             topic,
-            extraData
+            data
         );
 
         // Check querying all messages works properly
@@ -332,7 +326,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
 
     function testSendMultipleMessagesAndQueryPartialMessageRangeForAllMessagesSingleUser(
         address app,
-        bytes calldata extraData
+        bytes calldata data
     ) public {
         address user = users[0];
         string memory topic = "topic";
@@ -341,7 +335,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
             app,
             user,
             topic,
-            extraData
+            data
         );
 
         // Check querying all messages works properly
@@ -371,7 +365,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
 
     function testSendMultipleMessagesAndQueryPartialMessageRangeForAppMessagesSingleUser(
         address app,
-        bytes calldata extraData
+        bytes calldata data
     ) public {
         address user = users[0];
         string memory topic = "topic";
@@ -380,7 +374,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
             app,
             user,
             topic,
-            extraData
+            data
         );
 
         // Check querying all messages works properly
@@ -408,7 +402,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
 
     function testSendMultipleMessagesAndQueryPartialMessageRangeForAppTopicMessagesSingleUser(
         address app,
-        bytes calldata extraData
+        bytes calldata data
     ) public {
         address user = users[0];
         string memory topic = "topic";
@@ -417,7 +411,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
             app,
             user,
             topic,
-            extraData
+            data
         );
 
         // Check querying all messages works properly
@@ -455,7 +449,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
 
     function testSendMultipleMessagesAndQueryPartialMessageRangeForAppUserTopicMessagesSingleUser(
         address app,
-        bytes calldata extraData
+        bytes calldata data
     ) public {
         address user = users[0];
         string memory topic = "topic";
@@ -464,7 +458,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
             app,
             user,
             topic,
-            extraData
+            data
         );
 
         // Check querying all messages works properly
@@ -504,7 +498,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
 
     function testSendMultipleMessagesAndQueryPartialMessageRangeForAppUserMessagesSingleUser(
         address app,
-        bytes calldata extraData
+        bytes calldata data
     ) public {
         address user = users[0];
         string memory topic = "topic";
@@ -513,7 +507,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
             app,
             user,
             topic,
-            extraData
+            data
         );
 
         // Check querying all messages works properly
@@ -552,15 +546,15 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
     function testSendEmptyMessageExpectsRevert(
         address app,
         string calldata text,
-        bytes calldata extraData
+        bytes calldata data
     ) public {
         vm.assume(bytes(text).length > 0);
-        vm.assume(bytes(extraData).length > 0);
+        vm.assume(bytes(data).length > 0);
 
         // Just empty text
-        sendAndVerifyMessage(users[0], app, "", "Topic", extraData);
+        sendAndVerifyMessage(users[0], app, "", "Topic", data);
 
-        // Just empty extraData
+        // Just empty data
         bytes memory empty;
         sendAndVerifyMessage(users[0], app, text, "Topic", empty);
 
@@ -688,7 +682,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
         address app,
         address user,
         string memory topic,
-        bytes calldata extraData
+        bytes calldata data
     ) public returns (Net.Message[] memory) {
         Net.Message[] memory sentMsgs = new Net.Message[](numMessages);
         for (uint256 i; i < sentMsgs.length; i++) {
@@ -696,7 +690,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
                 app: app,
                 sender: user,
                 timestamp: block.timestamp,
-                extraData: extraData,
+                data: data,
                 text: Strings.toString(i),
                 topic: topic
             });
@@ -705,7 +699,7 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
                 app,
                 sentMsgs[i].text,
                 sentMsgs[i].topic,
-                extraData
+                data
             );
         }
         return sentMsgs;

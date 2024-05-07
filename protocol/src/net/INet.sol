@@ -6,7 +6,7 @@ interface INet {
         address app;
         address sender;
         uint256 timestamp;
-        bytes extraData;
+        bytes data;
         string text;
         string topic;
     }

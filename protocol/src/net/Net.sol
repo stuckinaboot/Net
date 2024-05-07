@@ -33,10 +33,10 @@ contract Net is INet, EventsAndErrors {
         address sender,
         string calldata text,
         string calldata topic,
-        bytes calldata extraData
+        bytes calldata data
     ) external {
         // Revert if message length is none to prevent empty messages
-        if (bytes(text).length == 0 && bytes(extraData).length == 0) {
+        if (bytes(text).length == 0 && bytes(data).length == 0) {
             revert MsgEmpty();
         }
 
@@ -86,7 +86,7 @@ contract Net is INet, EventsAndErrors {
                     // Timestamp
                     block.timestamp,
                     // Extra data
-                    extraData,
+                    data,
                     // Text
                     text,
                     // Topic
@@ -99,10 +99,10 @@ contract Net is INet, EventsAndErrors {
     function sendMessage(
         string calldata text,
         string calldata topic,
-        bytes calldata extraData
+        bytes calldata data
     ) external {
         // Revert if message length is none to prevent empty messages
-        if (bytes(text).length == 0 && bytes(extraData).length == 0) {
+        if (bytes(text).length == 0 && bytes(data).length == 0) {
             revert MsgEmpty();
         }
 
@@ -144,7 +144,7 @@ contract Net is INet, EventsAndErrors {
                     // Timestamp
                     block.timestamp,
                     // Extra data
-                    extraData,
+                    data,
                     // Text
                     text,
                     // Topic
@@ -216,7 +216,7 @@ contract Net is INet, EventsAndErrors {
             message.app,
             message.sender,
             message.timestamp,
-            message.extraData,
+            message.data,
             message.text,
             message.topic
         ) = abi.decode(
