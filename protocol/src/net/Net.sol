@@ -13,7 +13,6 @@ contract Net is INet, EventsAndErrors {
     mapping(bytes32 hashVal => uint256[] messageIndexes)
         public hashToMessageIndexes;
 
-    // Message[] public messages;
     address[] public messagePointers;
 
     bytes32 constant ZERO_HASH = keccak256(abi.encodePacked(address(0)));
@@ -23,8 +22,8 @@ contract Net is INet, EventsAndErrors {
     // we prefix the relevant hash topic keys with these values to ensure collisions don't occur
     // Example if this prefix didn't exist:
     // keccak256(abi.encodePacked(address(0))) == keccak256(abi.encodePacked(address(0), "" /* where "" represents topic */)) evaluates to true
-    uint8 constant APP_TOPIC_HASH_PREFIX = 1;
-    uint8 constant APP_USER_TOPIC_HASH_PREFIX = 2;
+    uint256 constant APP_TOPIC_HASH_PREFIX = 1;
+    uint256 constant APP_USER_TOPIC_HASH_PREFIX = 2;
 
     // ************
     // Send message
