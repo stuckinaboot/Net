@@ -169,9 +169,10 @@ contract Net is INet, EventsAndErrors {
 
     // Fetch message indexes
 
-    /// @notice Get message index for app
+    /// @notice Get message pointer index for app
     /// @param idx message index
     /// @param app app
+    /// @return index index
     function getMessageIdxForApp(
         uint256 idx,
         address app
@@ -179,10 +180,11 @@ contract Net is INet, EventsAndErrors {
         return hashToMessageIndexes[keccak256(abi.encodePacked(app))][idx];
     }
 
-    /// @notice Get message index for app user
+    /// @notice Get message pointer index for app user
     /// @param idx message index
     /// @param app app
     /// @param user user
+    /// @return index index
     function getMessageIdxForAppUser(
         uint256 idx,
         address app,
@@ -192,10 +194,11 @@ contract Net is INet, EventsAndErrors {
             hashToMessageIndexes[keccak256(abi.encodePacked(app, user))][idx];
     }
 
-    /// @notice Get message index for app topic
+    /// @notice Get message pointer index for app topic
     /// @param idx message index
     /// @param app app
     /// @param topic topic
+    /// @return index index
     function getMessageIdxForAppTopic(
         uint256 idx,
         address app,
@@ -207,11 +210,12 @@ contract Net is INet, EventsAndErrors {
             ][idx];
     }
 
-    /// @notice Get message index for app user topic
+    /// @notice Get message pointer index for app user topic
     /// @param idx message index
     /// @param app app
     /// @param user user
     /// @param topic topic
+    /// @return index index
     function getMessageIdxForAppUserTopic(
         uint256 idx,
         address app,
