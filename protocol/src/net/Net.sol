@@ -3,6 +3,7 @@ pragma solidity >=0.8.17 .0;
 
 import {EventsAndErrors} from "./EventsAndErrors.sol";
 import {INet} from "./INet.sol";
+import {SSTORE2} from "@solady/utils/SSTORE2.sol";
 
 /// @title Net
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
@@ -13,6 +14,7 @@ contract Net is INet, EventsAndErrors {
         public hashToMessageIndexes;
 
     Message[] public messages;
+    address[] public messagePointers;
 
     bytes32 constant ZERO_HASH = keccak256(abi.encodePacked(address(0)));
 
@@ -75,6 +77,26 @@ contract Net is INet, EventsAndErrors {
         emit MessageSentViaApp(msg.sender, sender, topic, messagesLength);
 
         // Store message
+        messagePointers.push(
+            SSTORE2.write(
+                abi.encodePacked(
+                    // App
+                    msg.sender,
+                    // Sender
+                    sender,
+                    // Extra data
+                    extraData,
+                    // Text
+                    text,
+                    // Topic
+                    topic,
+                    // Timestamp
+                    block.timestamp
+                )
+            )
+        );
+
+        // TODO remove
         messages.push(
             Message({
                 app: msg.sender,
@@ -135,6 +157,25 @@ contract Net is INet, EventsAndErrors {
                 timestamp: block.timestamp
             })
         );
+
+        messagePointers.push(
+            SSTORE2.write(
+                abi.encodePacked(
+                    // App
+                    address(0),
+                    // Sender
+                    msg.sender,
+                    // Extra data
+                    extraData,
+                    // Text
+                    text,
+                    // Topic
+                    topic,
+                    // Timestamp
+                    block.timestamp
+                )
+            )
+        );
     }
 
     // **************
@@ -191,8 +232,44 @@ contract Net is INet, EventsAndErrors {
 
     // Fetch single message
 
+    function decodeMessage(
+        bytes memory encodedMessage
+    ) public view returns (Message memory) {
+        Message memory message;
+        (
+            message.app,
+            message.sender,
+            message.timestamp,
+            message.extraData,
+            message.text,
+            message.topic
+        ) = abi.decode(
+            encodedMessage,
+            (
+                // app
+                address,
+                // sender
+                address,
+                // timestamp
+                uint256,
+                // extra data
+                bytes,
+                // text
+                string,
+                // topic
+                string
+            )
+        );
+    }
+
+    function decodeMessageAtIndex(
+        uint256 index
+    ) public view returns (Message memory) {
+        return decodeMessage(SSTORE2.read(messagePointers[index]));
+    }
+
     function getMessage(uint256 idx) external view returns (Message memory) {
-        return messages[idx];
+        return decodeMessageAtIndex(idx);
     }
 
     function getMessageForApp(
@@ -200,9 +277,9 @@ contract Net is INet, EventsAndErrors {
         address app
     ) external view returns (Message memory) {
         return
-            messages[
+            decodeMessageAtIndex(
                 hashToMessageIndexes[keccak256(abi.encodePacked(app))][idx]
-            ];
+            );
     }
 
     function getMessageForAppUser(
@@ -211,11 +288,11 @@ contract Net is INet, EventsAndErrors {
         address user
     ) external view returns (Message memory) {
         return
-            messages[
+            decodeMessageAtIndex(
                 hashToMessageIndexes[keccak256(abi.encodePacked(app, user))][
                     idx
                 ]
-            ];
+            );
     }
 
     function getMessageForAppTopic(
@@ -224,13 +301,13 @@ contract Net is INet, EventsAndErrors {
         string calldata topic
     ) external view returns (Message memory) {
         return
-            messages[
+            decodeMessageAtIndex(
                 hashToMessageIndexes[
                     keccak256(
                         abi.encodePacked(APP_TOPIC_HASH_PREFIX, app, topic)
                     )
                 ][idx]
-            ];
+            );
     }
 
     function getMessageForAppUserTopic(
@@ -240,7 +317,7 @@ contract Net is INet, EventsAndErrors {
         string calldata topic
     ) external view returns (Message memory) {
         return
-            messages[
+            decodeMessageAtIndex(
                 hashToMessageIndexes[
                     keccak256(
                         abi.encodePacked(
@@ -251,7 +328,7 @@ contract Net is INet, EventsAndErrors {
                         )
                     )
                 ][idx]
-            ];
+            );
     }
 
     // Fetch multiple messages
