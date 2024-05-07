@@ -59,7 +59,7 @@ contract NftGatedChatTest is
             app: address(chat),
             sender: users[0],
             timestamp: block.timestamp,
-            extraData: "",
+            data: "",
             text: "Hello, world!",
             topic: Strings.toHexString(uint160(address(nft)), 20)
         });

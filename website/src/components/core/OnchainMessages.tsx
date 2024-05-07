@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
 import { getOwnedNftTokenIds } from "@/app/utils";
 import {
   Card,
@@ -23,7 +23,8 @@ const GLOBAL_CHAT_ROOM_ITEM = "Global";
 const ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM = "Onchain Steamboat Willies";
 const CHAT_ROOM_ITEMS = [
   GLOBAL_CHAT_ROOM_ITEM,
-  ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM,
+  // TODO re-enable once nft chat is deployed to counterfactual address across chains
+  // ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM,
 ];
 
 function nftAddressFromChatRoomItem(chatRoomItem: string) {
@@ -42,19 +43,22 @@ export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
 }) {
   const { isConnected, address: userAddress } = useAccount();
+
   const [chatRoom, setChatRoom] = useState(CHAT_ROOM_ITEMS[0]);
   const [selectedNftTokenId, setSelectedNftTokenId] = useState<string>();
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [scrollingToBottom, setScrollingToBottom] = useState(false);
   const [ready, setReady] = useState(false);
 
   const scrollToBottom = () => {
+    setScrollingToBottom(true);
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  function checkAndUpdateShouldShowScrollToBottomButton() {
+  function isScrolledToBottom() {
     const scrollContainer = scrollContainerRef.current;
     const targetDiv = messagesEndRef.current;
     if (targetDiv == null || scrollContainer == null) {
@@ -63,9 +67,41 @@ export default function WillieNetDapp(props: {
 
     const containerTop = scrollContainer.getBoundingClientRect().top;
     const { top, bottom } = targetDiv.getBoundingClientRect();
-    setShowScrollButton(
-      top > containerTop && bottom > containerTop + scrollContainer.clientHeight
-    );
+
+    const scrollIsAboveBottom =
+      top > containerTop &&
+      bottom > containerTop + scrollContainer.clientHeight;
+    return !scrollIsAboveBottom;
+  }
+
+  function checkAndUpdateShouldShowScrollToBottomButton() {
+    setScrollingToBottom((currScrollingToBottom) => {
+      if (currScrollingToBottom && isScrolledToBottom()) {
+        // Already scrolled to bottom, so set scrolling to bottom to false
+        return false;
+      } else if (currScrollingToBottom) {
+        // Currently scrolling to bottom, so don't perform any updates
+        return currScrollingToBottom;
+      }
+
+      const shouldShowScrollBottomButton = !isScrolledToBottom();
+      if (shouldShowScrollBottomButton == null) {
+        // Null result, so return current value
+        return currScrollingToBottom;
+      }
+
+      setShowScrollButton((currShowScrollButton) => {
+        if (!currShowScrollButton && shouldShowScrollBottomButton) {
+          // If not currently showing scroll button and should show scroll button,
+          // implies we were previously scrolled to bottom to see latest message.
+          // So scroll to bottom again to see the new latest message and continue
+          // to not show scroll button
+          scrollToBottom();
+        }
+        return shouldShowScrollBottomButton;
+      });
+      return currScrollingToBottom;
+    });
   }
 
   useEffect(() => {
@@ -133,6 +169,9 @@ export default function WillieNetDapp(props: {
           nftAddress={nftAddressFromItem ? nftAddressFromItem : undefined}
           initialVisibleMessageIndex={props.specificMessageIndex}
           scrollToBottom={scrollToBottom}
+          checkAndUpdateShouldShowScrollToBottomButton={
+            checkAndUpdateShouldShowScrollToBottomButton
+          }
         />
         <div ref={messagesEndRef} />
       </CardContent>

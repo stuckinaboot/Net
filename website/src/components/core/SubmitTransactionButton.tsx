@@ -1,10 +1,12 @@
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
+import {
+  useChainId,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getDisplayableErrorMessageFromSubmitTransactionError } from "@/app/utils";
-
-// TODO implement this helper class and modify MintButton and SendMessageButton to use it
 
 const SHOW_TX_SUBMISSION_TEXT = false;
 const SHOW_TX_RECEIPT_TEXT = false;
@@ -25,25 +27,34 @@ export default function SubmitTransactionButton(props: {
   disabled?: boolean;
 }) {
   const { toast } = useToast();
+  const chainId = useChainId();
+  const [shownSuccessToast, setShownSucccessToast] = useState(false);
 
-  const { data: hash, writeContractAsync, status } = useWriteContract();
+  const { data: hash, writeContractAsync, status, reset } = useWriteContract();
   const receipt = useWaitForTransactionReceipt({ hash });
+
+  useEffect(() => {
+    // On chain switch, reset the most recent transaction write results
+    reset();
+  }, [chainId]);
 
   useEffect(() => {
     if (hash == null) {
       return;
     }
+    setShownSucccessToast(false);
     console.log(`Transactions submitted with hash: ${hash}`);
   }, [hash]);
 
   useEffect(() => {
-    if (!receipt.isSuccess) {
+    if (!receipt.isSuccess || shownSuccessToast) {
       return;
     }
     toast({
       title: props.messages.toasts.title,
       description: props.messages.toasts.success,
     });
+    setShownSucccessToast(true);
   }, [receipt.isSuccess]);
 
   async function performTransaction() {

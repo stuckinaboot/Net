@@ -3,6 +3,7 @@ pragma solidity >=0.8.17 .0;
 
 import {EventsAndErrors} from "./EventsAndErrors.sol";
 import {INet} from "./INet.sol";
+import {SSTORE2} from "@solady/utils/SSTORE2.sol";
 
 /// @title Net
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
@@ -12,7 +13,7 @@ contract Net is INet, EventsAndErrors {
     mapping(bytes32 hashVal => uint256[] messageIndexes)
         public hashToMessageIndexes;
 
-    Message[] public messages;
+    address[] public messagePointers;
 
     bytes32 constant ZERO_HASH = keccak256(abi.encodePacked(address(0)));
 
@@ -21,8 +22,8 @@ contract Net is INet, EventsAndErrors {
     // we prefix the relevant hash topic keys with these values to ensure collisions don't occur
     // Example if this prefix didn't exist:
     // keccak256(abi.encodePacked(address(0))) == keccak256(abi.encodePacked(address(0), "" /* where "" represents topic */)) evaluates to true
-    uint8 constant APP_TOPIC_HASH_PREFIX = 1;
-    uint8 constant APP_USER_TOPIC_HASH_PREFIX = 2;
+    uint256 constant APP_TOPIC_HASH_PREFIX = 1;
+    uint256 constant APP_USER_TOPIC_HASH_PREFIX = 2;
 
     // ************
     // Send message
@@ -32,15 +33,15 @@ contract Net is INet, EventsAndErrors {
         address sender,
         string calldata text,
         string calldata topic,
-        bytes calldata extraData
+        bytes calldata data
     ) external {
         // Revert if message length is none to prevent empty messages
-        if (bytes(text).length == 0 && bytes(extraData).length == 0) {
+        if (bytes(text).length == 0 && bytes(data).length == 0) {
             revert MsgEmpty();
         }
 
         // Track message index in topic and user mappings
-        uint256 messagesLength = messages.length;
+        uint256 messagesLength = messagePointers.length;
 
         // App messages
         hashToMessageIndexes[keccak256(abi.encodePacked(msg.sender))].push(
@@ -75,30 +76,38 @@ contract Net is INet, EventsAndErrors {
         emit MessageSentViaApp(msg.sender, sender, topic, messagesLength);
 
         // Store message
-        messages.push(
-            Message({
-                app: msg.sender,
-                sender: sender,
-                extraData: extraData,
-                text: text,
-                topic: topic,
-                timestamp: block.timestamp
-            })
+        messagePointers.push(
+            SSTORE2.write(
+                abi.encode(
+                    // App
+                    msg.sender,
+                    // Sender
+                    sender,
+                    // Timestamp
+                    block.timestamp,
+                    // Data
+                    data,
+                    // Text
+                    text,
+                    // Topic
+                    topic
+                )
+            )
         );
     }
 
     function sendMessage(
         string calldata text,
         string calldata topic,
-        bytes calldata extraData
+        bytes calldata data
     ) external {
         // Revert if message length is none to prevent empty messages
-        if (bytes(text).length == 0 && bytes(extraData).length == 0) {
+        if (bytes(text).length == 0 && bytes(data).length == 0) {
             revert MsgEmpty();
         }
 
         // Track message index in topic and user mappings
-        uint256 messagesLength = messages.length;
+        uint256 messagesLength = messagePointers.length;
 
         // address(0) is used to represent messages sent from "no app"
         hashToMessageIndexes[ZERO_HASH].push(messagesLength);
@@ -125,15 +134,23 @@ contract Net is INet, EventsAndErrors {
         emit MessageSent(msg.sender, topic, messagesLength);
 
         // Store message
-        messages.push(
-            Message({
-                app: address(0),
-                sender: msg.sender,
-                extraData: extraData,
-                text: text,
-                topic: topic,
-                timestamp: block.timestamp
-            })
+        messagePointers.push(
+            SSTORE2.write(
+                abi.encode(
+                    // App
+                    address(0),
+                    // Sender
+                    msg.sender,
+                    // Timestamp
+                    block.timestamp,
+                    // Data
+                    data,
+                    // Text
+                    text,
+                    // Topic
+                    topic
+                )
+            )
         );
     }
 
@@ -191,8 +208,45 @@ contract Net is INet, EventsAndErrors {
 
     // Fetch single message
 
+    function decodeMessage(
+        bytes memory encodedMessage
+    ) public pure returns (Message memory) {
+        Message memory message;
+        (
+            message.app,
+            message.sender,
+            message.timestamp,
+            message.data,
+            message.text,
+            message.topic
+        ) = abi.decode(
+            encodedMessage,
+            (
+                // App
+                address,
+                // Sender
+                address,
+                // Timestamp
+                uint256,
+                // Data
+                bytes,
+                // Text
+                string,
+                // Topic
+                string
+            )
+        );
+        return message;
+    }
+
+    function decodeMessageAtIndex(
+        uint256 index
+    ) public view returns (Message memory) {
+        return decodeMessage(SSTORE2.read(messagePointers[index]));
+    }
+
     function getMessage(uint256 idx) external view returns (Message memory) {
-        return messages[idx];
+        return decodeMessageAtIndex(idx);
     }
 
     function getMessageForApp(
@@ -200,9 +254,9 @@ contract Net is INet, EventsAndErrors {
         address app
     ) external view returns (Message memory) {
         return
-            messages[
+            decodeMessageAtIndex(
                 hashToMessageIndexes[keccak256(abi.encodePacked(app))][idx]
-            ];
+            );
     }
 
     function getMessageForAppUser(
@@ -211,11 +265,11 @@ contract Net is INet, EventsAndErrors {
         address user
     ) external view returns (Message memory) {
         return
-            messages[
+            decodeMessageAtIndex(
                 hashToMessageIndexes[keccak256(abi.encodePacked(app, user))][
                     idx
                 ]
-            ];
+            );
     }
 
     function getMessageForAppTopic(
@@ -224,13 +278,13 @@ contract Net is INet, EventsAndErrors {
         string calldata topic
     ) external view returns (Message memory) {
         return
-            messages[
+            decodeMessageAtIndex(
                 hashToMessageIndexes[
                     keccak256(
                         abi.encodePacked(APP_TOPIC_HASH_PREFIX, app, topic)
                     )
                 ][idx]
-            ];
+            );
     }
 
     function getMessageForAppUserTopic(
@@ -240,7 +294,7 @@ contract Net is INet, EventsAndErrors {
         string calldata topic
     ) external view returns (Message memory) {
         return
-            messages[
+            decodeMessageAtIndex(
                 hashToMessageIndexes[
                     keccak256(
                         abi.encodePacked(
@@ -251,7 +305,7 @@ contract Net is INet, EventsAndErrors {
                         )
                     )
                 ][idx]
-            ];
+            );
     }
 
     // Fetch multiple messages
@@ -263,7 +317,7 @@ contract Net is INet, EventsAndErrors {
         if (startIdx >= endIdx) {
             revert InvalidRange();
         }
-        uint256 querySetLength = messages.length;
+        uint256 querySetLength = messagePointers.length;
         if (startIdx + 1 > querySetLength) {
             revert InvalidStartIndex();
         }
@@ -276,7 +330,7 @@ contract Net is INet, EventsAndErrors {
         uint256 idxInMessages = startIdx;
         unchecked {
             for (uint256 i; i < length && idxInMessages < endIdx; ) {
-                messagesSlice[i] = messages[idxInMessages];
+                messagesSlice[i] = decodeMessageAtIndex(idxInMessages);
                 ++i;
                 ++idxInMessages;
             }
@@ -306,9 +360,9 @@ contract Net is INet, EventsAndErrors {
         uint256 idxInMessages = startIdx;
         unchecked {
             for (uint256 i; i < length && idxInMessages < endIdx; ) {
-                messagesSlice[i] = messages[
+                messagesSlice[i] = decodeMessageAtIndex(
                     hashToMessageIndexes[hashVal][idxInMessages]
-                ];
+                );
                 ++i;
                 ++idxInMessages;
             }
@@ -385,7 +439,7 @@ contract Net is INet, EventsAndErrors {
     // **************
 
     function getTotalMessagesCount() external view returns (uint256) {
-        return messages.length;
+        return messagePointers.length;
     }
 
     function getTotalMessagesForHashCount(
