@@ -1,6 +1,5 @@
 import {
   useChainId,
-  useSwitchChain,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
@@ -96,7 +95,7 @@ export default function SubmitTransactionButton(props: {
       <Button
         onClick={performTransaction}
         className={props.className}
-        disabled={props.disabled}
+        disabled={props.disabled || receipt.isPending}
       >
         {status === "idle" ||
         status === "error" ||
