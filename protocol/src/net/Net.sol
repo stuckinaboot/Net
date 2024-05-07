@@ -272,7 +272,7 @@ contract Net is INet, EventsAndErrors {
     }
 
     /// @notice Decode message at index in message pointers
-    /// @param index index
+    /// @param idx index
     /// @return decodedMessage decoded message
     function decodeMessageAtIndex(
         uint256 index
@@ -281,14 +281,14 @@ contract Net is INet, EventsAndErrors {
     }
 
     /// @notice Get message
-    /// @param index index
+    /// @param idx index
     /// @return message message
     function getMessage(uint256 idx) external view returns (Message memory) {
         return decodeMessageAtIndex(idx);
     }
 
     /// @notice Get message for app
-    /// @param index index
+    /// @param idx index
     /// @param app app
     /// @return message message
     function getMessageForApp(
@@ -302,7 +302,7 @@ contract Net is INet, EventsAndErrors {
     }
 
     /// @notice Get message for app user
-    /// @param index index
+    /// @param idx index
     /// @param app app
     /// @param user user
     /// @return message message
@@ -320,7 +320,7 @@ contract Net is INet, EventsAndErrors {
     }
 
     /// @notice Get message for app topic
-    /// @param index index
+    /// @param idx index
     /// @param app app
     /// @param topic topic
     /// @return message message
@@ -340,7 +340,7 @@ contract Net is INet, EventsAndErrors {
     }
 
     /// @notice Get message for app user topic
-    /// @param index index
+    /// @param idx index
     /// @param app app
     /// @param user user
     /// @param topic topic
