@@ -183,6 +183,39 @@ contract NetTest is TestUtils, EventsAndErrors, StdCheats, IERC721Receiver {
         }
     }
 
+    function testEncodeAndDecodeMessage(
+        address app,
+        address sender,
+        uint256 timestamp,
+        bytes memory extraData,
+        string memory topic,
+        string memory text
+    ) public {
+        bytes memory encodedMessage = abi.encode(
+            // App
+            app,
+            // Sender
+            sender,
+            // Timestamp
+            block.timestamp,
+            // Extra data
+            extraData,
+            // Text
+            text,
+            // Topic
+            topic
+        );
+        Net.Message memory expectedMessage = INet.Message({
+            app: app,
+            sender: sender,
+            timestamp: block.timestamp,
+            extraData: extraData,
+            text: text,
+            topic: topic
+        });
+        verifyMessage(expectedMessage, net.decodeMessage(encodedMessage));
+    }
+
     function testSendOneMessage(
         address app,
         string calldata messageContents,
