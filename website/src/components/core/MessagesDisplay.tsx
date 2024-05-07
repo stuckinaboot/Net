@@ -20,7 +20,6 @@ import IframeRenderer from "./IFrameRenderer";
 import { CopyIcon } from "@radix-ui/react-icons";
 import { useToast } from "@/components/ui/use-toast";
 import copy from "copy-to-clipboard";
-import Link from "next/link";
 
 type OnchainMessage = {
   data: string;
@@ -43,6 +42,7 @@ type SanitizedOnchainMessage = {
 const RENDER_HTML = false;
 
 const SHOW_COPY_MESSAGE_LINK_BUTTON = false;
+const PRE_SCROLL_TIMEOUT_MS = 250;
 
 export default function MessagesDisplay(props: {
   scrollToBottom: () => void;
@@ -111,7 +111,7 @@ export default function MessagesDisplay(props: {
     // we attempt to scroll. Otherwise, we won't scroll at all
     setTimeout(() => {
       specificMessageRef.current?.scrollIntoView({ behavior: "instant" });
-    }, 250);
+    }, PRE_SCROLL_TIMEOUT_MS);
   }
 
   useEffect(() => {
@@ -126,7 +126,7 @@ export default function MessagesDisplay(props: {
     // Scroll on chain changed and messages fetched
     setTimeout(() => {
       props.scrollToBottom();
-    }, 250);
+    }, PRE_SCROLL_TIMEOUT_MS);
   }, [chainChanged, messagesResult.isFetched]);
 
   useEffect(() => {
