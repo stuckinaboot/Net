@@ -95,7 +95,7 @@ export default function SubmitTransactionButton(props: {
       <Button
         onClick={performTransaction}
         className={props.className}
-        disabled={props.disabled || receipt.isPending}
+        disabled={props.disabled}
       >
         {status === "idle" ||
         status === "error" ||
