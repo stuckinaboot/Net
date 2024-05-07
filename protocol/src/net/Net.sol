@@ -84,14 +84,14 @@ contract Net is INet, EventsAndErrors {
                     msg.sender,
                     // Sender
                     sender,
+                    // Timestamp
+                    block.timestamp,
                     // Extra data
                     extraData,
                     // Text
                     text,
                     // Topic
-                    topic,
-                    // Timestamp
-                    block.timestamp
+                    topic
                 )
             )
         );
@@ -165,14 +165,14 @@ contract Net is INet, EventsAndErrors {
                     address(0),
                     // Sender
                     msg.sender,
+                    // Timestamp
+                    block.timestamp,
                     // Extra data
                     extraData,
                     // Text
                     text,
                     // Topic
-                    topic,
-                    // Timestamp
-                    block.timestamp
+                    topic
                 )
             )
         );
