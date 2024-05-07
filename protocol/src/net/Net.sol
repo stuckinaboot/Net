@@ -95,18 +95,6 @@ contract Net is INet, EventsAndErrors {
                 )
             )
         );
-
-        // TODO remove
-        // messages.push(
-        //     Message({
-        //         app: msg.sender,
-        //         sender: sender,
-        //         extraData: extraData,
-        //         text: text,
-        //         topic: topic,
-        //         timestamp: block.timestamp
-        //     })
-        // );
     }
 
     function sendMessage(
@@ -147,18 +135,6 @@ contract Net is INet, EventsAndErrors {
         emit MessageSent(msg.sender, topic, messagesLength);
 
         // Store message
-        // todo remove
-        // messages.push(
-        //     Message({
-        //         app: address(0),
-        //         sender: msg.sender,
-        //         extraData: extraData,
-        //         text: text,
-        //         topic: topic,
-        //         timestamp: block.timestamp
-        //     })
-        // );
-
         messagePointers.push(
             SSTORE2.write(
                 abi.encode(
