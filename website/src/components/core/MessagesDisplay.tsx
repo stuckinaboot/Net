@@ -23,7 +23,7 @@ import copy from "copy-to-clipboard";
 import Link from "next/link";
 
 type OnchainMessage = {
-  extraData: string;
+  data: string;
   text: string;
   sender: string;
   app: string;
@@ -34,7 +34,7 @@ type OnchainMessage = {
 type SanitizedOnchainMessage = {
   sender: string;
   timestamp: number;
-  extraData: string;
+  data: string;
   text: string;
   app: string;
   topic: string;
