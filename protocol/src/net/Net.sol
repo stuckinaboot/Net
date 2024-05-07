@@ -79,7 +79,7 @@ contract Net is INet, EventsAndErrors {
         // Store message
         messagePointers.push(
             SSTORE2.write(
-                abi.encodePacked(
+                abi.encode(
                     // App
                     msg.sender,
                     // Sender
@@ -160,7 +160,7 @@ contract Net is INet, EventsAndErrors {
 
         messagePointers.push(
             SSTORE2.write(
-                abi.encodePacked(
+                abi.encode(
                     // App
                     address(0),
                     // Sender
