@@ -13,7 +13,7 @@ contract Net is INet, EventsAndErrors {
     mapping(bytes32 hashVal => uint256[] messageIndexes)
         public hashToMessageIndexes;
 
-    Message[] public messages;
+    // Message[] public messages;
     address[] public messagePointers;
 
     bytes32 constant ZERO_HASH = keccak256(abi.encodePacked(address(0)));
@@ -42,7 +42,7 @@ contract Net is INet, EventsAndErrors {
         }
 
         // Track message index in topic and user mappings
-        uint256 messagesLength = messages.length;
+        uint256 messagesLength = messagePointers.length;
 
         // App messages
         hashToMessageIndexes[keccak256(abi.encodePacked(msg.sender))].push(
@@ -97,16 +97,16 @@ contract Net is INet, EventsAndErrors {
         );
 
         // TODO remove
-        messages.push(
-            Message({
-                app: msg.sender,
-                sender: sender,
-                extraData: extraData,
-                text: text,
-                topic: topic,
-                timestamp: block.timestamp
-            })
-        );
+        // messages.push(
+        //     Message({
+        //         app: msg.sender,
+        //         sender: sender,
+        //         extraData: extraData,
+        //         text: text,
+        //         topic: topic,
+        //         timestamp: block.timestamp
+        //     })
+        // );
     }
 
     function sendMessage(
@@ -120,7 +120,7 @@ contract Net is INet, EventsAndErrors {
         }
 
         // Track message index in topic and user mappings
-        uint256 messagesLength = messages.length;
+        uint256 messagesLength = messagePointers.length;
 
         // address(0) is used to represent messages sent from "no app"
         hashToMessageIndexes[ZERO_HASH].push(messagesLength);
@@ -147,16 +147,17 @@ contract Net is INet, EventsAndErrors {
         emit MessageSent(msg.sender, topic, messagesLength);
 
         // Store message
-        messages.push(
-            Message({
-                app: address(0),
-                sender: msg.sender,
-                extraData: extraData,
-                text: text,
-                topic: topic,
-                timestamp: block.timestamp
-            })
-        );
+        // todo remove
+        // messages.push(
+        //     Message({
+        //         app: address(0),
+        //         sender: msg.sender,
+        //         extraData: extraData,
+        //         text: text,
+        //         topic: topic,
+        //         timestamp: block.timestamp
+        //     })
+        // );
 
         messagePointers.push(
             SSTORE2.write(
@@ -341,7 +342,7 @@ contract Net is INet, EventsAndErrors {
         if (startIdx >= endIdx) {
             revert InvalidRange();
         }
-        uint256 querySetLength = messages.length;
+        uint256 querySetLength = messagePointers.length;
         if (startIdx + 1 > querySetLength) {
             revert InvalidStartIndex();
         }
@@ -354,7 +355,7 @@ contract Net is INet, EventsAndErrors {
         uint256 idxInMessages = startIdx;
         unchecked {
             for (uint256 i; i < length && idxInMessages < endIdx; ) {
-                messagesSlice[i] = messages[idxInMessages];
+                messagesSlice[i] = decodeMessageAtIndex(idxInMessages);
                 ++i;
                 ++idxInMessages;
             }
@@ -463,7 +464,7 @@ contract Net is INet, EventsAndErrors {
     // **************
 
     function getTotalMessagesCount() external view returns (uint256) {
-        return messages.length;
+        return messagePointers.length;
     }
 
     function getTotalMessagesForHashCount(
