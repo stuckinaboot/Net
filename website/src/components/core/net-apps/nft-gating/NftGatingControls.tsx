@@ -2,7 +2,8 @@ import { testnetsEnabled } from "@/app/constants";
 import NftCollectionSelectorDropdown from "../../NftCollectionSelectorDropdown";
 import { useEffect, useState } from "react";
 import NftSelector from "../../NftSelector";
-import { ControlsState } from "./types";
+import { NftGatingControlsState } from "./types";
+import { AppControlsProps } from "../../types";
 
 const ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM = "Onchain Steamboat Willies";
 const CHAT_ROOM_ITEMS = [
@@ -18,15 +19,9 @@ function nftAddressFromChatRoomItem(chatRoomItem: string) {
   }
 }
 
-type ControlsProps<T> = {
-  userAddress?: string;
-  // Controls state lives in parent so that parent can pass this state into
-  // other component
-  controlsState: T;
-  updateControlsState: (arg: T) => void;
-};
-
-export default function NftGatingControls(props: ControlsProps<ControlsState>) {
+export default function NftGatingControls<NftGatingControlsState>(
+  props: AppControlsProps<NftGatingControlsState>
+) {
   const [chatRoom, setChatRoom] = useState(CHAT_ROOM_ITEMS[0]);
   const [selectedNftTokenId, setSelectedNftTokenId] = useState<string>();
 

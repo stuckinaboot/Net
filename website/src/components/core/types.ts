@@ -30,9 +30,28 @@ export type GetContractWriteArgsFunction = (params: {
 }) => ContractWriteArgsResult;
 
 export type AppComponentsConfig = {
-  provider: any;
-  controls: any;
-  messageRenderer: any;
+  provider: (props: AppProviderProps) => React.ReactNode;
+  controls: (props: AppControlsProps) => React.ReactNode;
+  messageRenderer: (props: AppMessageRendererProps) => React.ReactNode;
   getContractReadArgsFunction: GetContractReadArgsFunction;
   getContractWriteArgsFunction: GetContractWriteArgsFunction;
+};
+
+export type AppProviderProps = {
+  children?: React.ReactNode;
+  messageRange: MessageRange;
+  appConfig: NetAppContext;
+};
+
+export type AppControlsProps = {
+  userAddress?: string;
+  // Controls state lives in parent so that parent can pass this state into
+  // other component
+  controlsState: any;
+  updateControlsState: (arg: any) => void;
+};
+
+export type AppMessageRendererProps = {
+  idx: number;
+  message: SanitizedOnchainMessage;
 };

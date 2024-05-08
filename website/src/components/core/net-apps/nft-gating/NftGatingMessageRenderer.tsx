@@ -1,20 +1,13 @@
-import {
-  chainTimeToMilliseconds,
-  getUrlForSpecificMessageIndex,
-} from "@/app/utils";
+import { chainTimeToMilliseconds } from "@/app/utils";
 import TimeAgo from "react-timeago";
-import { SanitizedOnchainMessage } from "../../types";
+import { AppMessageRendererProps } from "../../types";
 import { useNftGating } from "./NftGatingProvider";
 import { SHOW_COPY_MESSAGE_LINK_BUTTON } from "@/app/constants";
-import copy from "copy-to-clipboard";
-import { toast } from "@/components/ui/use-toast";
-import { CopyIcon } from "@radix-ui/react-icons";
 import CopyMessageLinkButton from "../../CopyMessageLinkButton";
 
-export default function NftGatingMessageRenderer(props: {
-  idx: number;
-  message: SanitizedOnchainMessage;
-}) {
+export default function NftGatingMessageRenderer(
+  props: AppMessageRendererProps
+) {
   const { idx, message } = props;
   const { nftMsgSenderTokenIds, nftMsgSenderImages } = useNftGating();
 
