@@ -3,6 +3,8 @@ import {
   WILLIE_NET_CONTRACT,
 } from "../../app/constants";
 import SubmitTransactionButton from "./SubmitTransactionButton";
+import { getContractWriteArgs } from "./nft-gating/NftGatingArgs";
+import { NetAppConfig } from "./types";
 
 export type Nft = { address: string; tokenId: string };
 
@@ -25,6 +27,7 @@ export default function SendMessageButton(props: {
   nft?: Nft;
   onTransactionConfirmed?: (transactionHash: string) => void;
   disabled?: boolean;
+  appConfig?: NetAppConfig;
 }) {
   function validatePrePerformTransasction() {
     if (props.message.length === 0) {
@@ -32,16 +35,22 @@ export default function SendMessageButton(props: {
     }
   }
 
-  if (props.nft) {
+  if (props.appConfig) {
+    const { sendMessage: sendMessageWriteArgs } = getContractWriteArgs({
+      appConfig: props.appConfig,
+      messageText: props.message,
+    });
     return (
       <SubmitTransactionButton
         className={props.className}
-        functionName="sendMessage"
-        abi={NFT_GATED_CHAT_CONTRACT.abi}
-        to={NFT_GATED_CHAT_CONTRACT.address}
-        args={[props.nft.address, props.nft.tokenId, props.message]}
+        functionName={sendMessageWriteArgs.functionName}
+        abi={sendMessageWriteArgs.abi}
+        to={sendMessageWriteArgs.to}
+        args={sendMessageWriteArgs.args}
         messages={{ toasts: TOASTS, button: BUTTONS }}
         useDefaultButtonMessageOnSuccess={true}
+        // TODO allow for custom logic to be executed before send message (ex. sanitizing message, displaying UI)
+        // and post confirmation
         onTransactionConfirmed={props.onTransactionConfirmed}
         prePerformTransasctionValidation={validatePrePerformTransasction}
         disabled={props.disabled}

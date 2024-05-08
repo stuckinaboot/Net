@@ -4,27 +4,29 @@ import { useSearchParams } from "next/navigation";
 import { createContext, useContext, useState } from "react";
 import useAsyncEffect from "use-async-effect";
 import { useReadContract } from "wagmi";
+import { NetAppConfig, MessageRange } from "../types";
+import { ControlsState } from "./types";
 
-type ContextType = {
+type AppContextType = {
   nftMsgSenderTokenIds: BigInt[] | undefined;
   nftMsgSenderImages: string[] | undefined;
 };
 
-const MyContext = createContext<ContextType>({
+const AppContext = createContext<AppContextType>({
   nftMsgSenderTokenIds: [],
   nftMsgSenderImages: [],
 });
 
-export const useNftGating = () => useContext(MyContext);
+export const useNftGating = () => useContext(AppContext);
 
 export default function NftGatingProvider(props: {
   children?: React.ReactNode;
-  messageRange: { startIndex: number; endIndex: number };
+  messageRange: MessageRange;
+  appConfig: NetAppConfig;
 }) {
   const [nftMsgSenderImages, setNftMsgSenderImages] = useState<string[]>([]);
 
-  const searchParams = useSearchParams();
-  const nftAddress = searchParams.get("nftAddress");
+  const nftAddress = props.appConfig.controlsState.nftAddress;
 
   const nftMsgSendersResult = useReadContract({
     abi: NFT_GATED_CHAT_CONTRACT.abi,
@@ -52,8 +54,8 @@ export default function NftGatingProvider(props: {
   }, [nftMsgSenderTokenIds?.length]);
 
   return (
-    <MyContext.Provider value={{ nftMsgSenderTokenIds, nftMsgSenderImages }}>
+    <AppContext.Provider value={{ nftMsgSenderTokenIds, nftMsgSenderImages }}>
       {props.children}
-    </MyContext.Provider>
+    </AppContext.Provider>
   );
 }

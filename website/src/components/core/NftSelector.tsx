@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NftSelectorDropdown, { NftSelectorItem } from "./NftSelectorDropdown";
 import useAsyncEffect from "use-async-effect";
 import { getNftImages, getOwnedNftTokenIds } from "@/app/utils";
@@ -11,6 +11,11 @@ export default function NftSelector(props: {
 }) {
   const [nfts, setNfts] = useState<NftSelectorItem[]>([]);
   const [loadingNfts, setLoadingNfts] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useAsyncEffect(async () => {
     setLoadingNfts(true);
@@ -40,6 +45,12 @@ export default function NftSelector(props: {
     props.selectedTokenId == null
       ? nfts[0]
       : nfts.find((nft) => nft.tokenId === props.selectedTokenId) || nfts[0];
+
+  if (!mounted) {
+    // This fixes a server hydration error that occurs when trying to
+    // perform the api request before component finishes mounting
+    return <></>;
+  }
 
   return loadingNfts ? (
     "Loading your NFTs..."

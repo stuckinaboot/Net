@@ -25,3 +25,5 @@ export const IS_PROD = process.env.NODE_ENV === "production";
 export const WEBSITE_BASE_URL = IS_PROD
   ? "https://willienet.vercel.app"
   : "http://localhost:3000";
+
+export const SHOW_COPY_MESSAGE_LINK_BUTTON = false;
