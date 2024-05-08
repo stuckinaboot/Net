@@ -147,17 +147,10 @@ export default function WillieNetDapp(props: {
       </div>
       <CardFooter className="flex flex-col justify-end">
         <Separator className="m-3" />
-        {app != null ? (
-          <SendMessageSection
-            appConfig={appConfig}
-            disabled={disableSendMessageSection}
-          />
-        ) : (
-          <SendMessageSection
-            appConfig={appConfig}
-            disabled={disableSendMessageSection}
-          />
-        )}
+        <SendMessageSection
+          appConfig={appConfig}
+          disabled={disableSendMessageSection}
+        />
       </CardFooter>
     </Card>
   );
