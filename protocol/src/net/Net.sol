@@ -275,9 +275,9 @@ contract Net is INet, EventsAndErrors {
     /// @param idx index
     /// @return decodedMessage decoded message
     function decodeMessageAtIndex(
-        uint256 index
+        uint256 idx
     ) public view returns (Message memory) {
-        return decodeMessage(SSTORE2.read(messagePointers[index]));
+        return decodeMessage(SSTORE2.read(messagePointers[idx]));
     }
 
     /// @notice Get message
