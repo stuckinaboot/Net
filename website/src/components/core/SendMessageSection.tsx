@@ -1,13 +1,10 @@
-import { chainTimeToMilliseconds } from "@/app/utils";
-import { cn } from "@/lib/utils";
 import React, { useState } from "react";
-import SendMessageButton, { Nft } from "./SendMessageButton";
-import { Input } from "@/components/ui/input";
+import SendMessageButton from "./SendMessageButton";
 import { Textarea } from "@/components/ui/textarea";
-import { NetAppConfig } from "./types";
+import { NetAppContext } from "./types";
 
 export default function SendMessageSection(props: {
-  appConfig?: NetAppConfig;
+  appContext?: NetAppContext;
   disabled?: boolean;
 }) {
   const [message, setMessage] = useState("");
@@ -25,7 +22,7 @@ export default function SendMessageSection(props: {
       />
       <div className="m-1" />
       <SendMessageButton
-        appConfig={props.appConfig}
+        appContext={props.appContext}
         className="w-full"
         message={message}
         topic="default"

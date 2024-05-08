@@ -13,8 +13,8 @@ import { Separator } from "@/components/ui/separator";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import MessagesDisplay from "./MessagesDisplay";
 import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
-import NftGatingControls from "./net-apps/nft-gating/NftGatingControls";
 import { useSearchParams } from "next/navigation";
+import { APP_TO_CONFIG } from "./net-apps/AppManager";
 
 export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
@@ -104,6 +104,8 @@ export default function WillieNetDapp(props: {
   const disableSendMessageSection = ready && !isConnected;
   const appConfig =
     app != null ? { appAddress: app, controlsState: controlsState } : undefined;
+
+  const Controls = app != null ? APP_TO_CONFIG[app].controls : null;
   return (
     <Card className="w-full h-full flex flex-col">
       <CardHeader className="flex flex-col">
@@ -114,10 +116,10 @@ export default function WillieNetDapp(props: {
         <CardDescription>
           All messages are stored and read onchain and are publicly accessible.
           {app ? (
-            <NftGatingControls
+            <Controls
               userAddress={userAddress}
               controlsState={controlsState}
-              updateControlsState={(updatedState) =>
+              updateControlsState={(updatedState: any) =>
                 setControlsState(updatedState)
               }
             />
@@ -136,7 +138,7 @@ export default function WillieNetDapp(props: {
           checkAndUpdateShouldShowScrollToBottomButton={
             checkAndUpdateShouldShowScrollToBottomButton
           }
-          appConfig={appConfig}
+          appContext={appConfig}
         />
         <div ref={messagesEndRef} />
       </CardContent>
@@ -148,7 +150,7 @@ export default function WillieNetDapp(props: {
       <CardFooter className="flex flex-col justify-end">
         <Separator className="m-3" />
         <SendMessageSection
-          appConfig={appConfig}
+          appContext={appConfig}
           disabled={disableSendMessageSection}
         />
       </CardFooter>

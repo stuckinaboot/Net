@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { createContext, useContext, useState } from "react";
 import useAsyncEffect from "use-async-effect";
 import { useReadContract } from "wagmi";
-import { NetAppConfig, MessageRange } from "../../types";
+import { NetAppContext, MessageRange } from "../../types";
 import { ControlsState } from "./types";
 
 type AppContextType = {
@@ -22,7 +22,7 @@ export const useNftGating = () => useContext(AppContext);
 export default function NftGatingProvider(props: {
   children?: React.ReactNode;
   messageRange: MessageRange;
-  appConfig: NetAppConfig;
+  appConfig: NetAppContext;
 }) {
   const [nftMsgSenderImages, setNftMsgSenderImages] = useState<string[]>([]);
 

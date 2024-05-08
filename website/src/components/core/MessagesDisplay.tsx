@@ -1,20 +1,11 @@
-import {
-  NFT_GATED_CHAT_CONTRACT,
-  NULL_ADDRESS,
-  WILLIE_NET_CONTRACT,
-} from "@/app/constants";
+import { NULL_ADDRESS, WILLIE_NET_CONTRACT } from "@/app/constants";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import truncateEthAddress from "truncate-eth-address";
 import { useChainId, useReadContract } from "wagmi";
-import isHtml from "is-html";
-import IframeRenderer from "./IFrameRenderer";
-import NftGatingProvider from "./net-apps/nft-gating/NftGatingProvider";
-import { NetAppConfig, SanitizedOnchainMessage } from "./types";
-import NftGatingMessageRenderer from "./net-apps/nft-gating/NftGatingMessageRenderer";
-import { useSearchParams } from "next/navigation";
-import { getContractReadArgs } from "./net-apps/nft-gating/NftGatingArgs";
+import { NetAppContext, SanitizedOnchainMessage } from "./types";
 import DefaultMessageRenderer from "./DefaultMessageRenderer";
+import { APP_TO_CONFIG } from "./net-apps/AppManager";
 
 type OnchainMessage = {
   data: string;
@@ -31,7 +22,7 @@ export default function MessagesDisplay(props: {
   scrollToBottom: () => void;
   checkAndUpdateShouldShowScrollToBottomButton: () => void;
   initialVisibleMessageIndex?: number;
-  appConfig?: NetAppConfig;
+  appContext?: NetAppContext;
 }) {
   const [chainChanged, setChainChanged] = useState(false);
   const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
@@ -40,8 +31,12 @@ export default function MessagesDisplay(props: {
   const chainId = useChainId();
 
   const totalMessagesReadContractArgs =
-    props.appConfig != null
-      ? getContractReadArgs(props.appConfig).totalMessages
+    props.appContext != null &&
+    APP_TO_CONFIG[props.appContext.appAddress]?.getContractReadArgsFunction !=
+      null
+      ? APP_TO_CONFIG[props.appContext.appAddress].getContractReadArgsFunction(
+          props.appContext
+        ).totalMessages
       : {
           abi: WILLIE_NET_CONTRACT.abi,
           address: WILLIE_NET_CONTRACT.address as any,
@@ -53,17 +48,22 @@ export default function MessagesDisplay(props: {
         };
 
   const totalMessagesResult = useReadContract(totalMessagesReadContractArgs);
-  const messagesResultsReadContractArgs = props.appConfig
-    ? getContractReadArgs(props.appConfig).messages({
-        startIndex: 0,
-        endIndex: +(totalMessagesResult.data || 0).toString(),
-      })
-    : {
-        abi: WILLIE_NET_CONTRACT.abi,
-        address: WILLIE_NET_CONTRACT.address as any,
-        functionName: "getMessagesInRangeForApp",
-        args: [BigInt(0), totalMessagesResult.data, NULL_ADDRESS],
-      };
+  const messagesResultsReadContractArgs =
+    props.appContext &&
+    APP_TO_CONFIG[props.appContext.appAddress]?.getContractReadArgsFunction !=
+      null
+      ? APP_TO_CONFIG[props.appContext.appAddress]
+          .getContractReadArgsFunction(props.appContext)
+          .messages({
+            startIndex: 0,
+            endIndex: +(totalMessagesResult.data || 0).toString(),
+          })
+      : {
+          abi: WILLIE_NET_CONTRACT.abi,
+          address: WILLIE_NET_CONTRACT.address as any,
+          functionName: "getMessagesInRangeForApp",
+          args: [BigInt(0), totalMessagesResult.data, NULL_ADDRESS],
+        };
   const messagesResult = useReadContract(messagesResultsReadContractArgs);
   const onchainMessages =
     (messagesResult.data as OnchainMessage[] | undefined) || [];
@@ -119,25 +119,58 @@ export default function MessagesDisplay(props: {
     scrollToSpecificMessageAfterTimeout();
   }, [sanitizedOnchainMessages.length, firstLoadedMessages]);
 
-  const ConditionalProvider = ({ children }: { children?: React.ReactNode }) =>
-    props.appConfig != null ? (
-      <NftGatingProvider
+  const ConditionalAppProvider = ({
+    children,
+  }: {
+    children?: React.ReactNode;
+  }) => {
+    const AppProvider =
+      props.appContext != null &&
+      APP_TO_CONFIG[props.appContext.appAddress]?.provider
+        ? APP_TO_CONFIG[props.appContext.appAddress].provider
+        : null;
+    if (AppProvider == null) {
+      return <>{children}</>;
+    }
+
+    return (
+      <AppProvider
         messageRange={{
           startIndex: 0,
           endIndex: +(totalMessagesResult.data != null
             ? +totalMessagesResult.data.toString()
             : 0),
         }}
-        appConfig={props.appConfig}
+        appConfig={props.appContext}
       >
         {children}
-      </NftGatingProvider>
-    ) : (
-      <>{children}</>
+      </AppProvider>
     );
+  };
+
+  const ConditionalMessageRenderer = ({
+    children,
+    idx,
+    message,
+  }: {
+    children?: React.ReactNode;
+    idx: number;
+    message: SanitizedOnchainMessage;
+  }) => {
+    const AppMessageRenderer =
+      props.appContext != null &&
+      APP_TO_CONFIG[props.appContext.appAddress]?.messageRenderer
+        ? APP_TO_CONFIG[props.appContext.appAddress].messageRenderer
+        : null;
+    if (AppMessageRenderer == null) {
+      return <DefaultMessageRenderer idx={idx} message={message} />;
+    }
+
+    return <AppMessageRenderer idx={idx} message={message} />;
+  };
 
   return (
-    <ConditionalProvider>
+    <ConditionalAppProvider>
       <div className="flex flex-col">
         <div
           className={cn(
@@ -158,15 +191,11 @@ export default function MessagesDisplay(props: {
                   : undefined
               }
             >
-              {props.appConfig ? (
-                <NftGatingMessageRenderer idx={idx} message={message} />
-              ) : (
-                <DefaultMessageRenderer idx={idx} message={message} />
-              )}
+              <ConditionalMessageRenderer idx={idx} message={message} />
             </div>
           ))}
         </div>
       </div>
-    </ConditionalProvider>
+    </ConditionalAppProvider>
   );
 }

@@ -1,18 +1,12 @@
 import { NFT_GATED_CHAT_CONTRACT, WILLIE_NET_CONTRACT } from "@/app/constants";
-import { ReadonlyURLSearchParams } from "next/navigation";
-import { NetAppConfig, MessageRange } from "../../types";
-import { ControlsState } from "./types";
+import {
+  NetAppContext,
+  MessageRange,
+  GetContractReadArgsFunction,
+  GetContractWriteArgsFunction,
+} from "../../types";
 
-type ContractReadArgs = {
-  totalMessages: any;
-  messages: (range: MessageRange) => any;
-};
-
-type ContractWriteArgs = {
-  sendMessage: { abi: any; functionName: string; to: string; args: any[] };
-};
-
-export function getContractReadArgs(params: NetAppConfig): ContractReadArgs {
+export const getContractReadArgs: GetContractReadArgsFunction = (params) => {
   return {
     totalMessages: {
       abi: WILLIE_NET_CONTRACT.abi,
@@ -35,12 +29,9 @@ export function getContractReadArgs(params: NetAppConfig): ContractReadArgs {
       ],
     }),
   };
-}
+};
 
-export function getContractWriteArgs(params: {
-  appConfig: NetAppConfig;
-  messageText: string;
-}): ContractWriteArgs {
+export const getContractWriteArgs: GetContractWriteArgsFunction = (params) => {
   return {
     sendMessage: {
       functionName: "sendMessage",
@@ -53,4 +44,4 @@ export function getContractWriteArgs(params: {
       ],
     },
   };
-}
+};
