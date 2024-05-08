@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { createContext, useContext, useState } from "react";
 import useAsyncEffect from "use-async-effect";
 import { useReadContract } from "wagmi";
-import { NetAppConfig, MessageRange } from "../types";
+import { NetAppConfig, MessageRange } from "../../types";
 import { ControlsState } from "./types";
 
 type AppContextType = {

@@ -9,11 +9,11 @@ import truncateEthAddress from "truncate-eth-address";
 import { useChainId, useReadContract } from "wagmi";
 import isHtml from "is-html";
 import IframeRenderer from "./IFrameRenderer";
-import NftGatingProvider from "./nft-gating/NftGatingProvider";
+import NftGatingProvider from "./net-apps/nft-gating/NftGatingProvider";
 import { NetAppConfig, SanitizedOnchainMessage } from "./types";
-import NftGatingMessageRenderer from "./nft-gating/NftGatingMessageRenderer";
+import NftGatingMessageRenderer from "./net-apps/nft-gating/NftGatingMessageRenderer";
 import { useSearchParams } from "next/navigation";
-import { getContractReadArgs } from "./nft-gating/NftGatingArgs";
+import { getContractReadArgs } from "./net-apps/nft-gating/NftGatingArgs";
 import DefaultMessageRenderer from "./DefaultMessageRenderer";
 
 type OnchainMessage = {

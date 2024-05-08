@@ -1,6 +1,6 @@
 import { NFT_GATED_CHAT_CONTRACT, WILLIE_NET_CONTRACT } from "@/app/constants";
 import { ReadonlyURLSearchParams } from "next/navigation";
-import { NetAppConfig, MessageRange } from "../types";
+import { NetAppConfig, MessageRange } from "../../types";
 import { ControlsState } from "./types";
 
 type ContractReadArgs = {

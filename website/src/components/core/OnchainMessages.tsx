@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import MessagesDisplay from "./MessagesDisplay";
 import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
-import NftGatingControls from "./nft-gating/NftGatingControls";
+import NftGatingControls from "./net-apps/nft-gating/NftGatingControls";
 import { useSearchParams } from "next/navigation";
 
 export default function WillieNetDapp(props: {

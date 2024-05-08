@@ -1,7 +1,7 @@
 import { testnetsEnabled } from "@/app/constants";
-import NftCollectionSelectorDropdown from "../NftCollectionSelectorDropdown";
+import NftCollectionSelectorDropdown from "../../NftCollectionSelectorDropdown";
 import { useEffect, useState } from "react";
-import NftSelector from "../NftSelector";
+import NftSelector from "../../NftSelector";
 import { ControlsState } from "./types";
 
 const ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM = "Onchain Steamboat Willies";

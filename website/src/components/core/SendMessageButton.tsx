@@ -3,7 +3,7 @@ import {
   WILLIE_NET_CONTRACT,
 } from "../../app/constants";
 import SubmitTransactionButton from "./SubmitTransactionButton";
-import { getContractWriteArgs } from "./nft-gating/NftGatingArgs";
+import { getContractWriteArgs } from "./net-apps/nft-gating/NftGatingArgs";
 import { NetAppConfig } from "./types";
 
 export type Nft = { address: string; tokenId: string };
