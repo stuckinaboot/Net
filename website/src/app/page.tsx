@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 
 import { useSearchParams } from "next/navigation";
-import WillieNetDapp from "../components/core/OnchainMessages";
+import WillieNetDapp from "../components/core/WillieNetDapp";
 
 function Core() {
   const searchParams = useSearchParams();
