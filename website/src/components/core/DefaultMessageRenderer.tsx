@@ -4,6 +4,8 @@ import { SanitizedOnchainMessage } from "./types";
 import { SHOW_COPY_MESSAGE_LINK_BUTTON } from "@/app/constants";
 import CopyMessageLinkButton from "./CopyMessageLinkButton";
 
+const SHOW_MESSAGE_TIMESTAMP = false;
+
 export default function DefaultMessageRenderer(props: {
   idx: number;
   message: SanitizedOnchainMessage;
@@ -14,8 +16,11 @@ export default function DefaultMessageRenderer(props: {
     <>
       <p className="flex text-left">{message.text}</p>
       <p className="flex justify-end">
-        <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
-        {message.senderEnsName || message.sender} | Message #{idx}{" "}
+        {SHOW_MESSAGE_TIMESTAMP && (
+          <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} />
+        )}
+        {SHOW_MESSAGE_TIMESTAMP && " |"}{" "}
+        {message.senderEnsName || message.sender} | #{idx}{" "}
         {SHOW_COPY_MESSAGE_LINK_BUTTON && (
           <CopyMessageLinkButton messageIdx={idx} />
         )}
