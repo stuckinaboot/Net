@@ -1,8 +1,7 @@
-import {
-  NFT_GATED_CHAT_CONTRACT,
-  WILLIE_NET_CONTRACT,
-} from "../../app/constants";
+import { WILLIE_NET_CONTRACT } from "../../app/constants";
 import SubmitTransactionButton from "./SubmitTransactionButton";
+import { APP_TO_CONFIG } from "./net-apps/AppManager";
+import { NetAppContext } from "./types";
 
 export type Nft = { address: string; tokenId: string };
 
@@ -22,9 +21,9 @@ export default function SendMessageButton(props: {
   message: string;
   topic: string;
   className?: string;
-  nft?: Nft;
   onTransactionConfirmed?: (transactionHash: string) => void;
   disabled?: boolean;
+  appContext?: NetAppContext;
 }) {
   function validatePrePerformTransasction() {
     if (props.message.length === 0) {
@@ -32,16 +31,29 @@ export default function SendMessageButton(props: {
     }
   }
 
-  if (props.nft) {
+  if (
+    props.appContext &&
+    APP_TO_CONFIG[props.appContext.appAddress]?.getContractWriteArgsFunction !=
+      null
+  ) {
+    const writeArgs = APP_TO_CONFIG[
+      props.appContext.appAddress
+    ].getContractWriteArgsFunction({
+      appConfig: props.appContext,
+      messageText: props.message,
+    });
+    const sendMessageArgs = writeArgs?.sendMessage;
     return (
       <SubmitTransactionButton
         className={props.className}
-        functionName="sendMessage"
-        abi={NFT_GATED_CHAT_CONTRACT.abi}
-        to={NFT_GATED_CHAT_CONTRACT.address}
-        args={[props.nft.address, props.nft.tokenId, props.message]}
+        functionName={sendMessageArgs.functionName}
+        abi={sendMessageArgs.abi}
+        to={sendMessageArgs.to}
+        args={sendMessageArgs.args}
         messages={{ toasts: TOASTS, button: BUTTONS }}
         useDefaultButtonMessageOnSuccess={true}
+        // TODO allow for custom logic to be executed before send message (ex. sanitizing message, displaying UI)
+        // and post confirmation
         onTransactionConfirmed={props.onTransactionConfirmed}
         prePerformTransasctionValidation={validatePrePerformTransasction}
         disabled={props.disabled}

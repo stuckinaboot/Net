@@ -1,25 +1,13 @@
-import {
-  NFT_GATED_CHAT_CONTRACT,
-  NULL_ADDRESS,
-  WILLIE_NET_CONTRACT,
-} from "@/app/constants";
-import {
-  chainTimeToMilliseconds,
-  getNftImages,
-  getUrlForSpecificMessageIndex,
-} from "@/app/utils";
+import { NULL_ADDRESS, WILLIE_NET_CONTRACT } from "@/app/constants";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
-import TimeAgo from "react-timeago";
 import truncateEthAddress from "truncate-eth-address";
-import useAsyncEffect from "use-async-effect";
-import { isAddress } from "viem";
 import { useChainId, useReadContract } from "wagmi";
-import isHtml from "is-html";
-import IframeRenderer from "./IFrameRenderer";
-import { CopyIcon } from "@radix-ui/react-icons";
-import { useToast } from "@/components/ui/use-toast";
-import copy from "copy-to-clipboard";
+import { NetAppContext, SanitizedOnchainMessage } from "./types";
+import DefaultMessageRenderer from "./DefaultMessageRenderer";
+import { APP_TO_CONFIG } from "./net-apps/AppManager";
+import { getEnsName } from "../utils/utils";
+import useAsyncEffect from "use-async-effect";
 
 type OnchainMessage = {
   data: string;
@@ -30,72 +18,54 @@ type OnchainMessage = {
   topic: string;
 };
 
-type SanitizedOnchainMessage = {
-  sender: string;
-  timestamp: number;
-  data: string;
-  text: string;
-  app: string;
-  topic: string;
-};
-
-const RENDER_HTML = false;
-
-const SHOW_COPY_MESSAGE_LINK_BUTTON = false;
 const PRE_SCROLL_TIMEOUT_MS = 250;
 
 export default function MessagesDisplay(props: {
   scrollToBottom: () => void;
   checkAndUpdateShouldShowScrollToBottomButton: () => void;
-  nftAddress?: string;
   initialVisibleMessageIndex?: number;
+  appContext?: NetAppContext;
 }) {
   const [chainChanged, setChainChanged] = useState(false);
-  const [nftMsgSenderImages, setNftMsgSenderImages] = useState<string[]>([]);
   const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
   const [firstLoadedMessages, setFirstLoadedMessages] = useState(false);
   const specificMessageRef = useRef<HTMLDivElement | null>(null);
   const chainId = useChainId();
-  const { toast } = useToast();
 
-  const totalMessagesReadContractArgs = props.nftAddress
-    ? {
-        abi: WILLIE_NET_CONTRACT.abi,
-        address: WILLIE_NET_CONTRACT.address as any,
-        functionName: "getTotalMessagesForAppTopicCount",
-        query: {
-          refetchInterval: 2000,
-        },
-        args: [NFT_GATED_CHAT_CONTRACT.address, props.nftAddress],
-      }
-    : {
-        abi: WILLIE_NET_CONTRACT.abi,
-        address: WILLIE_NET_CONTRACT.address as any,
-        functionName: "getTotalMessagesForAppCount",
-        query: {
-          refetchInterval: 2000,
-        },
-        args: [NULL_ADDRESS],
-      };
+  const totalMessagesReadContractArgs =
+    props.appContext != null &&
+    APP_TO_CONFIG[props.appContext.appAddress]?.getContractReadArgsFunction !=
+      null
+      ? APP_TO_CONFIG[props.appContext.appAddress].getContractReadArgsFunction(
+          props.appContext
+        ).totalMessages
+      : {
+          abi: WILLIE_NET_CONTRACT.abi,
+          address: WILLIE_NET_CONTRACT.address as any,
+          functionName: "getTotalMessagesForAppCount",
+          query: {
+            refetchInterval: 2000,
+          },
+          args: [NULL_ADDRESS],
+        };
+
   const totalMessagesResult = useReadContract(totalMessagesReadContractArgs);
-  const messagesResultsReadContractArgs = props.nftAddress
-    ? {
-        abi: WILLIE_NET_CONTRACT.abi,
-        address: WILLIE_NET_CONTRACT.address as any,
-        functionName: "getMessagesInRangeForAppTopic",
-        args: [
-          BigInt(0),
-          totalMessagesResult.data,
-          NFT_GATED_CHAT_CONTRACT.address,
-          props.nftAddress,
-        ],
-      }
-    : {
-        abi: WILLIE_NET_CONTRACT.abi,
-        address: WILLIE_NET_CONTRACT.address as any,
-        functionName: "getMessagesInRangeForApp",
-        args: [BigInt(0), totalMessagesResult.data, NULL_ADDRESS],
-      };
+  const messagesResultsReadContractArgs =
+    props.appContext &&
+    APP_TO_CONFIG[props.appContext.appAddress]?.getContractReadArgsFunction !=
+      null
+      ? APP_TO_CONFIG[props.appContext.appAddress]
+          .getContractReadArgsFunction(props.appContext)
+          .messages({
+            startIndex: 0,
+            endIndex: +(totalMessagesResult.data || 0).toString(),
+          })
+      : {
+          abi: WILLIE_NET_CONTRACT.abi,
+          address: WILLIE_NET_CONTRACT.address as any,
+          functionName: "getMessagesInRangeForApp",
+          args: [BigInt(0), totalMessagesResult.data, NULL_ADDRESS],
+        };
   const messagesResult = useReadContract(messagesResultsReadContractArgs);
   const onchainMessages =
     (messagesResult.data as OnchainMessage[] | undefined) || [];
@@ -129,13 +99,22 @@ export default function MessagesDisplay(props: {
     }, PRE_SCROLL_TIMEOUT_MS);
   }, [chainChanged, messagesResult.isFetched]);
 
-  useEffect(() => {
+  useAsyncEffect(async () => {
     if (!messagesResult.isFetched) {
       return;
     }
+
+    const finalMessages = await Promise.all(
+      sanitizedOnchainMessages.map(async (message) => ({
+        ...message,
+        senderEnsName:
+          (await getEnsName({ address: message.sender, chainId })) || undefined,
+      }))
+    );
+
     // Updating messages using state and skipping when not fetched
     // gets rid of the flicker of loading messages
-    setMessages(sanitizedOnchainMessages);
+    setMessages(finalMessages);
   }, [sanitizedOnchainMessages.length, messagesResult.isFetched]);
 
   useEffect(() => {
@@ -144,27 +123,6 @@ export default function MessagesDisplay(props: {
     props.checkAndUpdateShouldShowScrollToBottomButton();
   }, [messages.length]);
 
-  const nftMsgSendersResult = useReadContract({
-    abi: NFT_GATED_CHAT_CONTRACT.abi,
-    address: NFT_GATED_CHAT_CONTRACT.address as any,
-    functionName: "getMessageSendersInRange",
-    args: [props.nftAddress, BigInt(0), totalMessagesResult.data],
-  });
-  const nftMsgSenderTokenIds = nftMsgSendersResult?.data as
-    | BigInt[]
-    | undefined;
-
-  useAsyncEffect(async () => {
-    if (props.nftAddress == null || nftMsgSenderTokenIds == null) {
-      return;
-    }
-    const images = await getNftImages({
-      contractAddress: props.nftAddress,
-      tokenIds: nftMsgSenderTokenIds.map((tokenId) => tokenId.toString()),
-    });
-    setNftMsgSenderImages(images);
-  }, [nftMsgSenderTokenIds?.length]);
-
   useEffect(() => {
     if (firstLoadedMessages || sanitizedOnchainMessages.length === 0) {
       return;
@@ -172,29 +130,67 @@ export default function MessagesDisplay(props: {
     scrollToSpecificMessageAfterTimeout();
   }, [sanitizedOnchainMessages.length, firstLoadedMessages]);
 
-  function getRenderedMessage(message: string) {
-    if (RENDER_HTML && isHtml(message)) {
-      return <IframeRenderer htmlString={message} />;
+  const ConditionalAppProvider = ({
+    children,
+  }: {
+    children?: React.ReactNode;
+  }) => {
+    const AppProvider =
+      props.appContext != null &&
+      APP_TO_CONFIG[props.appContext.appAddress] != null
+        ? APP_TO_CONFIG[props.appContext.appAddress].provider
+        : null;
+    if (AppProvider == null || props.appContext == null) {
+      return <>{children}</>;
     }
-    return message;
-  }
+
+    return (
+      <AppProvider
+        messageRange={{
+          startIndex: 0,
+          endIndex: +(totalMessagesResult.data != null
+            ? +totalMessagesResult.data.toString()
+            : 0),
+        }}
+        appContext={props.appContext}
+      >
+        {children}
+      </AppProvider>
+    );
+  };
+
+  const ConditionalMessageRenderer = ({
+    idx,
+    message,
+  }: {
+    idx: number;
+    message: SanitizedOnchainMessage;
+  }) => {
+    const AppMessageRenderer =
+      props.appContext != null &&
+      APP_TO_CONFIG[props.appContext.appAddress] != null
+        ? APP_TO_CONFIG[props.appContext.appAddress].messageRenderer
+        : null;
+    if (AppMessageRenderer == null) {
+      return <DefaultMessageRenderer idx={idx} message={message} />;
+    }
+
+    return <AppMessageRenderer idx={idx} message={message} />;
+  };
 
   return (
-    <div className="flex flex-col">
-      <div
-        className={cn(
-          "flex",
-          "flex-col",
-          "whitespace-break-spaces",
-          "w-full",
-          "overflow-x-hidden"
-        )}
-      >
-        {nftMsgSenderTokenIds != null &&
-        nftMsgSenderTokenIds.length !== messages.length ? (
-          <p className="flex text-left">Loading messages in NFT chat</p>
-        ) : (
-          messages.map((message, idx) => (
+    <ConditionalAppProvider>
+      <div className="flex flex-col">
+        <div
+          className={cn(
+            "flex",
+            "flex-col",
+            "whitespace-break-spaces",
+            "w-full",
+            "overflow-x-hidden"
+          )}
+        >
+          {messages.map((message, idx) => (
             <div
               key={idx}
               className="flex flex-col"
@@ -204,45 +200,11 @@ export default function MessagesDisplay(props: {
                   : undefined
               }
             >
-              <p className="flex text-left">
-                {getRenderedMessage(message.text)}
-              </p>
-              <p className="flex justify-end">
-                <TimeAgo date={chainTimeToMilliseconds(message.timestamp)} /> |{" "}
-                {nftMsgSenderTokenIds != null ? (
-                  <>
-                    Willie #{nftMsgSenderTokenIds[idx].toString()}{" "}
-                    {/* Making the image too big causes weird scroll issues on message send */}
-                    <img src={nftMsgSenderImages[idx]} className="inline w-6" />
-                  </>
-                ) : (
-                  message.sender
-                )}{" "}
-                | Message #{idx}{" "}
-                {SHOW_COPY_MESSAGE_LINK_BUTTON && (
-                  <button
-                    onClick={() => {
-                      const url = getUrlForSpecificMessageIndex(idx);
-                      copy(url);
-                      toast({
-                        title: "Copied link",
-                        description: (
-                          <>
-                            Successfully copied the link to message #{idx} to
-                            your clipboard
-                          </>
-                        ),
-                      });
-                    }}
-                  >
-                    <CopyIcon />
-                  </button>
-                )}
-              </p>
+              <ConditionalMessageRenderer idx={idx} message={message} />
             </div>
-          ))
-        )}
+          ))}
+        </div>
       </div>
-    </div>
+    </ConditionalAppProvider>
   );
 }

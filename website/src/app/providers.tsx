@@ -14,7 +14,7 @@ import {
 import { base, baseSepolia, sepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
-import { testnetsEnabled } from "./constants";
+import { TESTNETS_ENABLED } from "./constants";
 
 const { wallets } = getDefaultWallets();
 
@@ -28,7 +28,7 @@ const config = getDefaultConfig({
       wallets: [argentWallet, trustWallet, ledgerWallet],
     },
   ],
-  chains: testnetsEnabled ? [baseSepolia, sepolia] : [base],
+  chains: TESTNETS_ENABLED ? [baseSepolia, sepolia] : [base],
   ssr: true,
 });
 

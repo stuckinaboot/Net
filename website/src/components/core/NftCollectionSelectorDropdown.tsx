@@ -3,14 +3,12 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export default function ChatSelectorDropdown(props: {
+export default function NftCollectionSelectorDropdown(props: {
   items: string[];
   selected: string;
   onItemClicked: (item: string) => void;

@@ -387,13 +387,13 @@ contract Net is INet, EventsAndErrors {
             revert InvalidEndIndex();
         }
 
-        uint256 length = endIdx - startIdx;
-        Message[] memory messagesSlice = new Message[](length);
+        Message[] memory messagesSlice = new Message[](endIdx - startIdx);
         uint256 idxInMessages = startIdx;
         unchecked {
-            for (uint256 i; i < length && idxInMessages < endIdx; ) {
-                messagesSlice[i] = decodeMessageAtIndex(idxInMessages);
-                ++i;
+            for (; idxInMessages < endIdx; ) {
+                messagesSlice[idxInMessages - startIdx] = decodeMessageAtIndex(
+                    idxInMessages
+                );
                 ++idxInMessages;
             }
         }
@@ -422,15 +422,13 @@ contract Net is INet, EventsAndErrors {
             revert InvalidEndIndex();
         }
 
-        uint256 length = endIdx - startIdx;
-        Message[] memory messagesSlice = new Message[](length);
+        Message[] memory messagesSlice = new Message[](endIdx - startIdx);
         uint256 idxInMessages = startIdx;
         unchecked {
-            for (uint256 i; i < length && idxInMessages < endIdx; ) {
-                messagesSlice[i] = decodeMessageAtIndex(
+            for (; idxInMessages < endIdx; ) {
+                messagesSlice[idxInMessages - startIdx] = decodeMessageAtIndex(
                     hashToMessageIndexes[hashVal][idxInMessages]
                 );
-                ++i;
                 ++idxInMessages;
             }
         }

@@ -1,12 +1,12 @@
-import { testnetsEnabled } from "@/app/constants";
+import { TESTNETS_ENABLED } from "@/app/constants";
 import { Alchemy, Network } from "alchemy-sdk";
 import { type NextRequest } from "next/server";
 
 const settings = {
-  apiKey: testnetsEnabled
+  apiKey: TESTNETS_ENABLED
     ? process.env["NEXT_PUBLIC_ALCHEMY_BASE_SEPOLIA_ID"]
     : process.env["NEXT_PUBLIC_ALCHEMY_BASE_ID"],
-  network: testnetsEnabled ? Network.BASE_SEPOLIA : Network.BASE_MAINNET,
+  network: TESTNETS_ENABLED ? Network.BASE_SEPOLIA : Network.BASE_MAINNET,
 };
 
 const alchemy = new Alchemy(settings);
