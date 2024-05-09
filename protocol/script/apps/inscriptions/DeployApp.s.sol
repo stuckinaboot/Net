@@ -9,17 +9,15 @@ import {Inscriptions} from "../../../src/apps/inscriptions/Inscriptions.sol";
 contract DeployApp is Script {
     address internal deployer;
     Inscriptions internal app;
-    address constant NET_ADDRESS =
-        address(0x00000000B24D62781dB359b07880a105cD0b64e6);
 
     function setUp() public virtual {}
 
     function run() public {
         string memory root = vm.projectRoot();
+        bytes32 salt = 0x9c610d5ba77ffa9c847d304361edbe3bf91279a21b1fc976c5e7504710833477;
 
         vm.startBroadcast();
-        bytes32 salt = 0x8778eb550373ae80f95672f08511b2445d5d44311a547477e8ef7de73c4dab41;
-        app = new Inscriptions(NET_ADDRESS);
+        app = new Inscriptions{salt: salt}();
         vm.stopBroadcast();
 
         console.logString("App address:");

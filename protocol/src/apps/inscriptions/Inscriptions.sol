@@ -10,11 +10,7 @@ import {Base64} from "@solady/utils/Base64.sol";
 /// @notice NFTs created by inscribing token uris in Net messages
 contract Inscriptions is ERC721 {
     uint256 public totalSupply = 1;
-    Net internal net;
-
-    constructor(address netAddr) {
-        net = Net(netAddr);
-    }
+    Net internal net = Net(0x00000000B24D62781dB359b07880a105cD0b64e6);
 
     function name() public view override returns (string memory) {
         return "Net Inscriptions";
@@ -24,7 +20,7 @@ contract Inscriptions is ERC721 {
         return "NET";
     }
 
-    function inscribe(string memory message) public {
+    function inscribe(string calldata message) public {
         // Send message
         net.sendMessageViaApp(msg.sender, message, "", "");
 
