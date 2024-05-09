@@ -9,7 +9,8 @@ import {Inscriptions} from "../../../src/apps/inscriptions/Inscriptions.sol";
 contract DeployApp is Script {
     address internal deployer;
     Inscriptions internal app;
-    address constant NET_ADDRESS = address(0);
+    address constant NET_ADDRESS =
+        address(0x00000000B24D62781dB359b07880a105cD0b64e6);
 
     function setUp() public virtual {}
 
