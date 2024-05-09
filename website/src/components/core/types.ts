@@ -40,7 +40,7 @@ export type AppComponentsConfig = {
 export type AppProviderProps = {
   children?: React.ReactNode;
   messageRange: MessageRange;
-  appConfig: NetAppContext;
+  appContext: NetAppContext;
 };
 
 export type AppControlsProps = {

@@ -141,7 +141,7 @@ export default function MessagesDisplay(props: {
             ? +totalMessagesResult.data.toString()
             : 0),
         }}
-        appConfig={props.appContext}
+        appContext={props.appContext}
       >
         {children}
       </AppProvider>

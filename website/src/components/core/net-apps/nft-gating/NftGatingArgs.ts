@@ -1,10 +1,10 @@
-import { NFT_GATED_CHAT_CONTRACT, WILLIE_NET_CONTRACT } from "@/app/constants";
+import { WILLIE_NET_CONTRACT } from "@/app/constants";
 import {
-  NetAppContext,
   MessageRange,
   GetContractReadArgsFunction,
   GetContractWriteArgsFunction,
 } from "../../types";
+import { NFT_GATED_CHAT_CONTRACT } from "./constants";
 
 export const getContractReadArgs: GetContractReadArgsFunction = (params) => {
   return {

@@ -1,4 +1,4 @@
-import { testnetsEnabled } from "@/app/constants";
+import { TESTNETS_ENABLED } from "@/app/constants";
 import NftCollectionSelectorDropdown from "../../NftCollectionSelectorDropdown";
 import { useEffect, useState } from "react";
 import NftSelector from "../../NftSelector";
@@ -12,7 +12,7 @@ const CHAT_ROOM_ITEMS = [
 
 function nftAddressFromChatRoomItem(chatRoomItem: string) {
   if (chatRoomItem === ONCHAIN_STEAMBOAT_WILLIES_CHAT_ROOM_ITEM) {
-    return testnetsEnabled
+    return TESTNETS_ENABLED
       ? "0x788d33297f559337bf42136ec86d1de75f24b2aa"
       : "todo";
   }
