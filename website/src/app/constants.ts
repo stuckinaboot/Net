@@ -5,7 +5,7 @@ export const TESTNETS_ENABLED =
 
 export const WILLIE_NET_CONTRACT = {
   address: TESTNETS_ENABLED
-    ? "0x0000000a5ef8b5d6fea2cac7ca166e50fa752db0"
+    ? "0x00000000b24d62781db359b07880a105cd0b64e6"
     : "0xabc",
   abi: willienetAbi,
 };
