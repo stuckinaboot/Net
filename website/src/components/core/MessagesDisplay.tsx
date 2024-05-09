@@ -18,7 +18,9 @@ type OnchainMessage = {
   topic: string;
 };
 
-const PRE_SCROLL_TIMEOUT_MS = 250;
+// TODO work on improving this to a lower value. Currently, if its too low,
+// we run into issues where it won't scroll at all
+const PRE_SCROLL_TIMEOUT_MS = 1000;
 
 export default function MessagesDisplay(props: {
   scrollToBottom: () => void;
@@ -94,6 +96,7 @@ export default function MessagesDisplay(props: {
     setChainChanged(false);
     // Scroll on chain changed and messages fetched
     setTimeout(() => {
+      console.log("SCROLL");
       props.scrollToBottom();
     }, PRE_SCROLL_TIMEOUT_MS);
   }, [chainChanged, messagesResult.isFetched]);
