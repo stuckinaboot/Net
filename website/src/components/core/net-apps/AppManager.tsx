@@ -1,8 +1,4 @@
-import {
-  AppComponentsConfig,
-  GetContractReadArgsFunction,
-  GetContractWriteArgsFunction,
-} from "../types";
+import { AppComponentsConfig } from "../types";
 import { config as NftGatingAppConfig } from "./nft-gating/NftGatingAppConfig";
 
 export const APP_TO_CONFIG: { [address: string]: AppComponentsConfig } = {
