@@ -3,7 +3,6 @@ import { mainnet } from "viem/chains";
 
 export async function getEnsName({
   address,
-  chainId,
 }: {
   address: string;
   chainId: number;

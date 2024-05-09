@@ -72,7 +72,6 @@ export default function MessagesDisplay(props: {
   const sanitizedOnchainMessages: SanitizedOnchainMessage[] =
     onchainMessages.map((message) => ({
       ...message,
-      sender: truncateEthAddress(message.sender),
       timestamp: +message.timestamp.toString(),
     }));
 
@@ -107,6 +106,7 @@ export default function MessagesDisplay(props: {
     const finalMessages = await Promise.all(
       sanitizedOnchainMessages.map(async (message) => ({
         ...message,
+        sender: truncateEthAddress(message.sender),
         senderEnsName:
           (await getEnsName({ address: message.sender, chainId })) || undefined,
       }))
