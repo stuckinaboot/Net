@@ -3,7 +3,7 @@ import nftGatedChatAbi from "../../../../../assets/abis/nft-gated-chat.json";
 
 export const NFT_GATED_CHAT_CONTRACT = {
   address: TESTNETS_ENABLED
-    ? "0x3d9d7f4646028847c84539855e2d8d63ebe11991"
+    ? "0xbcdadbd75e30f645997ef94dd38ec6c1fb1c6ed1"
     : "0xabc",
   abi: nftGatedChatAbi,
 };
