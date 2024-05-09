@@ -19,9 +19,7 @@ function nftAddressFromChatRoomItem(chatRoomItem: string) {
   }
 }
 
-export default function NftGatingControls<NftGatingControlsState>(
-  props: AppControlsProps<NftGatingControlsState>
-) {
+export default function NftGatingControls(props: AppControlsProps) {
   const [chatRoom, setChatRoom] = useState(CHAT_ROOM_ITEMS[0]);
   const [selectedNftTokenId, setSelectedNftTokenId] = useState<string>();
 

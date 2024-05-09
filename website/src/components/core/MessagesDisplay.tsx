@@ -126,10 +126,10 @@ export default function MessagesDisplay(props: {
   }) => {
     const AppProvider =
       props.appContext != null &&
-      APP_TO_CONFIG[props.appContext.appAddress]?.provider
+      APP_TO_CONFIG[props.appContext.appAddress] != null
         ? APP_TO_CONFIG[props.appContext.appAddress].provider
         : null;
-    if (AppProvider == null) {
+    if (AppProvider == null || props.appContext == null) {
       return <>{children}</>;
     }
 
@@ -159,7 +159,7 @@ export default function MessagesDisplay(props: {
   }) => {
     const AppMessageRenderer =
       props.appContext != null &&
-      APP_TO_CONFIG[props.appContext.appAddress]?.messageRenderer
+      APP_TO_CONFIG[props.appContext.appAddress] != null
         ? APP_TO_CONFIG[props.appContext.appAddress].messageRenderer
         : null;
     if (AppMessageRenderer == null) {
