@@ -115,6 +115,7 @@ export default function WillieNetDapp(props: {
         </div>
         <CardDescription>
           All messages are stored and read onchain and are publicly accessible.
+          Scroll down to see all messages.
           {Controls ? (
             <Controls
               userAddress={userAddress}
