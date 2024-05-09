@@ -1,5 +1,6 @@
 import { Label } from "@/components/ui/label";
 import IframeRenderer from "../../IFrameRenderer";
+import { Separator } from "@/components/ui/separator";
 
 export function InscriptionDialogContents(props: {
   message: string;
@@ -7,35 +8,38 @@ export function InscriptionDialogContents(props: {
   const inscriptionMetadata = JSON.parse(props.message);
   return (
     <>
-      <Label className="text-lg">Inscribe message as NFT</Label>
+      <Label>Inscribe message as NFT</Label>
+      <Separator className="m-3" />
       {inscriptionMetadata.name && (
         <>
+          <br />
           <Label>Name: {inscriptionMetadata.name}</Label>
         </>
       )}
       {inscriptionMetadata.description && (
         <>
-          <Label>Description: {inscriptionMetadata.description}</Label>
           <br />
+          <Label>Description: {inscriptionMetadata.description}</Label>
         </>
       )}
       {inscriptionMetadata.traits && (
         <>
-          <Label>Traits: {inscriptionMetadata.traits}</Label>
           <br />
+          <Label>Traits: {inscriptionMetadata.traits}</Label>
         </>
       )}
       {inscriptionMetadata.image && (
         <>
+          <br />
           <Label>
             Image:{" "}
             <img src={inscriptionMetadata.image} className="inline w-16" />
           </Label>
-          <br />
         </>
       )}
       {inscriptionMetadata.animation_url && (
         <>
+          <br />
           <Label>
             Animation:{" "}
             <IframeRenderer
