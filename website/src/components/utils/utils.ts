@@ -1,9 +1,5 @@
-import { SUPPORTED_CHAINS } from "@/app/constants";
 import { createPublicClient, http } from "viem";
-
-function getChain(chainId: number) {
-  return SUPPORTED_CHAINS.find((x) => x.id === chainId);
-}
+import { mainnet } from "viem/chains";
 
 export async function getEnsName({
   address,
@@ -13,7 +9,8 @@ export async function getEnsName({
   chainId: number;
 }) {
   const publicClient = createPublicClient({
-    chain: getChain(chainId),
+    // Just use mainnet ens names
+    chain: mainnet,
     transport: http(),
   });
   // Use public client so backend isn't responsible for making these requests

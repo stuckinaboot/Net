@@ -1,7 +1,4 @@
-import { base, baseSepolia, degen } from "viem/chains";
 import willienetAbi from "../../assets/abis/willienet.json";
-
-export const SUPPORTED_CHAINS = [baseSepolia, base, degen];
 
 export const TESTNETS_ENABLED =
   process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true";
