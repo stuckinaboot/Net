@@ -1,6 +1,58 @@
 [
   {
     "type": "function",
+    "name": "decodeMessage",
+    "inputs": [
+      { "name": "encodedMessage", "type": "bytes", "internalType": "bytes" }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct INet.Message",
+        "components": [
+          { "name": "app", "type": "address", "internalType": "address" },
+          { "name": "sender", "type": "address", "internalType": "address" },
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
+          { "name": "text", "type": "string", "internalType": "string" },
+          { "name": "topic", "type": "string", "internalType": "string" }
+        ]
+      }
+    ],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
+    "name": "decodeMessageAtIndex",
+    "inputs": [{ "name": "idx", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct INet.Message",
+        "components": [
+          { "name": "app", "type": "address", "internalType": "address" },
+          { "name": "sender", "type": "address", "internalType": "address" },
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
+          { "name": "text", "type": "string", "internalType": "string" },
+          { "name": "topic", "type": "string", "internalType": "string" }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getMessage",
     "inputs": [{ "name": "idx", "type": "uint256", "internalType": "uint256" }],
     "outputs": [
@@ -16,7 +68,7 @@
             "type": "uint256",
             "internalType": "uint256"
           },
-          { "name": "extraData", "type": "bytes", "internalType": "bytes" },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
           { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
@@ -44,7 +96,7 @@
             "type": "uint256",
             "internalType": "uint256"
           },
-          { "name": "extraData", "type": "bytes", "internalType": "bytes" },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
           { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
@@ -73,7 +125,7 @@
             "type": "uint256",
             "internalType": "uint256"
           },
-          { "name": "extraData", "type": "bytes", "internalType": "bytes" },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
           { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
@@ -102,7 +154,7 @@
             "type": "uint256",
             "internalType": "uint256"
           },
-          { "name": "extraData", "type": "bytes", "internalType": "bytes" },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
           { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
@@ -132,7 +184,7 @@
             "type": "uint256",
             "internalType": "uint256"
           },
-          { "name": "extraData", "type": "bytes", "internalType": "bytes" },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
           { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
@@ -204,7 +256,7 @@
             "type": "uint256",
             "internalType": "uint256"
           },
-          { "name": "extraData", "type": "bytes", "internalType": "bytes" },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
           { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
@@ -233,7 +285,7 @@
             "type": "uint256",
             "internalType": "uint256"
           },
-          { "name": "extraData", "type": "bytes", "internalType": "bytes" },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
           { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
@@ -263,7 +315,7 @@
             "type": "uint256",
             "internalType": "uint256"
           },
-          { "name": "extraData", "type": "bytes", "internalType": "bytes" },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
           { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
@@ -293,7 +345,7 @@
             "type": "uint256",
             "internalType": "uint256"
           },
-          { "name": "extraData", "type": "bytes", "internalType": "bytes" },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
           { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
@@ -324,7 +376,7 @@
             "type": "uint256",
             "internalType": "uint256"
           },
-          { "name": "extraData", "type": "bytes", "internalType": "bytes" },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
           { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
@@ -353,7 +405,7 @@
             "type": "uint256",
             "internalType": "uint256"
           },
-          { "name": "extraData", "type": "bytes", "internalType": "bytes" },
+          { "name": "data", "type": "bytes", "internalType": "bytes" },
           { "name": "text", "type": "string", "internalType": "string" },
           { "name": "topic", "type": "string", "internalType": "string" }
         ]
@@ -433,16 +485,9 @@
   },
   {
     "type": "function",
-    "name": "messages",
+    "name": "messagePointers",
     "inputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "outputs": [
-      { "name": "app", "type": "address", "internalType": "address" },
-      { "name": "sender", "type": "address", "internalType": "address" },
-      { "name": "timestamp", "type": "uint256", "internalType": "uint256" },
-      { "name": "extraData", "type": "bytes", "internalType": "bytes" },
-      { "name": "text", "type": "string", "internalType": "string" },
-      { "name": "topic", "type": "string", "internalType": "string" }
-    ],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
     "stateMutability": "view"
   },
   {
@@ -451,7 +496,7 @@
     "inputs": [
       { "name": "text", "type": "string", "internalType": "string" },
       { "name": "topic", "type": "string", "internalType": "string" },
-      { "name": "extraData", "type": "bytes", "internalType": "bytes" }
+      { "name": "data", "type": "bytes", "internalType": "bytes" }
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
@@ -463,7 +508,7 @@
       { "name": "sender", "type": "address", "internalType": "address" },
       { "name": "text", "type": "string", "internalType": "string" },
       { "name": "topic", "type": "string", "internalType": "string" },
-      { "name": "extraData", "type": "bytes", "internalType": "bytes" }
+      { "name": "data", "type": "bytes", "internalType": "bytes" }
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
