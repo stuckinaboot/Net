@@ -20,7 +20,7 @@ type OnchainMessage = {
 
 // TODO work on improving this to a lower value. Currently, if its too low,
 // we run into issues where it won't scroll at all
-const PRE_SCROLL_TIMEOUT_MS = 1000;
+const PRE_SCROLL_TIMEOUT_MS = 250;
 
 export default function MessagesDisplay(props: {
   scrollToBottom: () => void;
@@ -31,6 +31,7 @@ export default function MessagesDisplay(props: {
   const [chainChanged, setChainChanged] = useState(false);
   const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
   const [firstLoadedMessages, setFirstLoadedMessages] = useState(false);
+  const [loadedMessages, setLoadedMessages] = useState(false);
   const specificMessageRef = useRef<HTMLDivElement | null>(null);
   const chainId = useChainId();
 
@@ -116,12 +117,17 @@ export default function MessagesDisplay(props: {
 
     // Updating messages using state and skipping when not fetched
     // gets rid of the flicker of loading messages
+    setLoadedMessages(false);
     setMessages(finalMessages);
   }, [sanitizedOnchainMessages.length, messagesResult.isFetched]);
 
   useEffect(() => {
     // This is called whenever the state finishes being set, implying the messages
     // are rendered.
+    if (!loadedMessages) {
+      props.scrollToBottom();
+      setLoadedMessages(true);
+    }
     props.checkAndUpdateShouldShowScrollToBottomButton();
   }, [messages.length]);
 
