@@ -149,11 +149,9 @@ export default function MessagesDisplay(props: {
   };
 
   const ConditionalMessageRenderer = ({
-    children,
     idx,
     message,
   }: {
-    children?: React.ReactNode;
     idx: number;
     message: SanitizedOnchainMessage;
   }) => {

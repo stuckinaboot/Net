@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
 
+const DEFAULT_TOAST_DURATION = 5000;
+
 export function Toaster() {
   const { toasts } = useToast();
 
@@ -17,7 +19,12 @@ export function Toaster() {
     <ToastProvider>
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
-          <Toast key={id} {...props} className="dark">
+          <Toast
+            duration={DEFAULT_TOAST_DURATION}
+            key={id}
+            {...props}
+            className="dark"
+          >
             <div className="grid gap-1">
               {title && <ToastTitle>{title}</ToastTitle>}
               {description && (
