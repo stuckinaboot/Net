@@ -5,13 +5,12 @@ import {Net} from "../../net/Net.sol";
 import {ERC721} from "@solady/tokens/ERC721.sol";
 import {Base64} from "@solady/utils/Base64.sol";
 
-/// @title NftGatedChat
+/// @title Inscriptions
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
+/// @notice NFTs created by inscribing token uris in Net messages
 contract Inscriptions is ERC721 {
-    uint256 totalSupply = 1;
+    uint256 public totalSupply = 1;
     Net internal net;
-
-    error TokenDoesNotExist();
 
     constructor(address netAddr) {
         net = Net(netAddr);
