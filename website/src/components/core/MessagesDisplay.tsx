@@ -6,6 +6,8 @@ import { useChainId, useReadContract } from "wagmi";
 import { NetAppContext, SanitizedOnchainMessage } from "./types";
 import DefaultMessageRenderer from "./DefaultMessageRenderer";
 import { APP_TO_CONFIG } from "./net-apps/AppManager";
+import { getEnsName } from "../utils/utils";
+import useAsyncEffect from "use-async-effect";
 
 type OnchainMessage = {
   data: string;
@@ -97,13 +99,22 @@ export default function MessagesDisplay(props: {
     }, PRE_SCROLL_TIMEOUT_MS);
   }, [chainChanged, messagesResult.isFetched]);
 
-  useEffect(() => {
+  useAsyncEffect(async () => {
     if (!messagesResult.isFetched) {
       return;
     }
+
+    const finalMessages = await Promise.all(
+      sanitizedOnchainMessages.map(async (message) => ({
+        ...message,
+        senderEnsName:
+          (await getEnsName({ address: message.sender, chainId })) || undefined,
+      }))
+    );
+
     // Updating messages using state and skipping when not fetched
     // gets rid of the flicker of loading messages
-    setMessages(sanitizedOnchainMessages);
+    setMessages(finalMessages);
   }, [sanitizedOnchainMessages.length, messagesResult.isFetched]);
 
   useEffect(() => {

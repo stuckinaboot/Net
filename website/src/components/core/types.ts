@@ -5,6 +5,7 @@ export type SanitizedOnchainMessage = {
   text: string;
   app: string;
   topic: string;
+  senderEnsName?: string;
 };
 
 export type MessageRange = { startIndex: number; endIndex: number };

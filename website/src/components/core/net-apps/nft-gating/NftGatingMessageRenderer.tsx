@@ -25,7 +25,7 @@ export default function NftGatingMessageRenderer(
             )}
           </>
         ) : (
-          message.sender
+          message.senderEnsName || message.sender
         )}{" "}
         | Message #{idx}{" "}
         {SHOW_COPY_MESSAGE_LINK_BUTTON && (

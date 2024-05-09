@@ -1,5 +1,7 @@
+import { base, baseSepolia } from "viem/chains";
 import willienetAbi from "../../assets/abis/willienet.json";
-import nftGatedChatAbi from "../../assets/abis/nft-gated-chat.json";
+
+export const SUPPORTED_CHAINS = [baseSepolia, base];
 
 export const TESTNETS_ENABLED =
   process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true";
