@@ -78,7 +78,6 @@ export default function WillieNetDapp(props: {
         }
         return shouldShowScrollBottomButton;
       });
-      console.log("HIT ME!");
       return currScrollingToBottom;
     });
   }

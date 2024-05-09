@@ -96,7 +96,6 @@ export default function MessagesDisplay(props: {
     setChainChanged(false);
     // Scroll on chain changed and messages fetched
     setTimeout(() => {
-      console.log("SCROLL");
       props.scrollToBottom();
     }, PRE_SCROLL_TIMEOUT_MS);
   }, [chainChanged, messagesResult.isFetched]);
