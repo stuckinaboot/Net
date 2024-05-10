@@ -2,6 +2,18 @@ import { Label } from "@/components/ui/label";
 import IframeRenderer from "../../IFrameRenderer";
 import { Separator } from "@/components/ui/separator";
 
+const IPFS_URL_WEBSITE = "https://ipfs.io/ipfs/";
+const IPFS_PREFIX = "ipfs://";
+
+function sanitizeMediaUrl(inputUrl: string) {
+  let url = inputUrl;
+  if (url.startsWith(IPFS_PREFIX)) {
+    url = IPFS_URL_WEBSITE + url.substring(IPFS_PREFIX.length);
+  }
+  // Add future additional sanitization here
+  return url;
+}
+
 export function InscriptionDialogContents(props: {
   message: string;
 }): React.ReactNode {
@@ -35,7 +47,10 @@ export function InscriptionDialogContents(props: {
           <br />
           <Label>
             Image:{" "}
-            <img src={inscriptionMetadata.image} className="inline w-16" />
+            <img
+              src={sanitizeMediaUrl(inscriptionMetadata.image)}
+              className="inline w-16"
+            />
           </Label>
         </>
       )}
@@ -46,7 +61,7 @@ export function InscriptionDialogContents(props: {
             Animation:{" "}
             <IframeRenderer
               size="150px"
-              htmlString={inscriptionMetadata.animation_url}
+              htmlString={sanitizeMediaUrl(inscriptionMetadata.animation_url)}
             />
           </Label>
         </>
