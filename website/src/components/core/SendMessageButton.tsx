@@ -1,13 +1,25 @@
+import { useChainId } from "wagmi";
 import { WILLIE_NET_CONTRACT } from "../../app/constants";
 import SubmitTransactionButton from "./SubmitTransactionButton";
-import { APP_TO_CONFIG } from "./net-apps/AppManager";
+import { APP_TO_CONFIG, INFERRED_APP_TO_CONFIG } from "./net-apps/AppManager";
 import { NetAppContext } from "./types";
-
-export type Nft = { address: string; tokenId: string };
+import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { cn } from "@/lib/utils";
+import { useToast } from "../ui/use-toast";
 
 const TOASTS = {
   title: "Messages",
-  success: "Your message has been sent successfully on Willienet",
+  success: "Your message has been sent successfully on Net",
   error: "Failed to send your message",
 };
 
@@ -25,9 +37,78 @@ export default function SendMessageButton(props: {
   disabled?: boolean;
   appContext?: NetAppContext;
 }) {
+  const chainId = useChainId();
+  const { toast } = useToast();
+
   function validatePrePerformTransasction() {
     if (props.message.length === 0) {
       return "Message cannot be empty";
+    }
+  }
+
+  if (props.appContext == null) {
+    // Attempt to infer app context based on the message, where
+    // we search for first inferred app matching the
+    const inferredAppEntry = Object.entries(INFERRED_APP_TO_CONFIG).find(
+      ([_, config]) => {
+        if (!config.supportedChains.has(chainId)) {
+          // Chain not supported
+          return false;
+        }
+
+        // Return true if app config can infer app based on this message
+        return config.infer(props.message);
+      }
+    );
+    if (inferredAppEntry != null) {
+      const [appAddress, config] = inferredAppEntry;
+      const DialogContents = config.dialogContents;
+      const transactionParameters = config.getTransactionParameters(
+        props.message
+      );
+      return (
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className={props.className}>Send message</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogDescription>
+                <DialogContents message={props.message} />
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex">
+              <DialogClose asChild>
+                <Button className="flex-1 mr-2">Cancel</Button>
+              </DialogClose>
+              <SubmitTransactionButton
+                className={cn(props.className, "flex-1")}
+                functionName={transactionParameters.functionName}
+                abi={transactionParameters.abi}
+                to={appAddress}
+                args={transactionParameters.args}
+                messages={{ toasts: TOASTS, button: BUTTONS }}
+                useDefaultButtonMessageOnSuccess={true}
+                onTransactionConfirmed={(hash) => {
+                  // Submit transaction toast doesn't seem to show so
+                  // manually display a total on transaction confirmed callback
+                  // using the inferred app's config
+                  toast({
+                    title: TOASTS.title,
+                    description: config.toasts.success.description,
+                  });
+                  props.onTransactionConfirmed &&
+                    props.onTransactionConfirmed(hash);
+                }}
+                prePerformTransasctionValidation={
+                  validatePrePerformTransasction
+                }
+                disabled={props.disabled}
+              />
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      );
     }
   }
 

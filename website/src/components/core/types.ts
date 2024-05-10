@@ -56,3 +56,17 @@ export type AppMessageRendererProps = {
   idx: number;
   message: SanitizedOnchainMessage;
 };
+
+export type InferredAppComponentsConfig = {
+  supportedChains: Set<number>;
+  infer: (message: string) => boolean;
+  dialogContents: (props: { message: string }) => React.ReactNode;
+  getTransactionParameters: (message: string) => {
+    abi: any[];
+    args: any[];
+    functionName: string;
+  };
+  toasts: {
+    success: { description: string };
+  };
+};

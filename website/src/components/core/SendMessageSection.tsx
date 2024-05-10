@@ -3,11 +3,16 @@ import SendMessageButton from "./SendMessageButton";
 import { Textarea } from "@/components/ui/textarea";
 import { NetAppContext } from "./types";
 
+function getAppSendMessageDialog() {
+  // TODO
+}
+
 export default function SendMessageSection(props: {
   appContext?: NetAppContext;
   disabled?: boolean;
 }) {
   const [message, setMessage] = useState("");
+
   return (
     <div className="flex flex-col items-center justify-between w-full">
       <Textarea

@@ -45,11 +45,11 @@ export default function MessagesDisplay(props: {
       : {
           abi: WILLIE_NET_CONTRACT.abi,
           address: WILLIE_NET_CONTRACT.address as any,
-          functionName: "getTotalMessagesForAppCount",
+          functionName: "getTotalMessagesCount",
           query: {
             refetchInterval: 2000,
           },
-          args: [NULL_ADDRESS],
+          args: [],
         };
 
   const totalMessagesResult = useReadContract(totalMessagesReadContractArgs);
@@ -66,8 +66,8 @@ export default function MessagesDisplay(props: {
       : {
           abi: WILLIE_NET_CONTRACT.abi,
           address: WILLIE_NET_CONTRACT.address as any,
-          functionName: "getMessagesInRangeForApp",
-          args: [BigInt(0), totalMessagesResult.data, NULL_ADDRESS],
+          functionName: "getMessagesInRange",
+          args: [BigInt(0), totalMessagesResult.data],
         };
   const messagesResult = useReadContract(messagesResultsReadContractArgs);
   const onchainMessages =

@@ -1,11 +1,17 @@
-export default function IframeRenderer({ htmlString }: { htmlString: string }) {
+export default function IframeRenderer({
+  htmlString,
+  size,
+}: {
+  htmlString: string;
+  size?: string;
+}) {
   return (
     <iframe
       sandbox="allow-scripts"
       className="bg-white"
       title="Rendered HTML"
       srcDoc={htmlString}
-      style={{ width: "100%", height: "400px", border: "none" }}
+      style={{ width: size || "100%", height: size || "400px", border: "none" }}
     />
   );
 }

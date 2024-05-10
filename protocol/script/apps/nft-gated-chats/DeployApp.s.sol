@@ -2,8 +2,8 @@
 pragma solidity >=0.8.17 .0;
 
 import {Script, console} from "forge-std/Script.sol";
-import {Net} from "../src/net/Net.sol";
-import {NftGatedChat} from "../src/apps/nft-gated-chat/NftGatedChat.sol";
+import {Net} from "../../../src/net/Net.sol";
+import {NftGatedChat} from "../../../src/apps/nft-gated-chat/NftGatedChat.sol";
 
 /// @dev See the Solidity Scripting tutorial: https://book.getfoundry.sh/tutorials/solidity-scripting
 contract DeployNetAndNftGatedChat is Script {
