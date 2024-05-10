@@ -14,7 +14,7 @@ contract DeployApp is Script {
 
     function run() public {
         string memory root = vm.projectRoot();
-        bytes32 salt = 0x9c610d5ba77ffa9c847d304361edbe3bf91279a21b1fc976c5e7504710833477;
+        bytes32 salt = 0xfece4e9e3e08e0bb8e5a969186a6faf60e5c7bc2119dc2b21636aabc6aec2ef5;
 
         vm.startBroadcast();
         app = new Inscriptions{salt: salt}();

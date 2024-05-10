@@ -9,7 +9,7 @@ import {Base64} from "@solady/utils/Base64.sol";
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
 /// @notice NFTs created by inscribing token uris in Net messages
 contract Inscriptions is ERC721 {
-    uint256 public totalSupply = 1;
+    uint256 public totalSupply;
     Net internal net = Net(0x00000000B24D62781dB359b07880a105cD0b64e6);
 
     function name() public view override returns (string memory) {
@@ -35,15 +35,16 @@ contract Inscriptions is ERC721 {
 
     function tokenURI(uint256 id) public view override returns (string memory) {
         uint256 totalSupply = net.getTotalMessagesForAppCount(address(this));
-        if (id > totalSupply) {
+        if (id >= totalSupply) {
             revert TokenDoesNotExist();
         }
-        string memory tokenUri = net.getMessageForApp(id, address(this)).text;
 
         return
             string.concat(
                 "data:application/json;base64,",
-                Base64.encode(bytes(tokenUri))
+                Base64.encode(
+                    bytes(net.getMessageForApp(id, address(this)).text)
+                )
             );
     }
 }
