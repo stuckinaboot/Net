@@ -8,8 +8,8 @@ const SUPPORTED_CHAINS = new Set([base.id, baseSepolia.id]);
 
 export const INSCRIPTIONS_CONTRACT = {
   address: TESTNETS_ENABLED
-    ? "0x00000000bDBbe33eafA9172A54FC7cAc71563bAd"
-    : "0x00000000bDBbe33eafA9172A54FC7cAc71563bAd",
+    ? "0x00000000bDdf795Cc4a1B8107aF795f434f705ED"
+    : "0x00000000bDdf795Cc4a1B8107aF795f434f705ED",
   abi: abi,
 };
 

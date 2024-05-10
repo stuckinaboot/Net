@@ -21,9 +21,6 @@ contract Inscriptions is ERC721 {
     }
 
     function inscribe(string calldata message) public {
-        // Send message
-        net.sendMessageViaApp(msg.sender, message, "", "");
-
         // Mint NFT
         _mint(msg.sender, totalSupply);
 
@@ -31,6 +28,9 @@ contract Inscriptions is ERC721 {
         unchecked {
             ++totalSupply;
         }
+
+        // Send message
+        net.sendMessageViaApp(msg.sender, message, "", "");
     }
 
     function tokenURI(uint256 id) public view override returns (string memory) {
