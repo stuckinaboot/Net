@@ -2,8 +2,16 @@ import { base, baseSepolia } from "viem/chains";
 import { InscriptionDialogContents } from "./InscriptionDialogContents";
 import { InferredAppComponentsConfig } from "../../types";
 import { TESTNETS_ENABLED } from "@/app/constants";
+import abi from "../../../../../assets/abis/apps/inscriptions.json";
 
 const SUPPORTED_CHAINS = new Set([base.id, baseSepolia.id]);
+
+export const INSCRIPTIONS_CONTRACT = {
+  address: TESTNETS_ENABLED
+    ? "0x00000051fDbf937D191344354D063Ca7b5440c92"
+    : "0xabc",
+  abi: abi,
+};
 
 export const config: InferredAppComponentsConfig = {
   supportedChains: SUPPORTED_CHAINS,
@@ -17,17 +25,8 @@ export const config: InferredAppComponentsConfig = {
   },
   dialogContents: InscriptionDialogContents,
   getTransactionParameters: (message: string) => ({
-    abi: [],
+    abi: INSCRIPTIONS_CONTRACT.abi,
     args: [message],
     functionName: "inscribe",
   }),
-};
-
-export const INSCRIPTIONS_CONTRACT = {
-  address: TESTNETS_ENABLED
-    ? "0xbcdadbd75e30f645997ef94dd38ec6c1fb1c6ed1"
-    : "0xabc",
-  abi: [
-    // TODO
-  ],
 };

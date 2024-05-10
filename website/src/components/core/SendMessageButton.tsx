@@ -13,10 +13,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-
-export type Nft = { address: string; tokenId: string };
 
 const TOASTS = {
   title: "Messages",
