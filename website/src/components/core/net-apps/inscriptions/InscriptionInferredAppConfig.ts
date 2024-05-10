@@ -29,4 +29,7 @@ export const config: InferredAppComponentsConfig = {
     args: [message],
     functionName: "inscribe",
   }),
+  toasts: {
+    success: { description: "You successfully inscribed an NFT on Net" },
+  },
 };

@@ -6,6 +6,7 @@ import { NetAppContext } from "./types";
 import { Button } from "../ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -13,10 +14,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { cn } from "@/lib/utils";
+import { useToast } from "../ui/use-toast";
 
 const TOASTS = {
   title: "Messages",
-  success: "Your message has been sent successfully on Willienet",
+  success: "Your message has been sent successfully on Net",
   error: "Failed to send your message",
 };
 
@@ -35,6 +38,7 @@ export default function SendMessageButton(props: {
   appContext?: NetAppContext;
 }) {
   const chainId = useChainId();
+  const { toast } = useToast();
 
   function validatePrePerformTransasction() {
     if (props.message.length === 0) {
@@ -65,26 +69,37 @@ export default function SendMessageButton(props: {
       return (
         <Dialog>
           <DialogTrigger asChild>
-            {/* TODO use send message button */}
             <Button className={props.className}>Send message</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Edit profile</DialogTitle>
               <DialogDescription>
                 <DialogContents message={props.message} />
               </DialogDescription>
             </DialogHeader>
-            <DialogFooter>
+            <DialogFooter className="flex">
+              <DialogClose asChild>
+                <Button className="flex-1 mr-2">Cancel</Button>
+              </DialogClose>
               <SubmitTransactionButton
-                className={props.className}
+                className={cn(props.className, "flex-1")}
                 functionName={transactionParameters.functionName}
                 abi={transactionParameters.abi}
                 to={appAddress}
                 args={transactionParameters.args}
                 messages={{ toasts: TOASTS, button: BUTTONS }}
                 useDefaultButtonMessageOnSuccess={true}
-                onTransactionConfirmed={props.onTransactionConfirmed}
+                onTransactionConfirmed={(hash) => {
+                  // Submit transaction toast doesn't seem to show so
+                  // manually display a total on transaction confirmed callback
+                  // using the inferred app's config
+                  toast({
+                    title: TOASTS.title,
+                    description: config.toasts.success.description,
+                  });
+                  props.onTransactionConfirmed &&
+                    props.onTransactionConfirmed(hash);
+                }}
                 prePerformTransasctionValidation={
                   validatePrePerformTransasction
                 }

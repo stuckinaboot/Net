@@ -25,7 +25,9 @@ export function InscriptionDialogContents(props: {
       {inscriptionMetadata.traits && (
         <>
           <br />
-          <Label>Traits: {inscriptionMetadata.traits}</Label>
+          <Label>
+            Traits: {JSON.stringify(inscriptionMetadata.traits, null, 4)}
+          </Label>
         </>
       )}
       {inscriptionMetadata.image && (

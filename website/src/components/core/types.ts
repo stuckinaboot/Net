@@ -66,4 +66,7 @@ export type InferredAppComponentsConfig = {
     args: any[];
     functionName: string;
   };
+  toasts: {
+    success: { description: string };
+  };
 };
