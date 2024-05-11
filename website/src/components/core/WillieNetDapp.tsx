@@ -82,6 +82,8 @@ export default function WillieNetDapp(props: {
         // to not show scroll button
         // NOTE: this is the culprit
         if (scrollingToBottomRef.current) {
+          // This handles the race condition where scrolling to bottom ref's value was updated
+          // to true when we were going to call scroll to bottom again, which fixes a scroll jitter bug on mobile
           return false;
         }
         scrollToBottom();
@@ -182,7 +184,12 @@ export default function WillieNetDapp(props: {
           }
           appContext={appConfig}
         />
-        <div ref={messagesEndRef} style={{ height: "1px", width: "100%" }} />
+        {/* This end ref having height 1px is necessary to help avoid the jitter during
+        "is scrolled to bottom" detection on mobile */}
+        <div
+          ref={messagesEndRef}
+          style={{ backgroundColor: "red", height: "1px", width: "100%" }}
+        />
       </CardContent>
       <div className="flex flex-col">
         {showScrollButton && (
