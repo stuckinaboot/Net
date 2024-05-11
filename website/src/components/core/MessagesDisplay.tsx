@@ -1,4 +1,4 @@
-import { NULL_ADDRESS, WILLIE_NET_CONTRACT } from "@/app/constants";
+import { WILLIE_NET_CONTRACT } from "@/app/constants";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import truncateEthAddress from "truncate-eth-address";
