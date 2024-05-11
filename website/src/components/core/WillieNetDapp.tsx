@@ -32,8 +32,6 @@ export default function WillieNetDapp(props: {
   const [scrollingToBottom, setScrollingToBottom] = useState(false);
   const [ready, setReady] = useState(false);
 
-  const { toast } = useToast();
-
   const scrollToBottom = () => {
     setScrollingToBottom(true);
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -73,22 +71,12 @@ export default function WillieNetDapp(props: {
       }
 
       setShowScrollButton((currShowScrollButton) => {
-        toast({
-          title: "Debug",
-          description: (
-            <>
-              shouldShowScrollBottomButton:{" "}
-              {shouldShowScrollBottomButton ? 1 : 0}, currScrollingToBottom:{" "}
-              {currScrollingToBottom ? 1 : 0}, currShowScrollButton:{" "}
-              {currShowScrollButton ? 1 : 0}
-            </>
-          ),
-        });
         if (!currShowScrollButton && shouldShowScrollBottomButton) {
           // If not currently showing scroll button and should show scroll button,
           // implies we were previously scrolled to bottom to see latest message.
           // So scroll to bottom again to see the new latest message and continue
           // to not show scroll button
+          // NOTE: this is the culprit
           // scrollToBottom();
         }
         return shouldShowScrollBottomButton;
@@ -130,7 +118,8 @@ export default function WillieNetDapp(props: {
         </div>
         <CardDescription>
           All messages are stored and read onchain and are publicly accessible.
-          Scroll down to see all messages.
+          Scroll down to see all messages. {showScrollButton ? 1 : 0}{" "}
+          {scrollingToBottom ? 1 : 0} {isScrolledToBottom() ? 1 : 1}
           {Controls ? (
             <Controls
               userAddress={userAddress}
