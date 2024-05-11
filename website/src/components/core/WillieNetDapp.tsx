@@ -97,6 +97,7 @@ export default function WillieNetDapp(props: {
         // if (scrollingToBottomRef.current) {
         //   return false;
         // }
+        //
         console.log(
           "Trigger!",
           isScrolledToBottom(),
