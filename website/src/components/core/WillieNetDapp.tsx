@@ -118,7 +118,7 @@ export default function WillieNetDapp(props: {
         <CardDescription>
           All messages are stored and read onchain and are publicly accessible.
           Scroll down to see all messages. {showScrollButton ? 1 : 0}{" "}
-          {scrollingToBottom ? 1 : 0} {isScrolledToBottom() ? 1 : 1}
+          {scrollingToBottom ? 1 : 0} {isScrolledToBottom() ? 1 : 0}
           {Controls ? (
             <Controls
               userAddress={userAddress}
