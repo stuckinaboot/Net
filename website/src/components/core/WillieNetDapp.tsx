@@ -35,7 +35,11 @@ export default function WillieNetDapp(props: {
   const [ready, setReady] = useState(false);
   const { toast } = useToast();
 
-  const scrollToBottom = () => {
+  const scrollToBottom = (onlyIfAlreadyOnBottom: boolean) => {
+    if (onlyIfAlreadyOnBottom && !isScrolledToBottom()) {
+      // Only scroll if already on bottom but we are not already on bottom so return
+      return;
+    }
     console.log("HIT!");
     // setScrollingToBottom(true);
     scrollingToBottomRef.current = true;
@@ -201,10 +205,7 @@ export default function WillieNetDapp(props: {
           }
           appContext={appConfig}
         />
-        <div
-          ref={messagesEndRef}
-          style={{ width: "100%", height: "10px", backgroundColor: "red" }}
-        />
+        <div ref={messagesEndRef} />
       </CardContent>
       <div className="flex flex-col">
         {showScrollButton && (

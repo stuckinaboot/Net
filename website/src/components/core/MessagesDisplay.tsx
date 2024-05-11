@@ -23,7 +23,7 @@ type OnchainMessage = {
 const PRE_SCROLL_TIMEOUT_MS = 250;
 
 export default function MessagesDisplay(props: {
-  scrollToBottom: () => void;
+  scrollToBottom: (onlyIfAlreadyOnBottom: boolean) => void;
   checkAndUpdateShouldShowScrollToBottomButton: () => void;
   initialVisibleMessageIndex?: number;
   appContext?: NetAppContext;
@@ -97,7 +97,8 @@ export default function MessagesDisplay(props: {
     setChainChanged(false);
     // Scroll on chain changed and messages fetched
     setTimeout(() => {
-      props.scrollToBottom();
+      // Force scroll to bottom
+      props.scrollToBottom(false);
     }, PRE_SCROLL_TIMEOUT_MS);
   }, [chainChanged, messagesResult.isFetched]);
 
@@ -125,7 +126,7 @@ export default function MessagesDisplay(props: {
     // This is called whenever the state finishes being set, implying the messages
     // are rendered.
     if (!loadedMessages) {
-      props.scrollToBottom();
+      props.scrollToBottom(true);
       setLoadedMessages(true);
     }
     props.checkAndUpdateShouldShowScrollToBottomButton();
