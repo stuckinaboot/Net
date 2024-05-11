@@ -89,7 +89,7 @@ export default function WillieNetDapp(props: {
           // implies we were previously scrolled to bottom to see latest message.
           // So scroll to bottom again to see the new latest message and continue
           // to not show scroll button
-          scrollToBottom();
+          // scrollToBottom();
         }
         return shouldShowScrollBottomButton;
       });
