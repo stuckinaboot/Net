@@ -201,7 +201,10 @@ export default function WillieNetDapp(props: {
           }
           appContext={appConfig}
         />
-        <div ref={messagesEndRef} />
+        <div
+          ref={messagesEndRef}
+          style={{ width: "100%", height: "10px", backgroundColor: "red" }}
+        />
       </CardContent>
       <div className="flex flex-col">
         {showScrollButton && (
