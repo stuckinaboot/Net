@@ -128,7 +128,6 @@ export default function MessagesDisplay(props: {
     if (!loadedMessages) {
       setLoadedMessages(true);
 
-      console.log("Updated length", messages.length, loadedMessages);
       if (messages.length > 0) {
         if (!firstLoadedMessages) {
           setFirstLoadedMessages(true);
@@ -138,7 +137,6 @@ export default function MessagesDisplay(props: {
         }
       }
     }
-    console.log("CALLING!");
     props.checkAndUpdateShouldShowScrollToBottomButton();
   }, [messages.length]);
 

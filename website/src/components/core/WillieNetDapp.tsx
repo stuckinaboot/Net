@@ -15,8 +15,6 @@ import MessagesDisplay from "./MessagesDisplay";
 import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
 import { useSearchParams } from "next/navigation";
 import { APP_TO_CONFIG } from "./net-apps/AppManager";
-import debounce from "debounce";
-import { useToast } from "../ui/use-toast";
 
 export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
@@ -30,20 +28,15 @@ export default function WillieNetDapp(props: {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
-  const [scrollingToBottom, setScrollingToBottom] = useState(false);
   const scrollIsAtBottomRef = useRef(false);
   const scrollingToBottomRef = useRef(false);
   const [ready, setReady] = useState(false);
-  const { toast } = useToast();
 
-  const scrollToBottom = (onlyIfAlreadyOnBottom: boolean) => {
-    if (onlyIfAlreadyOnBottom && !scrollIsAtBottomRef.current) {
-      console.log("RET!");
+  const scrollToBottom = (onlyScrollIfAlreadyOnBottom: boolean) => {
+    if (onlyScrollIfAlreadyOnBottom && !scrollIsAtBottomRef.current) {
       // Only scroll if already on bottom but we are not already on bottom so return
       return;
     }
-    console.log("HIT!");
-    // setScrollingToBottom(true);
     scrollingToBottomRef.current = true;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -61,14 +54,6 @@ export default function WillieNetDapp(props: {
     const scrollIsAboveBottom =
       top > containerTop &&
       bottom > containerTop + scrollContainer.clientHeight;
-    console.log(
-      "is scrolled to bottom",
-      !scrollIsAboveBottom,
-      top > containerTop,
-      bottom > containerTop + scrollContainer.clientHeight,
-      bottom,
-      containerTop + scrollContainer.clientHeight
-    );
     return !scrollIsAboveBottom;
   }
 
@@ -89,57 +74,7 @@ export default function WillieNetDapp(props: {
       return;
     }
 
-    setShowScrollButton((currShowScrollButton) => {
-      if (!currShowScrollButton && shouldShowScrollBottomButton) {
-        // If not currently showing scroll button and should show scroll button,
-        // implies we were previously scrolled to bottom to see latest message.
-        // So scroll to bottom again to see the new latest message and continue
-        // to not show scroll button
-        // NOTE: this is the culprit
-        // if (scrollingToBottomRef.current) {
-        //   return false;
-        // }
-        //
-        console.log(
-          "Trigger!",
-          isScrolledToBottom(),
-          shouldShowScrollBottomButton
-        );
-        // scrollToBottom();
-      }
-      return shouldShowScrollBottomButton;
-    });
-    return;
-
-    // setScrollingToBottom((currScrollingToBottom) => {
-    //   if (currScrollingToBottom && isScrolledToBottom()) {
-    //     // Already scrolled to bottom, so set scrolling to bottom to false
-    //     return false;
-    //   } else if (currScrollingToBottom) {
-    //     // Currently scrolling to bottom, so don't perform any updates
-    //     return currScrollingToBottom;
-    //   }
-
-    //   const shouldShowScrollBottomButton = !isScrolledToBottom();
-
-    //   if (shouldShowScrollBottomButton == null) {
-    //     // Null result, so return current value
-    //     return currScrollingToBottom;
-    //   }
-
-    //   setShowScrollButton((currShowScrollButton) => {
-    //     if (!currShowScrollButton && shouldShowScrollBottomButton) {
-    //       // If not currently showing scroll button and should show scroll button,
-    //       // implies we were previously scrolled to bottom to see latest message.
-    //       // So scroll to bottom again to see the new latest message and continue
-    //       // to not show scroll button
-    //       // NOTE: this is the culprit
-    //       scrollToBottom();
-    //     }
-    //     return shouldShowScrollBottomButton;
-    //   });
-    //   return currScrollingToBottom;
-    // });
+    setShowScrollButton(shouldShowScrollBottomButton);
   }
 
   useEffect(() => {
@@ -178,9 +113,7 @@ export default function WillieNetDapp(props: {
         </div>
         <CardDescription>
           All messages are stored and read onchain and are publicly accessible.
-          Scroll down to see all messages. {showScrollButton ? 1 : 0}{" "}
-          {scrollingToBottom ? 1 : 0} {scrollingToBottomRef.current ? 1 : 0}{" "}
-          {isScrolledToBottom() ? 1 : 0}
+          Scroll down to see all messages.
           {Controls ? (
             <Controls
               userAddress={userAddress}
