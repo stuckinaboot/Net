@@ -16,6 +16,7 @@ import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
 import { useSearchParams } from "next/navigation";
 import { APP_TO_CONFIG } from "./net-apps/AppManager";
 import debounce from "debounce";
+import { useToast } from "../ui/use-toast";
 
 export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
@@ -32,11 +33,9 @@ export default function WillieNetDapp(props: {
   const [scrollingToBottom, setScrollingToBottom] = useState(false);
   const scrollingToBottomRef = useRef(false);
   const [ready, setReady] = useState(false);
+  const { toast } = useToast();
 
   const scrollToBottom = () => {
-    if (scrollingToBottomRef.current) {
-      return;
-    }
     // setScrollingToBottom(true);
     scrollingToBottomRef.current = true;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -82,6 +81,9 @@ export default function WillieNetDapp(props: {
         // So scroll to bottom again to see the new latest message and continue
         // to not show scroll button
         // NOTE: this is the culprit
+        if (scrollingToBottomRef.current) {
+          toast({ title: "FUCK", description: "SHIT" });
+        }
         scrollToBottom();
       }
       return shouldShowScrollBottomButton;
