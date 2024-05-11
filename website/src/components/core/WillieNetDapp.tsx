@@ -82,7 +82,7 @@ export default function WillieNetDapp(props: {
         // to not show scroll button
         // NOTE: this is the culprit
         if (scrollingToBottomRef.current) {
-          toast({ title: "FUCK", description: "SHIT" });
+          return false;
         }
         scrollToBottom();
       }
@@ -182,7 +182,7 @@ export default function WillieNetDapp(props: {
           }
           appContext={appConfig}
         />
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} style={{ height: "1px", width: "100%" }} />
       </CardContent>
       <div className="flex flex-col">
         {showScrollButton && (
