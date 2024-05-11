@@ -31,12 +31,13 @@ export default function WillieNetDapp(props: {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [scrollingToBottom, setScrollingToBottom] = useState(false);
+  const scrollIsAtBottomRef = useRef(false);
   const scrollingToBottomRef = useRef(false);
   const [ready, setReady] = useState(false);
   const { toast } = useToast();
 
   const scrollToBottom = (onlyIfAlreadyOnBottom: boolean) => {
-    if (onlyIfAlreadyOnBottom && !isScrolledToBottom()) {
+    if (onlyIfAlreadyOnBottom && !scrollIsAtBottomRef.current) {
       console.log("RET!");
       // Only scroll if already on bottom but we are not already on bottom so return
       return;
@@ -72,10 +73,6 @@ export default function WillieNetDapp(props: {
   }
 
   function checkAndUpdateShouldShowScrollToBottomButton() {
-    // console.log(
-    //   "checkAndUpdateShouldShowScrollToBottomButton entered",
-    //   isScrolledToBottom()
-    // );
     if (scrollingToBottomRef.current && isScrolledToBottom()) {
       // Already scrolled to bottom, so set scrolling to bottom to false
       scrollingToBottomRef.current = false;
@@ -150,17 +147,20 @@ export default function WillieNetDapp(props: {
     setReady(true);
   }, []);
 
+  function onScroll() {
+    // NOTE: this ref is intentionally only set on scroll. That means
+    // that if a new message is received, this value will _correctly_
+    // not be updated. This is useful because we can use this ref to track if,
+    // prior to the new message being received, scroll was at the bottom
+    scrollIsAtBottomRef.current = !!isScrolledToBottom();
+    checkAndUpdateShouldShowScrollToBottomButton();
+  }
+
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
-    scrollContainer?.addEventListener(
-      "scroll",
-      checkAndUpdateShouldShowScrollToBottomButton
-    );
+    scrollContainer?.addEventListener("scroll", onScroll);
     return () => {
-      scrollContainer?.removeEventListener(
-        "scroll",
-        checkAndUpdateShouldShowScrollToBottomButton
-      );
+      scrollContainer?.removeEventListener("scroll", onScroll);
     };
   }, []);
 

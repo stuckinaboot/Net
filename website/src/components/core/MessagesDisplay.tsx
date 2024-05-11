@@ -127,22 +127,20 @@ export default function MessagesDisplay(props: {
     // are rendered.
     if (!loadedMessages) {
       setLoadedMessages(true);
-    }
-    props.checkAndUpdateShouldShowScrollToBottomButton();
-  }, [messages.length]);
 
-  useEffect(() => {
-    if (loadedMessages) {
-      if (!firstLoadedMessages) {
-        console.log("FIRST LOADED!");
-        setFirstLoadedMessages(true);
-        props.scrollToBottom(false);
-      } else {
-        console.log("SECOND LOADED!");
-        props.scrollToBottom(true);
+      console.log("Updated length", messages.length, loadedMessages);
+      if (messages.length > 0) {
+        if (!firstLoadedMessages) {
+          setFirstLoadedMessages(true);
+          props.scrollToBottom(false);
+        } else {
+          props.scrollToBottom(true);
+        }
       }
     }
-  }, [loadedMessages]);
+    console.log("CALLING!");
+    props.checkAndUpdateShouldShowScrollToBottomButton();
+  }, [messages.length]);
 
   useEffect(() => {
     // TODO ensure this logic works
