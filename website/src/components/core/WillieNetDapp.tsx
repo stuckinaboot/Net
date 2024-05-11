@@ -192,9 +192,6 @@ export default function WillieNetDapp(props: {
         className="flex-1 flex-col overflow-y-auto"
         ref={scrollContainerRef}
       >
-        <div
-          style={{ backgroundColor: "red", height: "50px", width: "100%" }}
-        />
         <MessagesDisplay
           initialVisibleMessageIndex={props.specificMessageIndex}
           scrollToBottom={scrollToBottom}
@@ -203,11 +200,7 @@ export default function WillieNetDapp(props: {
           }
           appContext={appConfig}
         />
-        <div
-          ref={messagesEndRef}
-          className="flex flex-1"
-          style={{ backgroundColor: "red", height: "100%", width: "100%" }}
-        />
+        <div ref={messagesEndRef} />
       </CardContent>
       <div className="flex flex-col">
         {showScrollButton && (
