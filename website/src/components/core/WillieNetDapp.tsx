@@ -36,6 +36,7 @@ export default function WillieNetDapp(props: {
   const { toast } = useToast();
 
   const scrollToBottom = () => {
+    console.log("HIT!");
     // setScrollingToBottom(true);
     scrollingToBottomRef.current = true;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -54,10 +55,22 @@ export default function WillieNetDapp(props: {
     const scrollIsAboveBottom =
       top > containerTop &&
       bottom > containerTop + scrollContainer.clientHeight;
+    console.log(
+      "is scrolled to bottom",
+      !scrollIsAboveBottom,
+      top > containerTop,
+      bottom > containerTop + scrollContainer.clientHeight,
+      bottom,
+      containerTop + scrollContainer.clientHeight
+    );
     return !scrollIsAboveBottom;
   }
 
   function checkAndUpdateShouldShowScrollToBottomButton() {
+    // console.log(
+    //   "checkAndUpdateShouldShowScrollToBottomButton entered",
+    //   isScrolledToBottom()
+    // );
     if (scrollingToBottomRef.current && isScrolledToBottom()) {
       // Already scrolled to bottom, so set scrolling to bottom to false
       scrollingToBottomRef.current = false;
@@ -82,11 +95,14 @@ export default function WillieNetDapp(props: {
         // to not show scroll button
         // NOTE: this is the culprit
         if (scrollingToBottomRef.current) {
-          // This handles the race condition where scrolling to bottom ref's value was updated
-          // to true when we were going to call scroll to bottom again, which fixes a scroll jitter bug on mobile
           return false;
         }
-        scrollToBottom();
+        console.log(
+          "Trigger!",
+          isScrolledToBottom(),
+          shouldShowScrollBottomButton
+        );
+        // scrollToBottom();
       }
       return shouldShowScrollBottomButton;
     });
@@ -176,6 +192,9 @@ export default function WillieNetDapp(props: {
         className="flex-1 flex-col overflow-y-auto"
         ref={scrollContainerRef}
       >
+        <div
+          style={{ backgroundColor: "red", height: "50px", width: "100%" }}
+        />
         <MessagesDisplay
           initialVisibleMessageIndex={props.specificMessageIndex}
           scrollToBottom={scrollToBottom}
@@ -184,11 +203,10 @@ export default function WillieNetDapp(props: {
           }
           appContext={appConfig}
         />
-        {/* This end ref having height 1px is necessary to help avoid the jitter during
-        "is scrolled to bottom" detection on mobile */}
         <div
           ref={messagesEndRef}
-          style={{ backgroundColor: "red", height: "1px", width: "100%" }}
+          className="flex flex-1"
+          style={{ backgroundColor: "red", height: "100%", width: "100%" }}
         />
       </CardContent>
       <div className="flex flex-col">
