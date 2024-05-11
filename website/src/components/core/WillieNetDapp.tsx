@@ -37,6 +37,7 @@ export default function WillieNetDapp(props: {
 
   const scrollToBottom = (onlyIfAlreadyOnBottom: boolean) => {
     if (onlyIfAlreadyOnBottom && !isScrolledToBottom()) {
+      console.log("RET!");
       // Only scroll if already on bottom but we are not already on bottom so return
       return;
     }
@@ -209,7 +210,7 @@ export default function WillieNetDapp(props: {
       </CardContent>
       <div className="flex flex-col">
         {showScrollButton && (
-          <FloatingScrollToBottomButton onClick={scrollToBottom} />
+          <FloatingScrollToBottomButton onClick={() => scrollToBottom(false)} />
         )}
       </div>
       <CardFooter className="flex flex-col justify-end">

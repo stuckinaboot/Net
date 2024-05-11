@@ -126,13 +126,26 @@ export default function MessagesDisplay(props: {
     // This is called whenever the state finishes being set, implying the messages
     // are rendered.
     if (!loadedMessages) {
-      props.scrollToBottom(true);
       setLoadedMessages(true);
     }
     props.checkAndUpdateShouldShowScrollToBottomButton();
   }, [messages.length]);
 
   useEffect(() => {
+    if (loadedMessages) {
+      if (!firstLoadedMessages) {
+        console.log("FIRST LOADED!");
+        setFirstLoadedMessages(true);
+        props.scrollToBottom(false);
+      } else {
+        console.log("SECOND LOADED!");
+        props.scrollToBottom(true);
+      }
+    }
+  }, [loadedMessages]);
+
+  useEffect(() => {
+    // TODO ensure this logic works
     if (firstLoadedMessages || sanitizedOnchainMessages.length === 0) {
       return;
     }
