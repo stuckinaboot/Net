@@ -24,6 +24,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "copy-to-clipboard": "^3.3.3",
+    "debounce": "^2.0.0",
     "dialog": "^0.3.1",
     "is-html": "^3.1.0",
     "lucide-react": "^0.356.0",

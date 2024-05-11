@@ -15,6 +15,7 @@ import MessagesDisplay from "./MessagesDisplay";
 import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
 import { useSearchParams } from "next/navigation";
 import { APP_TO_CONFIG } from "./net-apps/AppManager";
+import debounce from "debounce";
 
 export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
@@ -31,10 +32,10 @@ export default function WillieNetDapp(props: {
   const [scrollingToBottom, setScrollingToBottom] = useState(false);
   const [ready, setReady] = useState(false);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = debounce(() => {
     setScrollingToBottom(true);
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, 100);
 
   function isScrolledToBottom() {
     const scrollContainer = scrollContainerRef.current;
