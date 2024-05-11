@@ -34,6 +34,9 @@ export default function WillieNetDapp(props: {
   const [ready, setReady] = useState(false);
 
   const scrollToBottom = () => {
+    if (scrollingToBottomRef.current) {
+      return;
+    }
     // setScrollingToBottom(true);
     scrollingToBottomRef.current = true;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
