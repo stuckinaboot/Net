@@ -94,9 +94,9 @@ export default function WillieNetDapp(props: {
         // So scroll to bottom again to see the new latest message and continue
         // to not show scroll button
         // NOTE: this is the culprit
-        if (scrollingToBottomRef.current) {
-          return false;
-        }
+        // if (scrollingToBottomRef.current) {
+        //   return false;
+        // }
         console.log(
           "Trigger!",
           isScrolledToBottom(),
