@@ -15,7 +15,6 @@ import MessagesDisplay from "./MessagesDisplay";
 import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
 import { useSearchParams } from "next/navigation";
 import { APP_TO_CONFIG } from "./net-apps/AppManager";
-import { useToast } from "../ui/use-toast";
 
 export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
