@@ -15,6 +15,7 @@ import MessagesDisplay from "./MessagesDisplay";
 import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
 import { useSearchParams } from "next/navigation";
 import { APP_TO_CONFIG } from "./net-apps/AppManager";
+import { useToast } from "../ui/use-toast";
 
 export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
@@ -30,6 +31,8 @@ export default function WillieNetDapp(props: {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [scrollingToBottom, setScrollingToBottom] = useState(false);
   const [ready, setReady] = useState(false);
+
+  const { toast } = useToast();
 
   const scrollToBottom = () => {
     setScrollingToBottom(true);
@@ -63,12 +66,24 @@ export default function WillieNetDapp(props: {
       }
 
       const shouldShowScrollBottomButton = !isScrolledToBottom();
+
       if (shouldShowScrollBottomButton == null) {
         // Null result, so return current value
         return currScrollingToBottom;
       }
 
       setShowScrollButton((currShowScrollButton) => {
+        toast({
+          title: "Debug",
+          description: (
+            <>
+              shouldShowScrollBottomButton:{" "}
+              {shouldShowScrollBottomButton ? 1 : 0}, currScrollingToBottom:{" "}
+              {currScrollingToBottom ? 1 : 0}, currShowScrollButton:{" "}
+              {currShowScrollButton ? 1 : 0}
+            </>
+          ),
+        });
         if (!currShowScrollButton && shouldShowScrollBottomButton) {
           // If not currently showing scroll button and should show scroll button,
           // implies we were previously scrolled to bottom to see latest message.
