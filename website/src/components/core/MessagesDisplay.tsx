@@ -1,4 +1,4 @@
-import { NULL_ADDRESS, WILLIE_NET_CONTRACT } from "@/app/constants";
+import { WILLIE_NET_CONTRACT } from "@/app/constants";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import truncateEthAddress from "truncate-eth-address";
@@ -23,7 +23,7 @@ type OnchainMessage = {
 const PRE_SCROLL_TIMEOUT_MS = 250;
 
 export default function MessagesDisplay(props: {
-  scrollToBottom: () => void;
+  scrollToBottom: (onlyIfAlreadyOnBottom: boolean) => void;
   checkAndUpdateShouldShowScrollToBottomButton: () => void;
   initialVisibleMessageIndex?: number;
   appContext?: NetAppContext;
@@ -97,7 +97,8 @@ export default function MessagesDisplay(props: {
     setChainChanged(false);
     // Scroll on chain changed and messages fetched
     setTimeout(() => {
-      props.scrollToBottom();
+      // Force scroll to bottom
+      props.scrollToBottom(false);
     }, PRE_SCROLL_TIMEOUT_MS);
   }, [chainChanged, messagesResult.isFetched]);
 
@@ -125,13 +126,22 @@ export default function MessagesDisplay(props: {
     // This is called whenever the state finishes being set, implying the messages
     // are rendered.
     if (!loadedMessages) {
-      props.scrollToBottom();
       setLoadedMessages(true);
+
+      if (messages.length > 0) {
+        if (!firstLoadedMessages) {
+          setFirstLoadedMessages(true);
+          props.scrollToBottom(false);
+        } else {
+          props.scrollToBottom(true);
+        }
+      }
     }
     props.checkAndUpdateShouldShowScrollToBottomButton();
   }, [messages.length]);
 
   useEffect(() => {
+    // TODO ensure this logic works
     if (firstLoadedMessages || sanitizedOnchainMessages.length === 0) {
       return;
     }

@@ -28,11 +28,16 @@ export default function WillieNetDapp(props: {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
-  const [scrollingToBottom, setScrollingToBottom] = useState(false);
+  const scrollIsAtBottomRef = useRef(false);
+  const scrollingToBottomRef = useRef(false);
   const [ready, setReady] = useState(false);
 
-  const scrollToBottom = () => {
-    setScrollingToBottom(true);
+  const scrollToBottom = (onlyScrollIfAlreadyOnBottom: boolean) => {
+    if (onlyScrollIfAlreadyOnBottom && !scrollIsAtBottomRef.current) {
+      // Only scroll if already on bottom but we are not already on bottom so return
+      return;
+    }
+    scrollingToBottomRef.current = true;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -53,33 +58,23 @@ export default function WillieNetDapp(props: {
   }
 
   function checkAndUpdateShouldShowScrollToBottomButton() {
-    setScrollingToBottom((currScrollingToBottom) => {
-      if (currScrollingToBottom && isScrolledToBottom()) {
-        // Already scrolled to bottom, so set scrolling to bottom to false
-        return false;
-      } else if (currScrollingToBottom) {
-        // Currently scrolling to bottom, so don't perform any updates
-        return currScrollingToBottom;
-      }
+    if (scrollingToBottomRef.current && isScrolledToBottom()) {
+      // Already scrolled to bottom, so set scrolling to bottom to false
+      scrollingToBottomRef.current = false;
+      return;
+    } else if (scrollingToBottomRef.current) {
+      // Currently scrolling to bottom, so don't perform any updates
+      return;
+    }
 
-      const shouldShowScrollBottomButton = !isScrolledToBottom();
-      if (shouldShowScrollBottomButton == null) {
-        // Null result, so return current value
-        return currScrollingToBottom;
-      }
+    const shouldShowScrollBottomButton = !isScrolledToBottom();
 
-      setShowScrollButton((currShowScrollButton) => {
-        if (!currShowScrollButton && shouldShowScrollBottomButton) {
-          // If not currently showing scroll button and should show scroll button,
-          // implies we were previously scrolled to bottom to see latest message.
-          // So scroll to bottom again to see the new latest message and continue
-          // to not show scroll button
-          scrollToBottom();
-        }
-        return shouldShowScrollBottomButton;
-      });
-      return currScrollingToBottom;
-    });
+    if (shouldShowScrollBottomButton == null) {
+      // Null result, so return current value
+      return;
+    }
+
+    setShowScrollButton(shouldShowScrollBottomButton);
   }
 
   useEffect(() => {
@@ -87,17 +82,20 @@ export default function WillieNetDapp(props: {
     setReady(true);
   }, []);
 
+  function onScroll() {
+    // NOTE: this ref is intentionally only set on scroll. That means
+    // that if a new message is received, this value will _correctly_
+    // not be updated. This is useful because we can use this ref to track if,
+    // prior to the new message being received, scroll was at the bottom
+    scrollIsAtBottomRef.current = !!isScrolledToBottom();
+    checkAndUpdateShouldShowScrollToBottomButton();
+  }
+
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
-    scrollContainer?.addEventListener(
-      "scroll",
-      checkAndUpdateShouldShowScrollToBottomButton
-    );
+    scrollContainer?.addEventListener("scroll", onScroll);
     return () => {
-      scrollContainer?.removeEventListener(
-        "scroll",
-        checkAndUpdateShouldShowScrollToBottomButton
-      );
+      scrollContainer?.removeEventListener("scroll", onScroll);
     };
   }, []);
 
@@ -145,7 +143,7 @@ export default function WillieNetDapp(props: {
       </CardContent>
       <div className="flex flex-col">
         {showScrollButton && (
-          <FloatingScrollToBottomButton onClick={scrollToBottom} />
+          <FloatingScrollToBottomButton onClick={() => scrollToBottom(false)} />
         )}
       </div>
       <CardFooter className="flex flex-col justify-end">
