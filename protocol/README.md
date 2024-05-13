@@ -54,3 +54,7 @@ Run `forge script script/DeployNet.s.sol`. You should see the address for that p
 # References
 
 - https://2ad.com/deterministic-deployment.html
+
+## Utilities
+
+- Example of get messages in range with cast: `cast call 0x00000000b24d62781db359b07880a105cd0b64e6 "getMessagesInRange(uint256,uint256)((address,address,uint256,bytes,string,string)[])" 0 10 --rpc-url $BASE_RPC_URL`
