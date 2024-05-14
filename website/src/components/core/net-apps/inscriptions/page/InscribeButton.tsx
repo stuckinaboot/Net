@@ -32,6 +32,16 @@ export default function InscribeButton(props: {
   const DialogContents = config.dialogContents;
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  let inscriptionJson;
+  try {
+    inscriptionJson = JSON.parse(props.inscription);
+  } catch (e) {}
+
+  function isValidInscription(json: any) {
+    return json.name && json.image;
+  }
+  const validInscription = isValidInscription(inscriptionJson);
+
   return (
     <Dialog
       open={dialogOpen}
@@ -50,40 +60,42 @@ export default function InscribeButton(props: {
           <DialogClose asChild>
             <Button className="flex-1 mr-2">Cancel</Button>
           </DialogClose>
-          <SubmitTransactionButton
-            className="flex-1"
-            functionName="inscribe"
-            abi={INSCRIPTIONS_CONTRACT.abi}
-            to={INSCRIPTIONS_CONTRACT.address}
-            args={[props.inscription]}
-            messages={{
-              toasts: {
-                ...TOASTS,
-                success: (
-                  <>
-                    {TOASTS.success}
-                    <Button
-                      onClick={() =>
-                        window.open(INSCRIPTIONS_COLLECTION_URL, "_blank")
-                      }
-                    >
-                      View on OpenSea
-                    </Button>
-                  </>
-                ),
-              },
-              button: BUTTONS,
-            }}
-            useDefaultButtonMessageOnSuccess={true}
-            onTransactionConfirmed={() => {
-              setDialogOpen(false);
-            }}
-            prePerformTransasctionValidation={() => {
-              // TODO check if message is valid
-              return undefined;
-            }}
-            disabled={props.disabled}
-          />
+          {validInscription && (
+            <SubmitTransactionButton
+              className="flex-1"
+              functionName="inscribe"
+              abi={INSCRIPTIONS_CONTRACT.abi}
+              to={INSCRIPTIONS_CONTRACT.address}
+              args={[props.inscription]}
+              messages={{
+                toasts: {
+                  ...TOASTS,
+                  success: (
+                    <>
+                      {TOASTS.success}
+                      <Button
+                        onClick={() =>
+                          window.open(INSCRIPTIONS_COLLECTION_URL, "_blank")
+                        }
+                      >
+                        View on OpenSea
+                      </Button>
+                    </>
+                  ),
+                },
+                button: BUTTONS,
+              }}
+              useDefaultButtonMessageOnSuccess={true}
+              onTransactionConfirmed={() => {
+                setDialogOpen(false);
+              }}
+              prePerformTransasctionValidation={() => {
+                // TODO check if message is valid
+                return undefined;
+              }}
+              disabled={props.disabled}
+            />
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

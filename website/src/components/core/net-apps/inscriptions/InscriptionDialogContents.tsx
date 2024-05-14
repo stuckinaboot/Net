@@ -11,6 +11,9 @@ export function InscriptionDialogContents(props: {
   let error;
   try {
     inscriptionMetadata = JSON.parse(props.message);
+    if (!inscriptionMetadata.image) {
+      error = "No image found";
+    }
   } catch (e) {
     if (props.message.length === 0) {
       error = "Empty inscription";
