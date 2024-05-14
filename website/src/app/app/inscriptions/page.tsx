@@ -14,8 +14,8 @@ export default function Page() {
     <BasePageCard
       description={
         <>
-          Inscribe art on Net. Enter metadata for your art and press 'inscribe'
-          to have your art inscribed on Net.
+          Inscribe art on Net. Enter metadata for your art and press inscribe to
+          have your art inscribed on Net.
           <br />
           <Button
             onClick={() => window.open(INSCRIPTIONS_COLLECTION_URL, "_blank")}
