@@ -3,6 +3,7 @@ import IframeRenderer from "../../IFrameRenderer";
 import { sanitizeMediaUrl } from "./utils";
 import mime from "mime-types";
 import InscriptionImagePreview from "./InscriptionImagePreview";
+import ReactPlayer from "react-player";
 
 enum AnimationType {
   VIDEO,
@@ -49,9 +50,7 @@ export default function InscriptionAnimationPreview({
   }
   if (animationType === AnimationType.VIDEO) {
     return (
-      <video width={SIZE} height={SIZE} controls>
-        <source src={animationUrl} />
-      </video>
+      <ReactPlayer url={animationUrl} width={SIZE} height={SIZE} controls />
     );
   }
 
