@@ -35,7 +35,6 @@ export default function InscriptionEntry(props: {
     <>
       <Label>Name:</Label>
       <Input
-        placeholder="My Cool Inscription"
         onChange={(e) => {
           const updated = e.target.value;
           setName(updated);
@@ -46,7 +45,6 @@ export default function InscriptionEntry(props: {
       <Spacing />
       <Label>Description:</Label>
       <Textarea
-        placeholder="A description of my cool inscription."
         onChange={(e) => {
           const updated = e.target.value;
           setDescription(updated);
@@ -58,7 +56,6 @@ export default function InscriptionEntry(props: {
 
       <Label>Image:</Label>
       <Textarea
-        placeholder="https://example.com/image.png"
         contentEditable
         onChange={(e) => {
           const updated = e.target.value;
@@ -70,7 +67,6 @@ export default function InscriptionEntry(props: {
       <Spacing />
       <Label>Animation (optional):</Label>
       <Textarea
-        placeholder="https://example.com/animation.mp4"
         contentEditable
         onChange={(e) => {
           const updated = e.target.value;
