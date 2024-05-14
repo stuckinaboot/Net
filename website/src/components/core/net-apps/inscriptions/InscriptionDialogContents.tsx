@@ -18,7 +18,6 @@ export function InscriptionDialogContents(props: {
       error = "Failed to load inscription";
     }
   }
-  console.log("inscriptionMetadata", inscriptionMetadata);
 
   return (
     <>

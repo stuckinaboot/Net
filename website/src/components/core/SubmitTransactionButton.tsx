@@ -17,7 +17,7 @@ export default function SubmitTransactionButton(props: {
   abi: any;
   to: string;
   messages: {
-    toasts: { title: string; success: string; error: string };
+    toasts: { title: string; success: string | React.ReactNode; error: string };
     button: { default: string; pending: string; success: string };
   };
   useDefaultButtonMessageOnSuccess?: boolean;
@@ -54,6 +54,7 @@ export default function SubmitTransactionButton(props: {
       title: props.messages.toasts.title,
       description: props.messages.toasts.success,
     });
+    hash && props.onTransactionConfirmed && props.onTransactionConfirmed(hash);
     setShownSucccessToast(true);
   }, [receipt.isSuccess]);
 
@@ -73,13 +74,12 @@ export default function SubmitTransactionButton(props: {
       return;
     }
     try {
-      const txnHash = await writeContractAsync({
+      await writeContractAsync({
         address: props.to as any,
         abi: props.abi,
         functionName: props.functionName,
         args: props.args,
       });
-      props.onTransactionConfirmed && props.onTransactionConfirmed(txnHash);
     } catch (e) {
       if (e instanceof Error) {
         toast({

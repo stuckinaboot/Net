@@ -10,10 +10,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { INSCRIPTIONS_CONTRACT, config } from "../InscriptionInferredAppConfig";
+import { useState } from "react";
+import { INSCRIPTIONS_COLLECTION_URL } from "../constants";
 
 const TOASTS = {
   title: "Inscriptions",
-  success: "Your art has been successfully inscribe on Net",
+  success: "Your art has been successfully inscribed on Net",
   error: "Failed to inscribe",
 };
 
@@ -28,9 +30,13 @@ export default function InscribeButton(props: {
   disabled?: boolean;
 }) {
   const DialogContents = config.dialogContents;
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   return (
-    <Dialog>
+    <Dialog
+      open={dialogOpen}
+      onOpenChange={(updatedOpen) => setDialogOpen(updatedOpen)}
+    >
       <DialogTrigger asChild>
         <Button className="w-full">Inscribe</Button>
       </DialogTrigger>
@@ -46,13 +52,32 @@ export default function InscribeButton(props: {
           </DialogClose>
           <SubmitTransactionButton
             className="flex-1"
-            functionName="sendMessage"
+            functionName="inscribe"
             abi={INSCRIPTIONS_CONTRACT.abi}
             to={INSCRIPTIONS_CONTRACT.address}
             args={[props.inscription]}
-            messages={{ toasts: TOASTS, button: BUTTONS }}
+            messages={{
+              toasts: {
+                ...TOASTS,
+                success: (
+                  <>
+                    {TOASTS.success}
+                    <Button
+                      onClick={() =>
+                        window.open(INSCRIPTIONS_COLLECTION_URL, "_blank")
+                      }
+                    >
+                      View on OpenSea
+                    </Button>
+                  </>
+                ),
+              },
+              button: BUTTONS,
+            }}
             useDefaultButtonMessageOnSuccess={true}
-            onTransactionConfirmed={() => {}}
+            onTransactionConfirmed={() => {
+              setDialogOpen(false);
+            }}
             prePerformTransasctionValidation={() => {
               // TODO check if message is valid
               return undefined;
