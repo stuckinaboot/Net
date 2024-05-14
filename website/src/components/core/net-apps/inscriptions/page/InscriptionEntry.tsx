@@ -54,7 +54,7 @@ export default function InscriptionEntry(props: {
       />
       <Spacing />
 
-      <Label>Image:</Label>
+      <Label>Image URL:</Label>
       <Textarea
         contentEditable
         onChange={(e) => {
@@ -65,7 +65,7 @@ export default function InscriptionEntry(props: {
         value={image}
       />
       <Spacing />
-      <Label>Animation (optional):</Label>
+      <Label>Animation URL (optional):</Label>
       <Textarea
         contentEditable
         onChange={(e) => {
