@@ -1,40 +1,45 @@
 import { Label } from "@/components/ui/label";
 import IframeRenderer from "../../IFrameRenderer";
 import { Separator } from "@/components/ui/separator";
-
-const IPFS_URL_WEBSITE = "https://ipfs.io/ipfs/";
-const IPFS_PREFIX = "ipfs://";
-
-function sanitizeMediaUrl(inputUrl: string) {
-  let url = inputUrl;
-  if (url.startsWith(IPFS_PREFIX)) {
-    url = IPFS_URL_WEBSITE + url.substring(IPFS_PREFIX.length);
-  }
-  // Add future additional sanitization here
-  return url;
-}
+import InscriptionAnimationPreview from "./InscriptionAnimationPreview";
+import InscriptionImagePreview from "./InscriptionImagePreview";
 
 export function InscriptionDialogContents(props: {
   message: string;
 }): React.ReactNode {
-  const inscriptionMetadata = JSON.parse(props.message);
+  let inscriptionMetadata;
+  let error;
+  try {
+    inscriptionMetadata = JSON.parse(props.message);
+    if (!inscriptionMetadata.image) {
+      error = "No image found";
+    }
+  } catch (e) {
+    if (props.message.length === 0) {
+      error = "Empty inscription";
+    } else {
+      error = "Failed to load inscription";
+    }
+  }
+
   return (
     <>
       <Label>Inscribe message as NFT</Label>
       <Separator className="m-3" />
-      {inscriptionMetadata.name && (
+      {error && <Label className="text-red-500">Error: {error}</Label>}
+      {inscriptionMetadata?.name && (
         <>
           <br />
           <Label>Name: {inscriptionMetadata.name}</Label>
         </>
       )}
-      {inscriptionMetadata.description && (
+      {inscriptionMetadata?.description && (
         <>
           <br />
           <Label>Description: {inscriptionMetadata.description}</Label>
         </>
       )}
-      {inscriptionMetadata.traits && (
+      {inscriptionMetadata?.traits && (
         <>
           <br />
           <Label>
@@ -42,26 +47,21 @@ export function InscriptionDialogContents(props: {
           </Label>
         </>
       )}
-      {inscriptionMetadata.image && (
+      {inscriptionMetadata?.image && (
         <>
           <br />
           <Label>
-            Image:{" "}
-            <img
-              src={sanitizeMediaUrl(inscriptionMetadata.image)}
-              className="inline w-16"
-            />
+            Image: <InscriptionImagePreview image={inscriptionMetadata.image} />
           </Label>
         </>
       )}
-      {inscriptionMetadata.animation_url && (
+      {inscriptionMetadata?.animation_url && (
         <>
           <br />
           <Label>
             Animation:{" "}
-            <IframeRenderer
-              size="150px"
-              htmlString={sanitizeMediaUrl(inscriptionMetadata.animation_url)}
+            <InscriptionAnimationPreview
+              animationUrl={inscriptionMetadata.animation_url}
             />
           </Label>
         </>

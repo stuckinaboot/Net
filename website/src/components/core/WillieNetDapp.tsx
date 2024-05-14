@@ -1,25 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { useAccount } from "wagmi";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import SendMessageSection from "./SendMessageSection";
 import { Separator } from "@/components/ui/separator";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import MessagesDisplay from "./MessagesDisplay";
 import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
 import { useSearchParams } from "next/navigation";
 import { APP_TO_CONFIG } from "./net-apps/AppManager";
+import BasePageCard from "./BasePageCard";
 
 export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
 }) {
-  const { isConnected, address: userAddress } = useAccount();
+  const { address: userAddress } = useAccount();
   const [controlsState, setControlsState] = useState<any>({});
 
   const params = useSearchParams();
@@ -30,7 +22,6 @@ export default function WillieNetDapp(props: {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const scrollIsAtBottomRef = useRef(false);
   const scrollingToBottomRef = useRef(false);
-  const [ready, setReady] = useState(false);
 
   const scrollToBottom = (onlyScrollIfAlreadyOnBottom: boolean) => {
     if (onlyScrollIfAlreadyOnBottom && !scrollIsAtBottomRef.current) {
@@ -77,11 +68,6 @@ export default function WillieNetDapp(props: {
     setShowScrollButton(shouldShowScrollBottomButton);
   }
 
-  useEffect(() => {
-    // Component mounted
-    setReady(true);
-  }, []);
-
   function onScroll() {
     // NOTE: this ref is intentionally only set on scroll. That means
     // that if a new message is received, this value will _correctly_
@@ -99,60 +85,62 @@ export default function WillieNetDapp(props: {
     };
   }, []);
 
-  const disableSendMessageSection = ready && !isConnected;
   const appConfig =
     app != null ? { appAddress: app, controlsState: controlsState } : undefined;
 
   const Controls = app != null ? APP_TO_CONFIG[app].controls : null;
   return (
-    <Card className="w-full h-full flex flex-col">
-      <CardHeader className="flex flex-col">
-        <div className="flex flex-row justify-between">
-          <CardTitle>Net</CardTitle>
-          <ConnectButton />
-        </div>
-        <CardDescription>
-          All messages are stored and read onchain and are publicly accessible.
-          Scroll down to see all messages.
-          {Controls ? (
-            <Controls
-              userAddress={userAddress}
-              controlsState={controlsState}
-              updateControlsState={(updatedState: any) =>
-                setControlsState(updatedState)
-              }
-            />
-          ) : (
-            <></>
-          )}
-        </CardDescription>
-      </CardHeader>
-      <CardContent
-        className="flex-1 flex-col overflow-y-auto"
-        ref={scrollContainerRef}
-      >
-        <MessagesDisplay
-          initialVisibleMessageIndex={props.specificMessageIndex}
-          scrollToBottom={scrollToBottom}
-          checkAndUpdateShouldShowScrollToBottomButton={
-            checkAndUpdateShouldShowScrollToBottomButton
-          }
-          appContext={appConfig}
-        />
-        <div ref={messagesEndRef} />
-      </CardContent>
-      <div className="flex flex-col">
-        {showScrollButton && (
-          <FloatingScrollToBottomButton onClick={() => scrollToBottom(false)} />
+    <>
+      <BasePageCard
+        description={
+          <>
+            All messages are stored and read onchain and are publicly
+            accessible. Scroll down to see all messages.
+            {Controls ? (
+              <Controls
+                userAddress={userAddress}
+                controlsState={controlsState}
+                updateControlsState={(updatedState: any) =>
+                  setControlsState(updatedState)
+                }
+              />
+            ) : (
+              <></>
+            )}
+          </>
+        }
+        content={{
+          ref: scrollContainerRef,
+          node: (
+            <>
+              <MessagesDisplay
+                initialVisibleMessageIndex={props.specificMessageIndex}
+                scrollToBottom={scrollToBottom}
+                checkAndUpdateShouldShowScrollToBottomButton={
+                  checkAndUpdateShouldShowScrollToBottomButton
+                }
+                appContext={appConfig}
+              />
+              <div ref={messagesEndRef} />
+            </>
+          ),
+        }}
+        betweenContentAndFooter={
+          <div className="flex flex-col">
+            {showScrollButton && (
+              <FloatingScrollToBottomButton
+                onClick={() => scrollToBottom(false)}
+              />
+            )}
+          </div>
+        }
+        footer={(disabled) => (
+          <>
+            <Separator className="m-3" />
+            <SendMessageSection appContext={appConfig} disabled={disabled} />
+          </>
         )}
-      </div>
-      <CardFooter className="flex flex-col justify-end">
-        <Separator className="m-3" />
-        <SendMessageSection
-          appContext={appConfig}
-          disabled={disableSendMessageSection}
-        />
-      </CardFooter>
-    </Card>
+      />
+    </>
   );
 }
