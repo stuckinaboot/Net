@@ -38,7 +38,7 @@ export default function InscribeButton(props: {
   } catch (e) {}
 
   function isValidInscription(json: any) {
-    return json.name?.length > 0 && json.image?.length > 0;
+    return json?.name?.length > 0 && json?.image?.length > 0;
   }
   const validInscription = isValidInscription(inscriptionJson);
 
