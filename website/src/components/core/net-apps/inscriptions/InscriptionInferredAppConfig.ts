@@ -1,10 +1,10 @@
-import { base, baseSepolia } from "viem/chains";
+import { base, baseSepolia, degen } from "viem/chains";
 import { InscriptionDialogContents } from "./InscriptionDialogContents";
 import { InferredAppComponentsConfig } from "../../types";
 import { TESTNETS_ENABLED } from "@/app/constants";
 import abi from "../../../../../assets/abis/apps/inscriptions.json";
 
-const SUPPORTED_CHAINS = new Set([base.id, baseSepolia.id]);
+const SUPPORTED_CHAINS = new Set([base.id, baseSepolia.id, degen.id]);
 
 export const INSCRIPTIONS_CONTRACT = {
   address: TESTNETS_ENABLED
