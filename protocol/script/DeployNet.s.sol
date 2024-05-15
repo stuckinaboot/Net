@@ -32,9 +32,9 @@ contract DeployNet is Script {
         console.logString("Predicted address:");
         console.logAddress(predictedAddress);
 
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
-        // vm.startBroadcast();
+        // uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        // vm.startBroadcast(deployerPrivateKey);
+        vm.startBroadcast();
         willieNet = new Net{salt: salt}();
         vm.stopBroadcast();
 
