@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain } from "wagmi";
 import SendMessageSection from "./SendMessageSection";
 import { Separator } from "@/components/ui/separator";
 import MessagesDisplay from "./MessagesDisplay";
@@ -7,6 +7,7 @@ import FloatingScrollToBottomButton from "./FloatingScrollToBottomButton";
 import { useSearchParams } from "next/navigation";
 import { APP_TO_CONFIG } from "./net-apps/AppManager";
 import BasePageCard from "./BasePageCard";
+import { base, baseSepolia, degen, sepolia } from "viem/chains";
 
 export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
@@ -22,6 +23,31 @@ export default function WillieNetDapp(props: {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const scrollIsAtBottomRef = useRef(false);
   const scrollingToBottomRef = useRef(false);
+
+  const searchParams = useSearchParams();
+  const { switchChain } = useSwitchChain();
+  const initialChainSearchParamStr = searchParams
+    .get("initialChain")
+    ?.toLowerCase();
+  const initialChainSearchParam =
+    initialChainSearchParamStr === "base"
+      ? base
+      : initialChainSearchParamStr === "degen"
+      ? degen
+      : initialChainSearchParamStr === "sepolia"
+      ? sepolia
+      : initialChainSearchParamStr === "baseSepolia"
+      ? baseSepolia
+      : undefined;
+
+  useEffect(() => {
+    if (initialChainSearchParam != null) {
+      // Switch to the initial chain, which will automatically only switch if the user isn't
+      // already connected to another supported chain.
+      // NOTE: rainbowkit `initialChain` doesn't work so we use this approach instead
+      switchChain({ chainId: initialChainSearchParam.id });
+    }
+  }, []);
 
   const scrollToBottom = (onlyScrollIfAlreadyOnBottom: boolean) => {
     if (onlyScrollIfAlreadyOnBottom && !scrollIsAtBottomRef.current) {
