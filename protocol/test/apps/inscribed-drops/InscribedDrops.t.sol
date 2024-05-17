@@ -38,48 +38,60 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         }
     }
 
-    function testInscribeOneToken(
+    function testInscribeTokens(
         uint256 mintPrice,
         uint256 maxSupply,
         uint256 mintEndTimestamp,
         string calldata tokenUri
     ) public {
+        vm.assume(mintPrice < 1 ether);
+        vm.assume(maxSupply < 100000);
+        vm.assume(mintEndTimestamp < block.timestamp + 52 weeks);
         vm.startPrank(users[1]);
 
-        bool tokenUriEmpty = bytes(tokenUri).length == 0;
-        if (tokenUriEmpty) {
-            vm.expectRevert(InscribedDrops.TokenUriEmpty.selector);
+        for (uint256 i = 0; i < 5; i++) {
+            uint256 mintPriceI = mintPrice + i;
+            uint256 maxSupplyI = maxSupply + i;
+            uint256 mintEndTimestampI = mintEndTimestamp + i;
+
+            bool tokenUriEmpty = bytes(tokenUri).length == 0;
+            if (tokenUriEmpty) {
+                vm.expectRevert(InscribedDrops.TokenUriEmpty.selector);
+            }
+            drops.inscribe(mintPriceI, maxSupplyI, mintEndTimestampI, tokenUri);
+
+            // Check total drops
+            assertEq(drops.totalDrops(), tokenUriEmpty ? 0 : i + 1);
+
+            // Check total supply
+            assertEq(drops.totalSupply(i), tokenUriEmpty ? 0 : 1);
+
+            // Check total net messages for app
+            uint256 totalMessages = net.getTotalMessagesForAppCount(
+                address(drops)
+            );
+            assertEq(totalMessages, tokenUriEmpty ? 0 : i + 1);
+
+            if (tokenUriEmpty) {
+                return;
+            }
+
+            // Check data on token is correct
+            Net.Message memory message = net.getMessageForApp(
+                totalMessages - 1,
+                address(drops)
+            );
+
+            // Parse data
+            (
+                uint256 actualMintPrice,
+                uint256 actualMaxSupply,
+                uint256 actualMintEndTimestamp
+            ) = abi.decode(message.data, (uint256, uint256, uint256));
+            assertEq(actualMintPrice, mintPriceI);
+            assertEq(actualMaxSupply, maxSupplyI);
+            assertEq(actualMintEndTimestamp, mintEndTimestampI);
         }
-        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
-
-        // Check total drops
-        assertEq(drops.totalDrops(), tokenUriEmpty ? 0 : 1);
-
-        // Check total supply
-        assertEq(drops.totalSupply(0), tokenUriEmpty ? 0 : 1);
-
-        // Check total net messages for app
-        assertEq(
-            net.getTotalMessagesForAppCount(address(drops)),
-            tokenUriEmpty ? 0 : 1
-        );
-
-        if (tokenUriEmpty) {
-            return;
-        }
-
-        // Check data on token is correct
-        Net.Message memory message = net.getMessageForApp(0, address(drops));
-
-        // Parse data
-        (
-            uint256 actualMintPrice,
-            uint256 actualMaxSupply,
-            uint256 actualMintEndTimestamp
-        ) = abi.decode(message.data, (uint256, uint256, uint256));
-        assertEq(actualMintPrice, mintPrice);
-        assertEq(actualMaxSupply, maxSupply);
-        assertEq(actualMintEndTimestamp, mintEndTimestamp);
     }
 
     function onERC1155Received(
