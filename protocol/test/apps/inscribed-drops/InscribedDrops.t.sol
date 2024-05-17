@@ -129,6 +129,8 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         }
     }
 
+    // TODO test mints
+
     function onERC1155Received(
         address operator,
         address from,
