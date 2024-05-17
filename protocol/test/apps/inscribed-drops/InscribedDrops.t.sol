@@ -130,6 +130,40 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
     }
 
     // TODO test mints
+    function testInscribeNoMintPriceNoMaxSupplyNoEndTimestampAndMint(
+        uint256 mintPrice,
+        uint256 maxSupply,
+        uint256 mintEndTimestamp,
+        string calldata tokenUri
+    ) public {
+        uint256 mintPrice = 0;
+        uint256 maxSupply = 0;
+        uint256 mintEndTimestamp = 0;
+        vm.assume(bytes(tokenUri).length > 0);
+        vm.startPrank(users[1]);
+
+        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+
+        vm.startPrank(users[2]);
+        drops.mint(0, 1, address(0), 0);
+        assertEq(drops.totalSupply(0), 2);
+        assertEq(drops.balanceOf(users[2], 0), 1);
+        assertEq(drops.balanceOf(users[1], 0), 1);
+
+        drops.mint(0, 2, address(0), 0);
+        assertEq(drops.totalSupply(0), 4);
+        assertEq(drops.balanceOf(users[2], 0), 3);
+        assertEq(drops.balanceOf(users[1], 0), 1);
+
+        vm.startPrank(users[3]);
+        drops.mint(0, 5, address(0), 0);
+        assertEq(drops.totalSupply(0), 9);
+        assertEq(drops.balanceOf(users[3], 0), 5);
+        assertEq(drops.balanceOf(users[2], 0), 3);
+        assertEq(drops.balanceOf(users[1], 0), 1);
+    }
+
+    // TODO test mint quantity 0
 
     function onERC1155Received(
         address operator,
