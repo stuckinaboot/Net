@@ -16,6 +16,7 @@ contract InscribedDrops is ERC1155 {
     mapping(uint256 id => uint256 supply) public totalSupply;
 
     error TokenDoesNotExist();
+    error TokenUriEmpty();
     error MintPaymentIncorrect();
     error MintSupplyReached();
     error MintEndTimestampReached();
@@ -35,6 +36,11 @@ contract InscribedDrops is ERC1155 {
         uint256 mintEndTimestamp,
         string calldata tokenUri
     ) public {
+        // Check token uri non-empty
+        if (bytes(tokenUri).length == 0) {
+            revert TokenUriEmpty();
+        }
+
         // Mint first token in drop
         _mint(msg.sender, totalDrops, 1, "");
         // Set total supply to 1

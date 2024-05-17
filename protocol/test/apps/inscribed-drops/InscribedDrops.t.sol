@@ -9,8 +9,9 @@ import {IERC721Receiver} from "@openzeppelin/contracts/interfaces/IERC721Receive
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {InscribedDrops} from "../../../src/apps/inscribed-drops/InscribedDrops.sol";
 import {PRBTest} from "@prb/test/PRBTest.sol";
+import {IERC1155Receiver} from "@openzeppelin/contracts/interfaces/IERC1155Receiver.sol";
 
-contract InscribedDropsTest is PRBTest, StdCheats {
+contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
     using stdStorage for StdStorage;
 
     StdStorage private stdstore;
@@ -18,10 +19,17 @@ contract InscribedDropsTest is PRBTest, StdCheats {
     // Test users
     address[10] users;
 
-    Net public net = new Net();
+    Net public net;
     InscribedDrops drops = new InscribedDrops();
 
+    address constant NET_ADDRESS =
+        address(0x00000000B24D62781dB359b07880a105cD0b64e6);
+
     function setUp() public {
+        // Deploy Net code to NET_ADDRESS
+        bytes memory code = address(new Net()).code;
+        vm.etch(NET_ADDRESS, code);
+
         vm.deal(address(this), 1000 ether);
 
         for (uint256 i = 0; i < users.length; i++) {
@@ -30,18 +38,49 @@ contract InscribedDropsTest is PRBTest, StdCheats {
         }
     }
 
-    function testInscribe() public {
-        string memory tokenUri = "abc";
-        uint256 mintPrice = 1;
-        uint256 maxSupply = 1;
-        uint256 mintEndTimestamp = 2;
-        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, "abc");
+    function testInscribeOneToken(
+        uint256 mintPrice,
+        uint256 maxSupply,
+        uint256 mintEndTimestamp,
+        string calldata tokenUri
+    ) public {
+        vm.startPrank(users[1]);
+        if (bytes(tokenUri).length == 0) {
+            vm.expectRevert();
+        }
+        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
 
         // Check total drops
         assertEq(drops.totalDrops(), 1);
 
         // Check total supply
         assertEq(drops.totalSupply(0), 1);
+    }
+
+    function onERC1155Received(
+        address operator,
+        address from,
+        uint256 id,
+        uint256 value,
+        bytes calldata data
+    ) external returns (bytes4) {
+        return this.onERC1155Received.selector;
+    }
+
+    function onERC1155BatchReceived(
+        address operator,
+        address from,
+        uint256[] calldata ids,
+        uint256[] calldata values,
+        bytes calldata data
+    ) external returns (bytes4) {
+        return this.onERC1155BatchReceived.selector;
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    ) external view returns (bool) {
+        return interfaceId == type(IERC1155Receiver).interfaceId;
     }
 
     receive() external payable {}
