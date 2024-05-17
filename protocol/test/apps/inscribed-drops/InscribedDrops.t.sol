@@ -19,11 +19,11 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
     // Test users
     address[10] users;
 
-    Net public net;
     InscribedDrops drops = new InscribedDrops();
 
     address constant NET_ADDRESS =
         address(0x00000000B24D62781dB359b07880a105cD0b64e6);
+    Net public net = Net(NET_ADDRESS);
 
     function setUp() public {
         // Deploy Net code to NET_ADDRESS
@@ -45,16 +45,41 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         string calldata tokenUri
     ) public {
         vm.startPrank(users[1]);
-        if (bytes(tokenUri).length == 0) {
-            vm.expectRevert();
+
+        bool tokenUriEmpty = bytes(tokenUri).length == 0;
+        if (tokenUriEmpty) {
+            vm.expectRevert(InscribedDrops.TokenUriEmpty.selector);
         }
         drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
 
         // Check total drops
-        assertEq(drops.totalDrops(), 1);
+        assertEq(drops.totalDrops(), tokenUriEmpty ? 0 : 1);
 
         // Check total supply
-        assertEq(drops.totalSupply(0), 1);
+        assertEq(drops.totalSupply(0), tokenUriEmpty ? 0 : 1);
+
+        // Check total net messages for app
+        assertEq(
+            net.getTotalMessagesForAppCount(address(drops)),
+            tokenUriEmpty ? 0 : 1
+        );
+
+        if (tokenUriEmpty) {
+            return;
+        }
+
+        // Check data on token is correct
+        Net.Message memory message = net.getMessageForApp(0, address(drops));
+
+        // Parse data
+        (
+            uint256 actualMintPrice,
+            uint256 actualMaxSupply,
+            uint256 actualMintEndTimestamp
+        ) = abi.decode(message.data, (uint256, uint256, uint256));
+        assertEq(actualMintPrice, mintPrice);
+        assertEq(actualMaxSupply, maxSupply);
+        assertEq(actualMintEndTimestamp, mintEndTimestamp);
     }
 
     function onERC1155Received(
