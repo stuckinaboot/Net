@@ -94,6 +94,41 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         }
     }
 
+    function testName() public {
+        assertEq(drops.name(), "Net Inscribed Drops");
+    }
+
+    function testSymbol() public {
+        assertEq(drops.symbol(), "NET");
+    }
+
+    function testUri(
+        uint256 mintPrice,
+        uint256 maxSupply,
+        uint256 mintEndTimestamp,
+        string calldata tokenUri
+    ) public {
+        vm.assume(mintPrice < 1 ether);
+        vm.assume(maxSupply < 100000);
+        vm.assume(mintEndTimestamp < block.timestamp + 52 weeks);
+        vm.assume(bytes(tokenUri).length > 0);
+        vm.startPrank(users[1]);
+
+        for (uint256 i = 0; i < 5; i++) {
+            drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+
+            for (uint256 j = 0; j <= i; j++) {
+                // No revert
+                drops.uri(j);
+            }
+            vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
+            drops.uri(i + 1);
+
+            vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
+            drops.uri(i + 2);
+        }
+    }
+
     function onERC1155Received(
         address operator,
         address from,
