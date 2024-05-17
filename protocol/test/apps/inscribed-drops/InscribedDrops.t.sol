@@ -161,9 +161,15 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         assertEq(drops.balanceOf(users[3], 0), 5);
         assertEq(drops.balanceOf(users[2], 0), 3);
         assertEq(drops.balanceOf(users[1], 0), 1);
-    }
 
-    // TODO test mint quantity 0
+        // Mint quantity 0 succeeds and doesn't affect anything
+        assertEq(drops.totalSupply(0), 9);
+        assertEq(drops.totalDrops(), 1);
+        assertEq(drops.balanceOf(users[3], 0), 5);
+        assertEq(drops.balanceOf(users[2], 0), 3);
+        assertEq(drops.balanceOf(users[1], 0), 1);
+        drops.mint(0, 0, address(0), 0);
+    }
 
     function onERC1155Received(
         address operator,
