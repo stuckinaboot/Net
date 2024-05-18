@@ -14,24 +14,24 @@ import {
   INSCRIBED_DROPS_CONTRACT,
   INSCRIPTIONS_COLLECTION_URL,
 } from "../constants";
+import { InscriptionDialogContents } from "../../inscriptions/InscriptionDialogContents";
 
 const TOASTS = {
-  title: "Inscriptions",
-  success: "Your art has been successfully inscribed on Net",
+  title: "Inscribed Drops",
+  success: "Your drop has been successfully inscribed on Net",
   error: "Failed to inscribe",
 };
 
 const BUTTONS = {
-  default: "Inscribe",
+  default: "Inscribe drop",
   pending: "Inscribing",
-  success: "Inscribed",
+  success: "Inscribed drop",
 };
 
 export default function InscribeDropButton(props: {
   inscription: string;
   disabled?: boolean;
 }) {
-  const DialogContents = config.dialogContents;
   const [dialogOpen, setDialogOpen] = useState(false);
 
   let inscriptionJson;
@@ -55,7 +55,7 @@ export default function InscribeDropButton(props: {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogDescription>
-            {<DialogContents message={props.inscription} />}
+            <InscriptionDialogContents message={props.inscription} />
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex">
