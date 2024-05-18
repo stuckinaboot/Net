@@ -45,7 +45,7 @@ export default function InscribeDropMintConfigEntry(props: {
 
   return (
     <>
-      <Label>Mint price (in ETH, enter nothing for free):</Label>
+      <Label>Mint price in ETH (Optional):</Label>
       <Input
         onChange={(e) => {
           const updated = e.target.value;
@@ -57,10 +57,10 @@ export default function InscribeDropMintConfigEntry(props: {
           });
         }}
         value={priceInEth}
-        placeholder="Default is 0 ETH (free)"
+        placeholder="Leave empty for 0 ETH (free)"
       />
       <Spacing />
-      <Label>Max supply (enter nothing for open edition):</Label>
+      <Label>Max supply (Optional):</Label>
       <Textarea
         onChange={(e) => {
           const updated = e.target.value;
@@ -72,10 +72,10 @@ export default function InscribeDropMintConfigEntry(props: {
           });
         }}
         value={maxSupply}
-        placeholder="Default is open edition"
+        placeholder="Leave empty for open edition"
       />
       <Spacing />
-      <Label>Mint end timestamp (enter nothing for open forever):</Label>
+      <Label>Mint end timestamp (Optional):</Label>
       <Textarea
         contentEditable
         onChange={(e) => {
@@ -88,7 +88,7 @@ export default function InscribeDropMintConfigEntry(props: {
           });
         }}
         value={mintEndTimestamp}
-        placeholder="Default is open forever"
+        placeholder="Leave empty for open forever"
       />
     </>
   );
