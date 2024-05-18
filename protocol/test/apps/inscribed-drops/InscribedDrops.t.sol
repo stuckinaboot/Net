@@ -129,35 +129,37 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         }
     }
 
-    function performAndValidateMints(uint256 tokenId) public {
+    function performAndValidateMints(
+        uint256 tokenId,
+        uint256 mintPrice
+    ) public {
         vm.startPrank(users[2]);
-        drops.mint(0, 1, address(0), 0);
+        drops.mint{value: mintPrice}(tokenId, 1, address(0), 0);
         assertEq(drops.totalSupply(0), 2);
         assertEq(drops.balanceOf(users[2], 0), 1);
         assertEq(drops.balanceOf(users[1], 0), 1);
 
-        drops.mint(0, 2, address(0), 0);
-        assertEq(drops.totalSupply(0), 4);
-        assertEq(drops.balanceOf(users[2], 0), 3);
-        assertEq(drops.balanceOf(users[1], 0), 1);
+        drops.mint{value: mintPrice * 2}(tokenId, 2, address(0), 0);
+        assertEq(drops.totalSupply(tokenId), 4);
+        assertEq(drops.balanceOf(users[2], tokenId), 3);
+        assertEq(drops.balanceOf(users[1], tokenId), 1);
 
         vm.startPrank(users[3]);
-        drops.mint(0, 5, address(0), 0);
-        assertEq(drops.totalSupply(0), 9);
-        assertEq(drops.balanceOf(users[3], 0), 5);
-        assertEq(drops.balanceOf(users[2], 0), 3);
-        assertEq(drops.balanceOf(users[1], 0), 1);
+        drops.mint{value: mintPrice * 5}(tokenId, 5, address(0), 0);
+        assertEq(drops.totalSupply(tokenId), 9);
+        assertEq(drops.balanceOf(users[3], tokenId), 5);
+        assertEq(drops.balanceOf(users[2], tokenId), 3);
+        assertEq(drops.balanceOf(users[1], tokenId), 1);
 
         // Mint quantity 0 succeeds and doesn't affect anything
-        assertEq(drops.totalSupply(0), 9);
+        assertEq(drops.totalSupply(tokenId), 9);
         assertEq(drops.totalDrops(), 1);
-        assertEq(drops.balanceOf(users[3], 0), 5);
-        assertEq(drops.balanceOf(users[2], 0), 3);
-        assertEq(drops.balanceOf(users[1], 0), 1);
-        drops.mint(0, 0, address(0), 0);
+        assertEq(drops.balanceOf(users[3], tokenId), 5);
+        assertEq(drops.balanceOf(users[2], tokenId), 3);
+        assertEq(drops.balanceOf(users[1], tokenId), 1);
+        drops.mint(tokenId, 0, address(0), 0);
     }
 
-    // TODO test mints
     function testInscribeNoMintPriceNoMaxSupplyNoEndTimestampAndMint(
         uint256 mintPrice,
         uint256 maxSupply,
@@ -172,7 +174,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
 
         drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
 
-        performAndValidateMints(0);
+        performAndValidateMints(0, mintPrice);
     }
 
     function testInscribeNoMintPriceNoMaxSupplyYesEndTimestampAndMint(
@@ -191,7 +193,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
 
         drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
 
-        performAndValidateMints(0);
+        performAndValidateMints(0, 0);
 
         vm.warp(mintEndTimestamp);
         drops.mint(0, 1, address(0), 0);
