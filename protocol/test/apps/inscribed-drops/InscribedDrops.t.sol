@@ -125,7 +125,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
     }
 
     function testName() public {
-        assertEq(drops.name(), "Net Inscribed Drops");
+        assertEq(drops.name(), "Inscribed Drops");
     }
 
     function testSymbol() public {

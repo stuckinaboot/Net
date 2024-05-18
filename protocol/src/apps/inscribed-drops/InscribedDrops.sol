@@ -6,11 +6,17 @@ import {ERC1155} from "@solady/tokens/ERC1155.sol";
 import {Base64} from "@solady/utils/Base64.sol";
 import {SafeTransferLib} from "@solady/utils/SafeTransferLib.sol";
 import {TwoStepOwnable} from "./TwoStepOwnable.sol";
+import {LibString} from "@solady/utils/LibString.sol";
 
 /// @title InscribedDrops
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
 /// @notice NFT mints created by inscribing token uris and mint configurations in Net messages.
 contract InscribedDrops is ERC1155, TwoStepOwnable {
+    using LibString for uint256;
+
+    string internal constant INSCRIBE_TOPIC = "i";
+    string internal constant MINT_TOPIC = "m";
+
     uint256 public totalDrops;
     uint256 public feeBps;
     Net internal net = Net(0x00000000B24D62781dB359b07880a105cD0b64e6);
@@ -24,7 +30,7 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
     error MintEndTimestampReached();
 
     function name() external pure returns (string memory) {
-        return "Net Inscribed Drops";
+        return "Inscribed Drops";
     }
 
     function symbol() external pure returns (string memory) {
@@ -56,7 +62,7 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         net.sendMessageViaApp(
             msg.sender,
             tokenUri,
-            "",
+            INSCRIBE_TOPIC,
             abi.encode(mintPrice, maxSupply, mintEndTimestamp)
         );
     }
@@ -71,7 +77,11 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         }
 
         // Get message
-        Net.Message memory message = net.getMessageForApp(id, address(this));
+        Net.Message memory message = net.getMessageForAppTopic(
+            id,
+            address(this),
+            INSCRIBE_TOPIC
+        );
 
         // Parse data
         (uint256 mintPrice, uint256 maxSupply, uint256 mintEndTimestamp) = abi
@@ -119,6 +129,18 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
             // Transfer full amount to creator of drop
             SafeTransferLib.safeTransferETH(payable(message.sender), msg.value);
         }
+
+        net.sendMessageViaApp(
+            msg.sender,
+            string.concat(
+                "Minted ",
+                quantity.toString(),
+                " of ",
+                id.toString()
+            ),
+            MINT_TOPIC,
+            ""
+        );
     }
 
     function uri(uint256 id) public view override returns (string memory) {
@@ -130,7 +152,15 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
             string.concat(
                 "data:application/json;base64,",
                 Base64.encode(
-                    bytes(net.getMessageForApp(id, address(this)).text)
+                    bytes(
+                        net
+                            .getMessageForAppTopic(
+                                id,
+                                address(this),
+                                INSCRIBE_TOPIC
+                            )
+                            .text
+                    )
                 )
             );
     }
