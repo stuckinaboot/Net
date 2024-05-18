@@ -16,6 +16,7 @@ import {
 } from "../constants";
 import { InscriptionDialogContents } from "../../inscriptions/InscriptionDialogContents";
 import { MintConfig } from "./InscribeDropMintConfigEntry";
+import { InscribeDropDialogContents } from "./InscribeDropDialogContents";
 
 const TOASTS = {
   title: "Inscribed Drops",
@@ -57,7 +58,10 @@ export default function InscribeDropButton(props: {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogDescription>
-            <InscriptionDialogContents message={props.inscription} />
+            <InscribeDropDialogContents
+              message={props.inscription}
+              mintConfig={props.mintConfig}
+            />
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex">

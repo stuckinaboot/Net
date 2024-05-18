@@ -2,9 +2,11 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import InscriptionAnimationPreview from "../../../../MetadataAnimationPreview";
 import InscriptionImagePreview from "../../../../MetadataImagePreview";
+import { MintConfig } from "./InscribeDropMintConfigEntry";
 
 export function InscribeDropDialogContents(props: {
   message: string;
+  mintConfig: MintConfig;
 }): React.ReactNode {
   let inscriptionMetadata;
   let error;
@@ -20,8 +22,6 @@ export function InscribeDropDialogContents(props: {
       error = "Failed to load inscription";
     }
   }
-
-  // TODO include mint fields
 
   return (
     <>
@@ -67,6 +67,22 @@ export function InscribeDropDialogContents(props: {
           </Label>
         </>
       )}
+      <>
+        <br />
+        <Label>Mint price (in ETH): {props.mintConfig.priceInEth || "0"}</Label>
+      </>
+      <>
+        <br />
+        <Label>
+          Max supply: {props.mintConfig.maxSupply || "Open Edition"}
+        </Label>
+      </>
+      <>
+        <br />
+        <Label>
+          Mint end date: {props.mintConfig.mintEndTimestamp || "Open Forever"}
+        </Label>
+      </>
     </>
   );
 }

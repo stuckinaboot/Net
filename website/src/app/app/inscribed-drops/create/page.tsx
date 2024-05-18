@@ -1,6 +1,10 @@
 "use client";
 
 import BasePageCard from "@/components/core/BasePageCard";
+import InscribeDropButton from "@/components/core/net-apps/inscribed-drops/page/InscribeDropButton";
+import InscribeDropMintConfigEntry, {
+  MintConfig,
+} from "@/components/core/net-apps/inscribed-drops/page/InscribeDropMintConfigEntry";
 import { INSCRIPTIONS_COLLECTION_URL } from "@/components/core/net-apps/inscriptions/constants";
 import InscribeButton from "@/components/core/net-apps/inscriptions/page/InscribeButton";
 import InscriptionEntry from "@/components/core/net-apps/inscriptions/page/InscriptionEntry";
@@ -9,6 +13,11 @@ import { useState } from "react";
 
 export default function Page() {
   const [message, setMessage] = useState("");
+  const [mintConfig, setMintConfig] = useState({
+    priceInEth: undefined,
+    maxSupply: undefined,
+    mintEndTimestamp: undefined,
+  } as MintConfig);
 
   return (
     <BasePageCard
@@ -27,13 +36,23 @@ export default function Page() {
       }
       content={{
         node: (
-          <InscriptionEntry
-            onInscriptionChanged={(inscription) => setMessage(inscription)}
-          />
+          <>
+            <InscriptionEntry
+              onInscriptionChanged={(inscription) => setMessage(inscription)}
+            />
+            <br />
+            <InscribeDropMintConfigEntry
+              onMintConfigChanged={(config) => setMintConfig(config)}
+            />
+          </>
         ),
       }}
       footer={(disabled) => (
-        <InscribeButton inscription={message} disabled={disabled} />
+        <InscribeDropButton
+          inscription={message}
+          mintConfig={mintConfig}
+          disabled={disabled}
+        />
       )}
     />
   );
