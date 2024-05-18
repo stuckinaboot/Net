@@ -14,11 +14,11 @@ contract DeployApp is Script {
 
     function run() public {
         string memory root = vm.projectRoot();
-        bytes32 salt = 0x19c0401450bcf16458a7cc9575cb8b52fb63c629cd18ab4f1bd1257621205d4e;
+        bytes32 salt = 0xd958548ba700dc992b4e1d2af6942abc3c7027a2cd4b2e56949f57e92deabd8e;
 
-        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        vm.startBroadcast(deployerPrivateKey);
-        // vm.startBroadcast();
+        // uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        // vm.startBroadcast(deployerPrivateKey);
+        vm.startBroadcast();
         app = new InscribedDrops{salt: salt}();
         vm.stopBroadcast();
 
