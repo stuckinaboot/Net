@@ -408,6 +408,13 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
             creator.balance,
             creatorBalance + mintPrice * 3 - (mintPrice * 3 * feeBps) / 10000
         );
+
+        vm.startPrank(users[3]);
+        // Mint with price 0 and fee set should work properly
+        drops.inscribe(0, maxSupply, mintEndTimestamp, tokenUri);
+        drops.mint(1, 1);
+
+        drops.mint(1, 5);
     }
 
     function onERC1155Received(
