@@ -66,6 +66,10 @@ contract InscribedDrops is ERC1155 {
         address feeAddress,
         uint256 feeBps
     ) public payable {
+        if (id >= totalDrops) {
+            revert TokenDoesNotExist();
+        }
+
         // Get message
         Net.Message memory message = net.getMessageForApp(id, address(this));
 

@@ -206,6 +206,37 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         drops.mint(0, 1, address(0), 0);
     }
 
+    function testInscribeMintTokenDoesNotExist(
+        uint256 maxSupply,
+        string calldata tokenUri
+    ) public {
+        vm.assume(bytes(tokenUri).length > 0);
+
+        vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
+        drops.mint(0, 1, address(0), 0);
+        vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
+        drops.mint(1, 1, address(0), 0);
+        vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
+        drops.mint(2, 1, address(0), 0);
+
+        drops.inscribe(0, 0, 0, tokenUri);
+        drops.mint(0, 1, address(0), 0);
+        drops.mint(0, 2, address(0), 0);
+
+        vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
+        drops.mint(1, 1, address(0), 0);
+
+        vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
+        drops.mint(2, 1, address(0), 0);
+
+        drops.inscribe(0, 0, 0, tokenUri);
+        drops.mint(0, 1, address(0), 0);
+        drops.mint(1, 1, address(0), 0);
+
+        vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
+        drops.mint(2, 1, address(0), 0);
+    }
+
     function testInscribeNoMintPriceYesMaxSupplyNoEndTimestampAndMint(
         uint256 maxSupply,
         string calldata tokenUri
@@ -244,6 +275,14 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         // Attempt to mint 1 more, which would exceed max supply
         vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
         drops.mint(0, 2, address(0), 0);
+
+        // Inscribe with max supply 1
+        drops.inscribe(mintPrice, 1, mintEndTimestamp, tokenUri);
+        // Mint should always revert
+        vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
+        drops.mint(1, 1, address(0), 0);
+        vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
+        drops.mint(1, 2, address(0), 0);
     }
 
     function onERC1155Received(
