@@ -23,8 +23,6 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
     error MintSupplyReached();
     error MintEndTimestampReached();
 
-    constructor() TwoStepOwnable() {}
-
     function name() external pure returns (string memory) {
         return "Net Inscribed Drops";
     }
