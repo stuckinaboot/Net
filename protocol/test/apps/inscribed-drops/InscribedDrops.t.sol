@@ -129,21 +129,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         }
     }
 
-    // TODO test mints
-    function testInscribeNoMintPriceNoMaxSupplyNoEndTimestampAndMint(
-        uint256 mintPrice,
-        uint256 maxSupply,
-        uint256 mintEndTimestamp,
-        string calldata tokenUri
-    ) public {
-        uint256 mintPrice = 0;
-        uint256 maxSupply = 0;
-        uint256 mintEndTimestamp = 0;
-        vm.assume(bytes(tokenUri).length > 0);
-        vm.startPrank(users[1]);
-
-        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
-
+    function performAndValidateMints(uint256 tokenId) public {
         vm.startPrank(users[2]);
         drops.mint(0, 1, address(0), 0);
         assertEq(drops.totalSupply(0), 2);
@@ -169,6 +155,54 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         assertEq(drops.balanceOf(users[2], 0), 3);
         assertEq(drops.balanceOf(users[1], 0), 1);
         drops.mint(0, 0, address(0), 0);
+    }
+
+    // TODO test mints
+    function testInscribeNoMintPriceNoMaxSupplyNoEndTimestampAndMint(
+        uint256 mintPrice,
+        uint256 maxSupply,
+        uint256 mintEndTimestamp,
+        string calldata tokenUri
+    ) public {
+        uint256 mintPrice = 0;
+        uint256 maxSupply = 0;
+        uint256 mintEndTimestamp = 0;
+        vm.assume(bytes(tokenUri).length > 0);
+        vm.startPrank(users[1]);
+
+        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+
+        performAndValidateMints(0);
+    }
+
+    function testInscribeNoMintPriceNoMaxSupplyYesEndTimestampAndMint(
+        uint256 mintEndTimestamp,
+        string calldata tokenUri
+    ) public {
+        uint256 mintPrice = 0;
+        uint256 maxSupply = 0;
+        vm.assume(bytes(tokenUri).length > 0);
+        vm.startPrank(users[1]);
+        vm.assume(
+            mintEndTimestamp > block.timestamp &&
+                mintEndTimestamp < block.timestamp + 52 weeks
+        );
+
+        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+
+        performAndValidateMints(0);
+
+        vm.warp(mintEndTimestamp);
+        drops.mint(0, 1, address(0), 0);
+
+        // Not able to mint after mint end timestamp
+        vm.warp(mintEndTimestamp + 1);
+        vm.expectRevert(InscribedDrops.MintEndTimestampReached.selector);
+        drops.mint(0, 1, address(0), 0);
+
+        vm.warp(mintEndTimestamp + 10);
+        vm.expectRevert(InscribedDrops.MintEndTimestampReached.selector);
+        drops.mint(0, 1, address(0), 0);
     }
 
     function onERC1155Received(
