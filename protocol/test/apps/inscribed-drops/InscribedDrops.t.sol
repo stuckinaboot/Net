@@ -243,7 +243,8 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         uint256 maxSupply,
         string calldata tokenUri
     ) public {
-        vm.assume(maxSupply > 4 && maxSupply < 100);
+        vm.assume(maxSupply < 1000);
+        maxSupply = (maxSupply % 100) + 4;
         vm.assume(bytes(tokenUri).length > 0);
 
         uint256 mintPrice = 0;
@@ -285,6 +286,37 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         drops.mint(1, 1, address(0), 0);
         vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
         drops.mint(1, 2, address(0), 0);
+    }
+
+    function testInscribeYesMintPriceNoMaxSupplyNoEndTimestampAndMint(
+        uint256 mintPrice,
+        string calldata tokenUri
+    ) public {
+        vm.assume(bytes(tokenUri).length > 0);
+        vm.assume(mintPrice > 0 && mintPrice < 1 ether);
+
+        uint256 maxSupply = 0;
+        uint256 mintEndTimestamp = 0;
+        vm.startPrank(users[1]);
+
+        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+
+        performAndValidateMints(0, mintPrice);
+
+        vm.expectRevert(InscribedDrops.MintPaymentIncorrect.selector);
+        drops.mint{value: mintPrice + 1}(0, 1, address(0), 0);
+
+        vm.expectRevert(InscribedDrops.MintPaymentIncorrect.selector);
+        drops.mint{value: mintPrice - 1}(0, 1, address(0), 0);
+
+        vm.expectRevert(InscribedDrops.MintPaymentIncorrect.selector);
+        drops.mint{value: mintPrice * 2}(0, 3, address(0), 0);
+
+        vm.expectRevert(InscribedDrops.MintPaymentIncorrect.selector);
+        drops.mint{value: mintPrice * 4}(0, 3, address(0), 0);
+
+        // Mint successfully
+        drops.mint{value: mintPrice * 3}(0, 3, address(0), 0);
     }
 
     function onERC1155Received(
