@@ -380,6 +380,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         drops.setFeeBps(feeBps);
 
         vm.startPrank(users[1]);
+        // Inscribe and mint with price greater than 0 and fee greater than 0 should work
         drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
 
         vm.startPrank(users[2]);
