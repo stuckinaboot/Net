@@ -15,6 +15,7 @@ import {
   INSCRIPTIONS_COLLECTION_URL,
 } from "../constants";
 import { InscriptionDialogContents } from "../../inscriptions/InscriptionDialogContents";
+import { MintConfig } from "./InscribeDropMintConfigEntry";
 
 const TOASTS = {
   title: "Inscribed Drops",
@@ -30,6 +31,7 @@ const BUTTONS = {
 
 export default function InscribeDropButton(props: {
   inscription: string;
+  mintConfig: MintConfig;
   disabled?: boolean;
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
