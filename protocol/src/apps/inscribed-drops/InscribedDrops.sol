@@ -102,11 +102,11 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
             totalSupply[id] += quantity;
         }
 
-        // If fee address is non-zero, transfer fee
-        if (owner() != address(0) && feeBps != 0) {
-            // Transfer fee
+        // If owner is non-zero and fee is non-zero and msg value is non-zero, transfer fee
+        if (owner() != address(0) && feeBps != 0 && msg.value > 0) {
             unchecked {
                 uint256 fee = (feeBps * msg.value) / 10_000;
+                // Transfer fee
                 SafeTransferLib.safeTransferETH(payable(owner()), fee);
 
                 // Transfer remainder to creator of drop
