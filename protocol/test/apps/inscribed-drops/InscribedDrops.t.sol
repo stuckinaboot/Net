@@ -316,7 +316,17 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         drops.mint{value: mintPrice * 4}(0, 3, address(0), 0);
 
         // Mint successfully
+        uint256 currBalance = users[1].balance;
+        drops.mint{value: mintPrice}(0, 1, address(0), 0);
+        assertEq(users[1].balance, currBalance + mintPrice);
+
+        currBalance = users[1].balance;
+        drops.mint{value: mintPrice * 2}(0, 2, address(0), 0);
+        assertEq(users[1].balance, currBalance + mintPrice * 2);
+
+        currBalance = users[1].balance;
         drops.mint{value: mintPrice * 3}(0, 3, address(0), 0);
+        assertEq(users[1].balance, currBalance + mintPrice * 3);
     }
 
     function onERC1155Received(
