@@ -59,7 +59,7 @@ export default function InscribeDropMintConfigEntry(props: {
         value={priceInEth}
       />
       <Spacing />
-      <Label>Max supply:</Label>
+      <Label>Max supply (enter 0 for open edition):</Label>
       <Textarea
         onChange={(e) => {
           const updated = e.target.value;
