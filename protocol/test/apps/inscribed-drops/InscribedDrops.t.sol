@@ -417,6 +417,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         drops.mint(1, 5);
 
         vm.startPrank(drops.owner());
+        // Mint with owner 0 address should work properly
         drops.renounceOwnership();
         drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
 
