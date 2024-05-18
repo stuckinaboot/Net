@@ -365,6 +365,51 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         assertEq(users[1].balance, currBalance + mintPrice * 3);
     }
 
+    function testInscribeYesMintPricePaysFeeCorrectly(
+        uint256 mintPrice,
+        string calldata tokenUri
+    ) public {
+        vm.assume(bytes(tokenUri).length > 0);
+        vm.assume(mintPrice > 0 && mintPrice < 0.1 ether);
+
+        uint256 maxSupply = 0;
+        uint256 mintEndTimestamp = 0;
+
+        // 2.5%
+        uint256 feeBps = 250;
+        drops.setFeeBps(feeBps);
+
+        vm.startPrank(users[1]);
+        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+
+        vm.startPrank(users[2]);
+        address creator = users[1];
+        uint256 ownerBalance = drops.owner().balance;
+        uint256 creatorBalance = creator.balance;
+
+        drops.mint{value: mintPrice}(0, 1);
+        assertEq(
+            drops.owner().balance,
+            ownerBalance + (mintPrice * feeBps) / 10000
+        );
+        assertEq(
+            creator.balance,
+            creatorBalance + mintPrice - (mintPrice * feeBps) / 10000
+        );
+
+        ownerBalance = drops.owner().balance;
+        creatorBalance = creator.balance;
+        drops.mint{value: mintPrice * 3}(0, 3);
+        assertEq(
+            drops.owner().balance,
+            ownerBalance + (mintPrice * 3 * feeBps) / 10000
+        );
+        assertEq(
+            creator.balance,
+            creatorBalance + mintPrice * 3 - (mintPrice * 3 * feeBps) / 10000
+        );
+    }
+
     function onERC1155Received(
         address operator,
         address from,
