@@ -179,14 +179,15 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         uint256 mintEndTimestamp,
         string calldata tokenUri
     ) public {
-        uint256 mintPrice = 0;
-        uint256 maxSupply = 0;
         vm.assume(bytes(tokenUri).length > 0);
-        vm.startPrank(users[1]);
         vm.assume(
             mintEndTimestamp > block.timestamp &&
                 mintEndTimestamp < block.timestamp + 52 weeks
         );
+
+        uint256 mintPrice = 0;
+        uint256 maxSupply = 0;
+        vm.startPrank(users[1]);
 
         drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
 
@@ -203,6 +204,46 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         vm.warp(mintEndTimestamp + 10);
         vm.expectRevert(InscribedDrops.MintEndTimestampReached.selector);
         drops.mint(0, 1, address(0), 0);
+    }
+
+    function testInscribeNoMintPriceYesMaxSupplyNoEndTimestampAndMint(
+        uint256 maxSupply,
+        string calldata tokenUri
+    ) public {
+        vm.assume(maxSupply > 4 && maxSupply < 100);
+        vm.assume(bytes(tokenUri).length > 0);
+
+        uint256 mintPrice = 0;
+        uint256 mintEndTimestamp = 0;
+        vm.startPrank(users[1]);
+
+        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+
+        vm.startPrank(users[2]);
+        // Mint close to max supply.
+        // i = 1 to start since we've already minted 1 during the inscribe itself
+        for (uint256 i = 1; i < maxSupply - 2; i++) {
+            drops.mint(0, 1, address(0), 0);
+        }
+
+        // Attempt to mint 3 more, which would exceed max supply
+        vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
+        drops.mint(0, 3, address(0), 0);
+
+        // Attempt to mint 3 more, which would exceed max supply
+        vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
+        drops.mint(0, 4, address(0), 0);
+
+        // Attempt to mint 2 more, which should work fine
+        drops.mint(0, 2, address(0), 0);
+
+        // Attempt to mint 1 more, which would exceed max supply
+        vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
+        drops.mint(0, 1, address(0), 0);
+
+        // Attempt to mint 1 more, which would exceed max supply
+        vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
+        drops.mint(0, 2, address(0), 0);
     }
 
     function onERC1155Received(
