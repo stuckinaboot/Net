@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import IframeRenderer from "../../IFrameRenderer";
-import { sanitizeMediaUrl } from "./utils";
+import { sanitizeMediaUrl } from "../../utils";
 import mime from "mime-types";
 import InscriptionImagePreview from "./InscriptionImagePreview";
 import ReactPlayer from "react-player";
