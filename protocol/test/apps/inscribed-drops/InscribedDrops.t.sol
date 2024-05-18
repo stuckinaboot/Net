@@ -10,6 +10,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {InscribedDrops} from "../../../src/apps/inscribed-drops/InscribedDrops.sol";
 import {PRBTest} from "@prb/test/PRBTest.sol";
 import {IERC1155Receiver} from "@openzeppelin/contracts/interfaces/IERC1155Receiver.sol";
+import {TwoStepOwnable} from "../../../src/apps/inscribed-drops/TwoStepOwnable.sol";
 
 contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
     using stdStorage for StdStorage;
@@ -36,6 +37,35 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
             users[i] = address(uint160(i + 1));
             vm.deal(users[i], 10 ether);
         }
+    }
+
+    function testSetFeesByOwner() public {
+        vm.startPrank(address(this));
+        drops.setFeeBps(100);
+        assertEq(drops.feeBps(), 100);
+
+        drops.setFeeBps(1000);
+        assertEq(drops.feeBps(), 1000);
+    }
+
+    function testSetFeesByNonOwnerReverts() public {
+        vm.startPrank(users[1]);
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
+        drops.setFeeBps(100);
+
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
+        drops.setFeeBps(1000);
+
+        vm.startPrank(address(this));
+        drops.transferOwnership(users[1]);
+        vm.startPrank(users[1]);
+
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
+        drops.setFeeBps(2000);
+
+        drops.acceptOwnership();
+        drops.setFeeBps(2000);
+        assertEq(drops.feeBps(), 2000);
     }
 
     function testInscribeTokens(
@@ -134,18 +164,18 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         uint256 mintPrice
     ) public {
         vm.startPrank(users[2]);
-        drops.mint{value: mintPrice}(tokenId, 1, address(0), 0);
+        drops.mint{value: mintPrice}(tokenId, 1);
         assertEq(drops.totalSupply(0), 2);
         assertEq(drops.balanceOf(users[2], 0), 1);
         assertEq(drops.balanceOf(users[1], 0), 1);
 
-        drops.mint{value: mintPrice * 2}(tokenId, 2, address(0), 0);
+        drops.mint{value: mintPrice * 2}(tokenId, 2);
         assertEq(drops.totalSupply(tokenId), 4);
         assertEq(drops.balanceOf(users[2], tokenId), 3);
         assertEq(drops.balanceOf(users[1], tokenId), 1);
 
         vm.startPrank(users[3]);
-        drops.mint{value: mintPrice * 5}(tokenId, 5, address(0), 0);
+        drops.mint{value: mintPrice * 5}(tokenId, 5);
         assertEq(drops.totalSupply(tokenId), 9);
         assertEq(drops.balanceOf(users[3], tokenId), 5);
         assertEq(drops.balanceOf(users[2], tokenId), 3);
@@ -157,7 +187,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         assertEq(drops.balanceOf(users[3], tokenId), 5);
         assertEq(drops.balanceOf(users[2], tokenId), 3);
         assertEq(drops.balanceOf(users[1], tokenId), 1);
-        drops.mint(tokenId, 0, address(0), 0);
+        drops.mint(tokenId, 0);
     }
 
     function testInscribeNoMintPriceNoMaxSupplyNoEndTimestampAndMint(
@@ -196,16 +226,16 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         performAndValidateMints(0, 0);
 
         vm.warp(mintEndTimestamp);
-        drops.mint(0, 1, address(0), 0);
+        drops.mint(0, 1);
 
         // Not able to mint after mint end timestamp
         vm.warp(mintEndTimestamp + 1);
         vm.expectRevert(InscribedDrops.MintEndTimestampReached.selector);
-        drops.mint(0, 1, address(0), 0);
+        drops.mint(0, 1);
 
         vm.warp(mintEndTimestamp + 10);
         vm.expectRevert(InscribedDrops.MintEndTimestampReached.selector);
-        drops.mint(0, 1, address(0), 0);
+        drops.mint(0, 1);
     }
 
     function testMintTokenDoesNotExist(
@@ -215,28 +245,28 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         vm.assume(bytes(tokenUri).length > 0);
 
         vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
-        drops.mint(0, 1, address(0), 0);
+        drops.mint(0, 1);
         vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
-        drops.mint(1, 1, address(0), 0);
+        drops.mint(1, 1);
         vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
-        drops.mint(2, 1, address(0), 0);
+        drops.mint(2, 1);
 
         drops.inscribe(0, 0, 0, tokenUri);
-        drops.mint(0, 1, address(0), 0);
-        drops.mint(0, 2, address(0), 0);
+        drops.mint(0, 1);
+        drops.mint(0, 2);
 
         vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
-        drops.mint(1, 1, address(0), 0);
+        drops.mint(1, 1);
 
         vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
-        drops.mint(2, 1, address(0), 0);
+        drops.mint(2, 1);
 
         drops.inscribe(0, 0, 0, tokenUri);
-        drops.mint(0, 1, address(0), 0);
-        drops.mint(1, 1, address(0), 0);
+        drops.mint(0, 1);
+        drops.mint(1, 1);
 
         vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
-        drops.mint(2, 1, address(0), 0);
+        drops.mint(2, 1);
     }
 
     function testInscribeNoMintPriceYesMaxSupplyNoEndTimestampAndMint(
@@ -257,35 +287,35 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         // Mint close to max supply.
         // i = 1 to start since we've already minted 1 during the inscribe itself
         for (uint256 i = 1; i < maxSupply - 2; i++) {
-            drops.mint(0, 1, address(0), 0);
+            drops.mint(0, 1);
         }
 
         // Attempt to mint 3 more, which would exceed max supply
         vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
-        drops.mint(0, 3, address(0), 0);
+        drops.mint(0, 3);
 
         // Attempt to mint 3 more, which would exceed max supply
         vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
-        drops.mint(0, 4, address(0), 0);
+        drops.mint(0, 4);
 
         // Attempt to mint 2 more, which should work fine
-        drops.mint(0, 2, address(0), 0);
+        drops.mint(0, 2);
 
         // Attempt to mint 1 more, which would exceed max supply
         vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
-        drops.mint(0, 1, address(0), 0);
+        drops.mint(0, 1);
 
         // Attempt to mint 1 more, which would exceed max supply
         vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
-        drops.mint(0, 2, address(0), 0);
+        drops.mint(0, 2);
 
         // Inscribe with max supply 1
         drops.inscribe(mintPrice, 1, mintEndTimestamp, tokenUri);
         // Mint should always revert
         vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
-        drops.mint(1, 1, address(0), 0);
+        drops.mint(1, 1);
         vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
-        drops.mint(1, 2, address(0), 0);
+        drops.mint(1, 2);
     }
 
     function testInscribeYesMintPriceNoMaxSupplyNoEndTimestampAndMint(
@@ -304,34 +334,34 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         performAndValidateMints(0, mintPrice);
 
         uint256 currBalance = users[1].balance;
-        drops.mint{value: mintPrice * 2}(0, 2, address(0), 0);
+        drops.mint{value: mintPrice * 2}(0, 2);
         assertEq(users[1].balance, currBalance + mintPrice * 2);
 
         vm.startPrank(users[2]);
 
         vm.expectRevert(InscribedDrops.MintPaymentIncorrect.selector);
-        drops.mint{value: mintPrice + 1}(0, 1, address(0), 0);
+        drops.mint{value: mintPrice + 1}(0, 1);
 
         vm.expectRevert(InscribedDrops.MintPaymentIncorrect.selector);
-        drops.mint{value: mintPrice - 1}(0, 1, address(0), 0);
+        drops.mint{value: mintPrice - 1}(0, 1);
 
         vm.expectRevert(InscribedDrops.MintPaymentIncorrect.selector);
-        drops.mint{value: mintPrice * 2}(0, 3, address(0), 0);
+        drops.mint{value: mintPrice * 2}(0, 3);
 
         vm.expectRevert(InscribedDrops.MintPaymentIncorrect.selector);
-        drops.mint{value: mintPrice * 4}(0, 3, address(0), 0);
+        drops.mint{value: mintPrice * 4}(0, 3);
 
         // Mint successfully
         currBalance = users[1].balance;
-        drops.mint{value: mintPrice}(0, 1, address(0), 0);
+        drops.mint{value: mintPrice}(0, 1);
         assertEq(users[1].balance, currBalance + mintPrice);
 
         currBalance = users[1].balance;
-        drops.mint{value: mintPrice * 2}(0, 2, address(0), 0);
+        drops.mint{value: mintPrice * 2}(0, 2);
         assertEq(users[1].balance, currBalance + mintPrice * 2);
 
         currBalance = users[1].balance;
-        drops.mint{value: mintPrice * 3}(0, 3, address(0), 0);
+        drops.mint{value: mintPrice * 3}(0, 3);
         assertEq(users[1].balance, currBalance + mintPrice * 3);
     }
 

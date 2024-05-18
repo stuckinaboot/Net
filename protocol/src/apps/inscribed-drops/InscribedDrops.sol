@@ -12,6 +12,7 @@ import {TwoStepOwnable} from "./TwoStepOwnable.sol";
 /// @notice NFT mints created by inscribing token uris and mint configurations in Net messages.
 contract InscribedDrops is ERC1155, TwoStepOwnable {
     uint256 public totalDrops;
+    uint256 public feeBps;
     Net internal net = Net(0x00000000B24D62781dB359b07880a105cD0b64e6);
 
     mapping(uint256 id => uint256 supply) public totalSupply;
@@ -62,12 +63,11 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         );
     }
 
-    function mint(
-        uint256 id,
-        uint256 quantity,
-        address feeAddress,
-        uint256 feeBps
-    ) public payable {
+    function setFeeBps(uint256 _feeBps) public onlyOwner {
+        feeBps = _feeBps;
+    }
+
+    function mint(uint256 id, uint256 quantity) public payable {
         if (id >= totalDrops) {
             revert TokenDoesNotExist();
         }
@@ -80,12 +80,12 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
             .decode(message.data, (uint256, uint256, uint256));
 
         // Check payment correct, if non-zero
-        if (mintPrice != 0 && msg.value != mintPrice * quantity) {
-            revert MintPaymentIncorrect();
-        }
-
-        // Check supply not reached, if non-zero
         unchecked {
+            if (mintPrice != 0 && msg.value != mintPrice * quantity) {
+                revert MintPaymentIncorrect();
+            }
+
+            // Check supply not reached, if non-zero
             if (maxSupply != 0 && totalSupply[id] + quantity > maxSupply) {
                 revert MintSupplyReached();
             }
@@ -105,10 +105,10 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         }
 
         // If fee address is non-zero, transfer fee
-        if (feeAddress != address(0) && feeBps != 0) {
+        if (owner() != address(0) && feeBps != 0) {
             // Transfer fee
             uint256 fee = (feeBps * msg.value) / 10_000;
-            SafeTransferLib.safeTransferETH(payable(feeAddress), fee);
+            SafeTransferLib.safeTransferETH(payable(owner()), fee);
 
             // Transfer remainder to creator of drop
             SafeTransferLib.safeTransferETH(message.sender, msg.value - fee);
