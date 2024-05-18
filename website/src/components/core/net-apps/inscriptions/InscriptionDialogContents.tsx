@@ -1,8 +1,8 @@
 import { Label } from "@/components/ui/label";
 import IframeRenderer from "../../IFrameRenderer";
 import { Separator } from "@/components/ui/separator";
-import InscriptionAnimationPreview from "./InscriptionAnimationPreview";
-import InscriptionImagePreview from "./InscriptionImagePreview";
+import InscriptionAnimationPreview from "../../../MetadataAnimationPreview";
+import InscriptionImagePreview from "../../../MetadataImagePreview";
 
 export function InscriptionDialogContents(props: {
   message: string;

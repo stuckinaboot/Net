@@ -1,8 +1,8 @@
 import { Label } from "@/components/ui/label";
-import IframeRenderer from "../../IFrameRenderer";
-import { sanitizeMediaUrl } from "../../utils";
+import IframeRenderer from "./core/IFrameRenderer";
+import { sanitizeMediaUrl } from "./core/utils";
 import mime from "mime-types";
-import InscriptionImagePreview from "./InscriptionImagePreview";
+import InscriptionImagePreview from "./MetadataImagePreview";
 import ReactPlayer from "react-player";
 
 enum AnimationType {

@@ -1,7 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import InscriptionAnimationPreview from "../../inscriptions/InscriptionAnimationPreview";
-import InscriptionImagePreview from "../../inscriptions/InscriptionImagePreview";
+import InscriptionAnimationPreview from "../../../../MetadataAnimationPreview";
+import InscriptionImagePreview from "../../../../MetadataImagePreview";
 
 export function InscribeDropDialogContents(props: {
   message: string;
