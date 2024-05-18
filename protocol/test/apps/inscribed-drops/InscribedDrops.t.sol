@@ -293,7 +293,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         string calldata tokenUri
     ) public {
         vm.assume(bytes(tokenUri).length > 0);
-        vm.assume(mintPrice > 0 && mintPrice < 1 ether);
+        vm.assume(mintPrice > 0 && mintPrice < 0.1 ether);
 
         uint256 maxSupply = 0;
         uint256 mintEndTimestamp = 0;
@@ -302,6 +302,12 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
 
         performAndValidateMints(0, mintPrice);
+
+        uint256 currBalance = users[1].balance;
+        drops.mint{value: mintPrice * 2}(0, 2, address(0), 0);
+        assertEq(users[1].balance, currBalance + mintPrice * 2);
+
+        vm.startPrank(users[2]);
 
         vm.expectRevert(InscribedDrops.MintPaymentIncorrect.selector);
         drops.mint{value: mintPrice + 1}(0, 1, address(0), 0);
@@ -316,7 +322,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         drops.mint{value: mintPrice * 4}(0, 3, address(0), 0);
 
         // Mint successfully
-        uint256 currBalance = users[1].balance;
+        currBalance = users[1].balance;
         drops.mint{value: mintPrice}(0, 1, address(0), 0);
         assertEq(users[1].balance, currBalance + mintPrice);
 

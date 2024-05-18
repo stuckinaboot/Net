@@ -5,11 +5,12 @@ import {Net} from "../../net/Net.sol";
 import {ERC1155} from "@solady/tokens/ERC1155.sol";
 import {Base64} from "@solady/utils/Base64.sol";
 import {SafeTransferLib} from "@solady/utils/SafeTransferLib.sol";
+import {TwoStepOwnable} from "./TwoStepOwnable.sol";
 
 /// @title InscribedDrops
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
 /// @notice NFT mints created by inscribing token uris and mint configurations in Net messages.
-contract InscribedDrops is ERC1155 {
+contract InscribedDrops is ERC1155, TwoStepOwnable {
     uint256 public totalDrops;
     Net internal net = Net(0x00000000B24D62781dB359b07880a105cD0b64e6);
 
@@ -20,6 +21,8 @@ contract InscribedDrops is ERC1155 {
     error MintPaymentIncorrect();
     error MintSupplyReached();
     error MintEndTimestampReached();
+
+    constructor() TwoStepOwnable() {}
 
     function name() public pure returns (string memory) {
         return "Net Inscribed Drops";
