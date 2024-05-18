@@ -22,7 +22,6 @@ contract InscribedDrops is ERC1155 {
     error MintEndTimestampReached();
 
     function name() public pure returns (string memory) {
-        // TODO
         return "Net Inscribed Drops";
     }
 
