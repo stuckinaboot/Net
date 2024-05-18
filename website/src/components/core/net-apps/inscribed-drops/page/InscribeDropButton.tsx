@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import {
   INSCRIBED_DROPS_CONTRACT,
-  INSCRIPTIONS_COLLECTION_URL,
+  INSCRIBED_DROPS_COLLECTION_URL,
 } from "../constants";
 import { InscriptionDialogContents } from "../../inscriptions/InscriptionDialogContents";
 import { MintConfig } from "./InscribeDropMintConfigEntry";
@@ -47,6 +47,12 @@ export default function InscribeDropButton(props: {
   }
   const validInscription = isValidInscription(inscriptionJson);
 
+  const sanitizedMintConfig = {
+    priceInEth: props.mintConfig.priceInEth || 0,
+    maxSupply: props.mintConfig.maxSupply || 0,
+    mintEndTimestamp: props.mintConfig.mintEndTimestamp || 0,
+  };
+
   return (
     <Dialog
       open={dialogOpen}
@@ -74,7 +80,12 @@ export default function InscribeDropButton(props: {
               functionName="inscribe"
               abi={INSCRIBED_DROPS_CONTRACT.abi}
               to={INSCRIBED_DROPS_CONTRACT.address}
-              args={[props.inscription]}
+              args={[
+                sanitizedMintConfig.priceInEth,
+                sanitizedMintConfig.maxSupply,
+                sanitizedMintConfig.mintEndTimestamp,
+                props.inscription,
+              ]}
               messages={{
                 toasts: {
                   ...TOASTS,
@@ -83,7 +94,7 @@ export default function InscribeDropButton(props: {
                       {TOASTS.success}
                       <Button
                         onClick={() =>
-                          window.open(INSCRIPTIONS_COLLECTION_URL, "_blank")
+                          window.open(INSCRIBED_DROPS_COLLECTION_URL, "_blank")
                         }
                       >
                         View on OpenSea

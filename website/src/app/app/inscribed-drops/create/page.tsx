@@ -1,6 +1,7 @@
 "use client";
 
 import BasePageCard from "@/components/core/BasePageCard";
+import { INSCRIBED_DROPS_COLLECTION_URL } from "@/components/core/net-apps/inscribed-drops/constants";
 import InscribeDropButton from "@/components/core/net-apps/inscribed-drops/page/InscribeDropButton";
 import InscribeDropMintConfigEntry, {
   MintConfig,
@@ -27,7 +28,9 @@ export default function Page() {
           your art, configure your mint, and press inscribe.
           <br />
           <Button
-            onClick={() => window.open(INSCRIPTIONS_COLLECTION_URL, "_blank")}
+            onClick={() =>
+              window.open(INSCRIBED_DROPS_COLLECTION_URL, "_blank")
+            }
             variant="outline"
           >
             View Inscribed Drops on OpenSea

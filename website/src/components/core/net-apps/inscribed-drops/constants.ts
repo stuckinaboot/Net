@@ -1,8 +1,8 @@
 import { TESTNETS_ENABLED } from "@/app/constants";
 import abi from "../../../../../assets/abis/apps/inscribed-drops.json";
 
-export const INSCRIPTIONS_COLLECTION_URL = TESTNETS_ENABLED
-  ? "https://testnets.opensea.io/collection/net-inscriptions-3"
+export const INSCRIBED_DROPS_COLLECTION_URL = TESTNETS_ENABLED
+  ? "https://testnets.opensea.io/collection/inscribed-drops"
   : "https://opensea.io/collection/net-inscriptions";
 
 export const INSCRIBED_DROPS_CONTRACT = {
