@@ -415,6 +415,17 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         drops.mint(1, 1);
 
         drops.mint(1, 5);
+
+        vm.startPrank(drops.owner());
+        drops.renounceOwnership();
+        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+
+        ownerBalance = drops.owner().balance;
+        creatorBalance = creator.balance;
+        drops.mint{value: mintPrice * 3}(0, 3);
+        assertEq(drops.owner().balance, ownerBalance);
+        // Full amount is transferred to creator
+        assertEq(creator.balance, creatorBalance + mintPrice * 3);
     }
 
     function onERC1155Received(
