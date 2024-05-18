@@ -75,7 +75,7 @@ export default function InscribeDropMintConfigEntry(props: {
         placeholder="Leave empty for open edition"
       />
       <Spacing />
-      <Label>Mint end timestamp (Optional):</Label>
+      <Label>Mint end block timestamp (Optional):</Label>
       <Textarea
         contentEditable
         onChange={(e) => {
