@@ -25,11 +25,11 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
 
     constructor() TwoStepOwnable() {}
 
-    function name() public pure returns (string memory) {
+    function name() external pure returns (string memory) {
         return "Net Inscribed Drops";
     }
 
-    function symbol() public pure returns (string memory) {
+    function symbol() external pure returns (string memory) {
         return "NET";
     }
 
@@ -38,7 +38,7 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         uint256 maxSupply,
         uint256 mintEndTimestamp,
         string calldata tokenUri
-    ) public {
+    ) external {
         // Check token uri non-empty
         if (bytes(tokenUri).length == 0) {
             revert TokenUriEmpty();
@@ -63,11 +63,11 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         );
     }
 
-    function setFeeBps(uint256 _feeBps) public onlyOwner {
-        feeBps = _feeBps;
+    function setFeeBps(uint256 newFeeBps) external onlyOwner {
+        feeBps = newFeeBps;
     }
 
-    function mint(uint256 id, uint256 quantity) public payable {
+    function mint(uint256 id, uint256 quantity) external payable {
         if (id >= totalDrops) {
             revert TokenDoesNotExist();
         }
@@ -107,11 +107,16 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         // If fee address is non-zero, transfer fee
         if (owner() != address(0) && feeBps != 0) {
             // Transfer fee
-            uint256 fee = (feeBps * msg.value) / 10_000;
-            SafeTransferLib.safeTransferETH(payable(owner()), fee);
+            unchecked {
+                uint256 fee = (feeBps * msg.value) / 10_000;
+                SafeTransferLib.safeTransferETH(payable(owner()), fee);
 
-            // Transfer remainder to creator of drop
-            SafeTransferLib.safeTransferETH(message.sender, msg.value - fee);
+                // Transfer remainder to creator of drop
+                SafeTransferLib.safeTransferETH(
+                    message.sender,
+                    msg.value - fee
+                );
+            }
         } else {
             // Transfer full amount to creator of drop
             SafeTransferLib.safeTransferETH(payable(message.sender), msg.value);
