@@ -130,12 +130,13 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
             SafeTransferLib.safeTransferETH(payable(message.sender), msg.value);
         }
 
+        // Send mint message on Net
         net.sendMessageViaApp(
             msg.sender,
             string.concat(
                 "Minted ",
                 quantity.toString(),
-                " of ",
+                " of #",
                 id.toString()
             ),
             MINT_TOPIC,
