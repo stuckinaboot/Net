@@ -206,7 +206,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         drops.mint(0, 1, address(0), 0);
     }
 
-    function testInscribeMintTokenDoesNotExist(
+    function testMintTokenDoesNotExist(
         uint256 maxSupply,
         string calldata tokenUri
     ) public {
