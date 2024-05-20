@@ -59,7 +59,9 @@ export default function InscribeDropButton(props: {
     mintEndTimestamp: props.mintConfig.mintEndTimestamp || 0,
   };
 
-  // TODO look at return value
+  // TODO look at return value of `inscribe` function, use this -> https://stackoverflow.com/questions/74104378/how-to-return-a-value-from-a-solidity-function-when-using-wagmi-usecontractwrite
+  // TODO push to mint page on token id
+  // TODO redeploy contract with latest contract code
 
   return (
     <Dialog
