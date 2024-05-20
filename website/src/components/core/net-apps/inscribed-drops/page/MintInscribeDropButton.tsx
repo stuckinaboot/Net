@@ -30,7 +30,7 @@ export default function MintInscribeDropButton(props: {
       functionName="mint"
       abi={INSCRIBED_DROPS_CONTRACT.abi}
       to={INSCRIBED_DROPS_CONTRACT.address}
-      args={[props.tokenId, props.quantity]}
+      args={[BigInt(props.tokenId), BigInt(props.quantity)]}
       value={
         props.priceInEth != 0
           ? parseUnits(
