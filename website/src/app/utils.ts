@@ -1,3 +1,4 @@
+import { base, baseSepolia, degen } from "viem/chains";
 import { WEBSITE_BASE_URL } from "./constants";
 
 export function chainTimeToMilliseconds(chainTime: number) {
@@ -41,4 +42,14 @@ export async function getDisplayableErrorMessageFromSubmitTransactionError(
     return msg;
   }
   return msg.substring(0, periodIdx);
+}
+
+export function chainIdToOpenSeaChainString(chainId: number) {
+  return chainId === baseSepolia.id
+    ? "base-sepolia"
+    : chainId === base.id
+    ? "base"
+    : chainId === degen.id
+    ? "degen"
+    : "unknown";
 }

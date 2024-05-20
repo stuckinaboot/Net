@@ -31,10 +31,14 @@ export default function MintInscribeDropButton(props: {
       abi={INSCRIBED_DROPS_CONTRACT.abi}
       to={INSCRIBED_DROPS_CONTRACT.address}
       args={[props.tokenId, props.quantity]}
-      value={parseUnits(
-        (props.priceInEth * props.quantity).toString(),
-        18
-      ).toString()}
+      value={
+        props.priceInEth != 0
+          ? parseUnits(
+              (props.priceInEth * props.quantity).toString(),
+              18
+            ).toString()
+          : undefined
+      }
       messages={{
         toasts: {
           ...TOASTS,

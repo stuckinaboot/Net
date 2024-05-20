@@ -1,7 +1,9 @@
 import MetadataAnimationPreview from "@/components/MetadataAnimationPreview";
 import MetadataImagePreview from "@/components/MetadataImagePreview";
 import { Spacing } from "@/components/core/Spacing";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { getInscribedDropUrlForTokenId } from "../utils";
 
 export type InscribeDropMessageTextTyped = {
   name?: string;
@@ -12,19 +14,28 @@ export type InscribeDropMessageTextTyped = {
 };
 
 export default function InscribeDropMintPreview(props: {
-  previewParams: InscribeDropMessageTextTyped & { creator: string };
+  previewParams: InscribeDropMessageTextTyped & {
+    creator: string;
+    tokenId: string;
+    chainId: number;
+  };
 }) {
   return (
     <>
       {props.previewParams.name && (
         <>
-          <Label>Name: {props.previewParams.name}</Label>
+          <Label>Inscribed Drop: {props.previewParams.name}</Label>
           <Spacing />
+        </>
+      )}
+      {props.previewParams.creator && (
+        <>
+          <Label>Created by: {props.previewParams.creator}</Label>
         </>
       )}
       {props.previewParams.description && (
         <>
-          <Label>Description: {props.previewParams.description}</Label>
+          <Label>{props.previewParams.description}</Label>
           <Spacing />
         </>
       )}
@@ -50,11 +61,19 @@ export default function InscribeDropMintPreview(props: {
           <Spacing />
         </>
       )}
-      {props.previewParams.creator && (
-        <>
-          <Label>Creator: {props.previewParams.creator}</Label>
-        </>
-      )}
+      <Button
+        onClick={() =>
+          window.open(
+            getInscribedDropUrlForTokenId(
+              props.previewParams.tokenId,
+              props.previewParams.chainId
+            ),
+            "_blank"
+          )
+        }
+      >
+        View on OpenSea
+      </Button>
     </>
   );
 }

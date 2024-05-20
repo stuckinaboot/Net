@@ -15,12 +15,13 @@ import { OnchainMessage } from "@/components/core/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { useReadContract } from "wagmi";
+import { useChainId, useReadContract } from "wagmi";
 import { fromHex } from "viem";
 import { Spacing } from "@/components/core/Spacing";
 
 export default function Page({ params }: { params: { tokenId: string } }) {
   const [quantityToMint, setQuantityToMint] = useState("1");
+  const chainId = useChainId();
 
   const { data } = useReadContract({
     address: WILLIE_NET_CONTRACT.address as any,
@@ -85,6 +86,8 @@ export default function Page({ params }: { params: { tokenId: string } }) {
               previewParams={{
                 ...typedData.messageTextTyped,
                 creator: typedData.creator,
+                tokenId: params.tokenId,
+                chainId,
               }}
             />
             <Spacing />
