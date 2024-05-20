@@ -5,6 +5,7 @@ import {
   INSCRIBED_DROPS_COLLECTION_URL,
 } from "../constants";
 import { parseUnits } from "viem";
+import { getInscribedDropUrlForTokenId } from "../utils";
 
 const TOASTS = {
   title: "Inscribed Drops",
@@ -22,6 +23,7 @@ export default function MintInscribeDropButton(props: {
   tokenId: string;
   quantity: number;
   priceInEth: number;
+  chainId: number;
   disabled?: boolean;
 }) {
   return (
@@ -47,7 +49,10 @@ export default function MintInscribeDropButton(props: {
               {TOASTS.success}
               <Button
                 onClick={() =>
-                  window.open(INSCRIBED_DROPS_COLLECTION_URL, "_blank")
+                  window.open(
+                    getInscribedDropUrlForTokenId(props.tokenId, props.chainId),
+                    "_blank"
+                  )
                 }
               >
                 View on OpenSea

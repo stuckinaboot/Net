@@ -117,6 +117,7 @@ export default function Page({ params }: { params: { tokenId: string } }) {
         typedData ? (
           <MintInscribeDropButton
             tokenId={params.tokenId}
+            chainId={chainId}
             quantity={+quantityToMint}
             priceInEth={typedData.mintConfig.priceInEth}
             disabled={disabled}
