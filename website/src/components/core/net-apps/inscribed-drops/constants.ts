@@ -9,3 +9,6 @@ export const INSCRIBED_DROPS_CONTRACT = {
   abi,
   address: "0x000000E388e564884C32cA75A6850C7D62F8E56F",
 };
+
+// Corresponds to the constant in the Inscribed Drops contract
+export const INSCRIBE_DROP_INSCRIBE_TOPIC = "i";

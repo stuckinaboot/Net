@@ -5,6 +5,7 @@ import BasePageCard from "@/components/core/BasePageCard";
 import {
   INSCRIBED_DROPS_COLLECTION_URL,
   INSCRIBED_DROPS_CONTRACT,
+  INSCRIBE_DROP_INSCRIBE_TOPIC,
 } from "@/components/core/net-apps/inscribed-drops/constants";
 import InscribeDropButton from "@/components/core/net-apps/inscribed-drops/page/InscribeDropButton";
 import InscribeDropMintConfigEntry, {
@@ -26,6 +27,11 @@ export default function Page({ params }: { params: { tokenId: string } }) {
     address: WILLIE_NET_CONTRACT.address as any,
     abi: WILLIE_NET_CONTRACT.abi,
     functionName: "getMessageForAppTopic",
+    args: [
+      params.tokenId,
+      INSCRIBED_DROPS_CONTRACT.address,
+      INSCRIBE_DROP_INSCRIBE_TOPIC,
+    ],
   });
 
   function convertDataToMintConfigDefined(data: any): MintConfigDefined {}
