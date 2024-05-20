@@ -29,6 +29,8 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
     error MintSupplyReached();
     error MintEndTimestampReached();
 
+    event InscribedDrop(address indexed creator, uint256 id);
+
     function name() external pure returns (string memory) {
         return "Inscribed Drops";
     }
@@ -52,6 +54,8 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         _mint(msg.sender, totalDrops, 1, "");
         // Set total supply to 1
         totalSupply[totalDrops] = 1;
+        // Emit inscribed drop event
+        emit InscribedDrop(msg.sender, totalDrops);
 
         // Increase total drops
         unchecked {
@@ -65,10 +69,6 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
             INSCRIBE_TOPIC,
             abi.encode(mintPrice, maxSupply, mintEndTimestamp)
         );
-
-        unchecked {
-            return totalDrops - 1;
-        }
     }
 
     function setFeeBps(uint256 newFeeBps) external onlyOwner {
