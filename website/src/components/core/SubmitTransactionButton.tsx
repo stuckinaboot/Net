@@ -22,7 +22,7 @@ export default function SubmitTransactionButton(props: {
   };
   useDefaultButtonMessageOnSuccess?: boolean;
   className?: string;
-  onTransactionConfirmed?: (transactionHash: string) => void;
+  onTransactionConfirmed?: (transactionHash: string) => Promise<void> | void;
   prePerformTransasctionValidation?: () => string | undefined;
   disabled?: boolean;
   value?: string;

@@ -1,5 +1,6 @@
-import { base, baseSepolia, degen } from "viem/chains";
+import { Chain, base, baseSepolia, degen } from "viem/chains";
 import { WEBSITE_BASE_URL } from "./constants";
+import { createPublicClient, http } from "viem";
 
 export function chainTimeToMilliseconds(chainTime: number) {
   return chainTime * 1000;
@@ -52,4 +53,11 @@ export function chainIdToOpenSeaChainString(chainId: number) {
     : chainId === degen.id
     ? "degen"
     : "unknown";
+}
+
+export function publicClient(chain: Chain) {
+  return createPublicClient({
+    chain,
+    transport: http(),
+  });
 }

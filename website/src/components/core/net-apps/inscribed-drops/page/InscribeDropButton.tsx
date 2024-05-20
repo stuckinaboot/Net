@@ -13,10 +13,15 @@ import { useState } from "react";
 import {
   INSCRIBED_DROPS_CONTRACT,
   INSCRIBED_DROPS_COLLECTION_URL,
+  INSCRIBE_DROP_INSCRIBE_TOPIC,
 } from "../constants";
-import { InscriptionDialogContents } from "../../inscriptions/InscriptionDialogContents";
 import { MintConfig } from "./InscribeDropMintConfigEntry";
 import { InscribeDropDialogContents } from "./InscribeDropDialogContents";
+import { useRouter } from "next/router";
+import { readContract } from "viem/actions";
+import { publicClient } from "@/app/utils";
+import { WILLIE_NET_CONTRACT } from "@/app/constants";
+import { useAccount } from "wagmi";
 
 const TOASTS = {
   title: "Inscribed Drops",
@@ -36,6 +41,7 @@ export default function InscribeDropButton(props: {
   disabled?: boolean;
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const router = useRouter();
 
   let inscriptionJson;
   try {
@@ -52,6 +58,8 @@ export default function InscribeDropButton(props: {
     maxSupply: props.mintConfig.maxSupply || 0,
     mintEndTimestamp: props.mintConfig.mintEndTimestamp || 0,
   };
+
+  // TODO look at return value
 
   return (
     <Dialog
@@ -105,7 +113,7 @@ export default function InscribeDropButton(props: {
                 button: BUTTONS,
               }}
               useDefaultButtonMessageOnSuccess={true}
-              onTransactionConfirmed={() => {
+              onTransactionConfirmed={async () => {
                 setDialogOpen(false);
               }}
               prePerformTransasctionValidation={() => {
