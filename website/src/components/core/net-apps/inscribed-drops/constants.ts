@@ -7,7 +7,7 @@ export const INSCRIBED_DROPS_COLLECTION_URL = TESTNETS_ENABLED
 
 export const INSCRIBED_DROPS_CONTRACT = {
   abi,
-  address: "0x000000E388e564884C32cA75A6850C7D62F8E56F",
+  address: "0x00000047aaAD11b9Ba4c61075246e9d6b9DFD92A",
 };
 
 // Corresponds to the constant in the Inscribed Drops contract
