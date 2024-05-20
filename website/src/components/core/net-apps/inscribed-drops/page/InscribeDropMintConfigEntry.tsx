@@ -9,6 +9,13 @@ export type MintConfig = {
   mintEndTimestamp?: number;
 };
 
+// Same as MintConfig except all fields non-optional
+export type MintConfigDefined = {
+  maxSupply: number;
+  priceInEth: number;
+  mintEndTimestamp: number;
+};
+
 export default function InscribeDropMintConfigEntry(props: {
   onMintConfigChanged: (mintConfig: MintConfig) => void;
 }) {
