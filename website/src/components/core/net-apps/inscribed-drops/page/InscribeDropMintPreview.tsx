@@ -31,6 +31,7 @@ export default function InscribeDropMintPreview(props: {
       {props.previewParams.creator && (
         <>
           <Label>Created by: {props.previewParams.creator}</Label>
+          <Spacing />
         </>
       )}
       {props.previewParams.description && (
