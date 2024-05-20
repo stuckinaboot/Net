@@ -42,7 +42,7 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         uint256 maxSupply,
         uint256 mintEndTimestamp,
         string calldata tokenUri
-    ) external {
+    ) external returns (uint256) {
         // Check token uri non-empty
         if (bytes(tokenUri).length == 0) {
             revert TokenUriEmpty();
@@ -65,6 +65,10 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
             INSCRIBE_TOPIC,
             abi.encode(mintPrice, maxSupply, mintEndTimestamp)
         );
+
+        unchecked {
+            return totalDrops - 1;
+        }
     }
 
     function setFeeBps(uint256 newFeeBps) external onlyOwner {
