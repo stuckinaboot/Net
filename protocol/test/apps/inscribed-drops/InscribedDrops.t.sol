@@ -17,6 +17,8 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
 
     StdStorage private stdstore;
 
+    event InscribedDrop(address indexed creator, uint256 id);
+
     // Test users
     address[10] users;
 
@@ -87,6 +89,9 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
             bool tokenUriEmpty = bytes(tokenUri).length == 0;
             if (tokenUriEmpty) {
                 vm.expectRevert(InscribedDrops.TokenUriEmpty.selector);
+            } else {
+                vm.expectEmit(true, true, true, true);
+                emit InscribedDrop(users[1], i);
             }
             drops.inscribe(mintPriceI, maxSupplyI, mintEndTimestampI, tokenUri);
 
