@@ -3,22 +3,18 @@
 import { WILLIE_NET_CONTRACT } from "@/app/constants";
 import BasePageCard from "@/components/core/BasePageCard";
 import {
-  INSCRIBED_DROPS_COLLECTION_URL,
   INSCRIBED_DROPS_CONTRACT,
   INSCRIBE_DROP_INSCRIBE_TOPIC,
 } from "@/components/core/net-apps/inscribed-drops/constants";
-import InscribeDropButton from "@/components/core/net-apps/inscribed-drops/page/InscribeDropButton";
-import InscribeDropMintConfigEntry, {
-  MintConfig,
-  MintConfigDefined,
-} from "@/components/core/net-apps/inscribed-drops/page/InscribeDropMintConfigEntry";
+import { MintConfigDefined } from "@/components/core/net-apps/inscribed-drops/page/InscribeDropMintConfigEntry";
 import InscribeDropMintPreview from "@/components/core/net-apps/inscribed-drops/page/InscribeDropMintPreview";
 import MintInscribeDropButton from "@/components/core/net-apps/inscribed-drops/page/MintInscribeDropButton";
-import InscriptionEntry from "@/components/core/net-apps/inscriptions/page/InscriptionEntry";
+import { OnchainMessage } from "@/components/core/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { useContractRead, useReadContract } from "wagmi";
+import { useReadContract } from "wagmi";
+import { fromHex } from "viem";
 
 export default function Page({ params }: { params: { tokenId: string } }) {
   const [quantityToMint, setQuantityToMint] = useState("1");
@@ -33,24 +29,42 @@ export default function Page({ params }: { params: { tokenId: string } }) {
       INSCRIBE_DROP_INSCRIBE_TOPIC,
     ],
   });
-  console.log("HI!", { data, isError, isLoading });
 
-  function convertDataToMintConfigDefined(
-    data: any
-  ): MintConfigDefined | undefined {
+  function convertDataToTyped(
+    data: OnchainMessage
+  ): { mintConfig: MintConfigDefined; creator: string } | undefined {
     if (data == null) {
       return undefined;
     }
-    return { priceInEth: 0, maxSupply: 0, mintEndTimestamp: 0 };
+
+    const msgDataFields: number[] = [];
+    const msgData = data.data.substring(2);
+    for (let i = 0; i < msgData.length; i += 64) {
+      msgDataFields.push(
+        fromHex(`0x${msgData.substring(i, i + 64)}`, "number")
+      );
+    }
+    if (msgDataFields.length < 3) {
+      return undefined;
+    }
+
+    return {
+      mintConfig: {
+        priceInEth: msgDataFields[0],
+        maxSupply: msgDataFields[1],
+        mintEndTimestamp: msgDataFields[2],
+      },
+      creator: data.sender,
+    };
   }
 
-  const mintConfig = convertDataToMintConfigDefined(data);
+  const typedData = convertDataToTyped(data as OnchainMessage);
 
   return (
     <BasePageCard
       description={<>Mint from an inscribed drop on Net.</>}
       content={{
-        node: mintConfig ? (
+        node: typedData ? (
           <>
             <InscribeDropMintPreview />
             <br />
@@ -77,11 +91,11 @@ export default function Page({ params }: { params: { tokenId: string } }) {
         ),
       }}
       footer={(disabled) =>
-        mintConfig ? (
+        typedData ? (
           <MintInscribeDropButton
             tokenId={params.tokenId}
             quantity={+quantityToMint}
-            priceInEth={mintConfig.priceInEth}
+            priceInEth={typedData.mintConfig.priceInEth}
             disabled={disabled}
           />
         ) : null
