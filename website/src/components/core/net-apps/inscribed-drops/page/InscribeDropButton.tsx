@@ -13,15 +13,10 @@ import { useState } from "react";
 import {
   INSCRIBED_DROPS_CONTRACT,
   INSCRIBED_DROPS_COLLECTION_URL,
-  INSCRIBE_DROP_INSCRIBE_TOPIC,
 } from "../constants";
 import { MintConfig } from "./InscribeDropMintConfigEntry";
 import { InscribeDropDialogContents } from "./InscribeDropDialogContents";
-import { useRouter } from "next/router";
-import { readContract } from "viem/actions";
-import { publicClient } from "@/app/utils";
-import { WILLIE_NET_CONTRACT } from "@/app/constants";
-import { useAccount } from "wagmi";
+import { useRouter } from "next/navigation";
 
 const TOASTS = {
   title: "Inscribed Drops",
