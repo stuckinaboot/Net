@@ -33,18 +33,24 @@ export default function Page({ params }: { params: { tokenId: string } }) {
       INSCRIBE_DROP_INSCRIBE_TOPIC,
     ],
   });
+  console.log("HI!", { data, isError, isLoading });
 
-  function convertDataToMintConfigDefined(data: any): MintConfigDefined {
+  function convertDataToMintConfigDefined(
+    data: any
+  ): MintConfigDefined | undefined {
+    if (data == null) {
+      return undefined;
+    }
     return { priceInEth: 0, maxSupply: 0, mintEndTimestamp: 0 };
   }
 
-  const mintConfigDefined = convertDataToMintConfigDefined(data);
+  const mintConfig = convertDataToMintConfigDefined(data);
 
   return (
     <BasePageCard
       description={<>Mint from an inscribed drop on Net.</>}
       content={{
-        node: (
+        node: mintConfig ? (
           <>
             <InscribeDropMintPreview />
             <br />
@@ -66,16 +72,20 @@ export default function Page({ params }: { params: { tokenId: string } }) {
               value={quantityToMint}
             />
           </>
+        ) : (
+          <>Loading mint...</>
         ),
       }}
-      footer={(disabled) => (
-        <MintInscribeDropButton
-          tokenId={params.tokenId}
-          quantity={+quantityToMint}
-          priceInEth={mintConfigDefined.priceInEth}
-          disabled={disabled}
-        />
-      )}
+      footer={(disabled) =>
+        mintConfig ? (
+          <MintInscribeDropButton
+            tokenId={params.tokenId}
+            quantity={+quantityToMint}
+            priceInEth={mintConfig.priceInEth}
+            disabled={disabled}
+          />
+        ) : null
+      }
     />
   );
 }
