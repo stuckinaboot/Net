@@ -1,3 +1,4 @@
+import { Spacing } from "@/components/core/Spacing";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,10 +11,6 @@ export default function InscriptionEntry(props: {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
   const [animation, setAnimation] = useState("");
-
-  function Spacing() {
-    return <div className="mt-4" />;
-  }
 
   function updateInscription(params: {
     name: string;
@@ -53,7 +50,6 @@ export default function InscriptionEntry(props: {
         value={description}
       />
       <Spacing />
-
       <Label>Image URL:</Label>
       <Textarea
         contentEditable

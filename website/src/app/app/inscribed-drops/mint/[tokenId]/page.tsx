@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useReadContract } from "wagmi";
 import { fromHex } from "viem";
+import { Spacing } from "@/components/core/Spacing";
 
 export default function Page({ params }: { params: { tokenId: string } }) {
   const [quantityToMint, setQuantityToMint] = useState("1");
@@ -80,8 +81,13 @@ export default function Page({ params }: { params: { tokenId: string } }) {
       content={{
         node: typedData ? (
           <>
-            <InscribeDropMintPreview />
-            <br />
+            <InscribeDropMintPreview
+              previewParams={{
+                ...typedData.messageTextTyped,
+                creator: typedData.creator,
+              }}
+            />
+            <Spacing />
             <Label>Enter quantity to mint:</Label>
             <Input
               onChange={(e) => {
