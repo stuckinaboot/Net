@@ -7,7 +7,9 @@ import {
   INSCRIBE_DROP_INSCRIBE_TOPIC,
 } from "@/components/core/net-apps/inscribed-drops/constants";
 import { MintConfigDefined } from "@/components/core/net-apps/inscribed-drops/page/InscribeDropMintConfigEntry";
-import InscribeDropMintPreview from "@/components/core/net-apps/inscribed-drops/page/InscribeDropMintPreview";
+import InscribeDropMintPreview, {
+  InscribeDropMessageTextTyped,
+} from "@/components/core/net-apps/inscribed-drops/page/InscribeDropMintPreview";
 import MintInscribeDropButton from "@/components/core/net-apps/inscribed-drops/page/MintInscribeDropButton";
 import { OnchainMessage } from "@/components/core/types";
 import { Input } from "@/components/ui/input";
@@ -19,7 +21,7 @@ import { fromHex } from "viem";
 export default function Page({ params }: { params: { tokenId: string } }) {
   const [quantityToMint, setQuantityToMint] = useState("1");
 
-  const { data, isError, isLoading } = useReadContract({
+  const { data } = useReadContract({
     address: WILLIE_NET_CONTRACT.address as any,
     abi: WILLIE_NET_CONTRACT.abi,
     functionName: "getMessageForAppTopic",
@@ -30,9 +32,13 @@ export default function Page({ params }: { params: { tokenId: string } }) {
     ],
   });
 
-  function convertDataToTyped(
-    data: OnchainMessage
-  ): { mintConfig: MintConfigDefined; creator: string } | undefined {
+  function convertDataToTyped(data: OnchainMessage):
+    | {
+        mintConfig: MintConfigDefined;
+        creator: string;
+        messageTextTyped: InscribeDropMessageTextTyped;
+      }
+    | undefined {
     if (data == null) {
       return undefined;
     }
@@ -48,12 +54,20 @@ export default function Page({ params }: { params: { tokenId: string } }) {
       return undefined;
     }
 
+    let textTyped: InscribeDropMessageTextTyped;
+    try {
+      textTyped = JSON.parse(data.text);
+    } catch (e) {
+      return undefined;
+    }
+
     return {
       mintConfig: {
         priceInEth: msgDataFields[0],
         maxSupply: msgDataFields[1],
         mintEndTimestamp: msgDataFields[2],
       },
+      messageTextTyped: textTyped,
       creator: data.sender,
     };
   }
