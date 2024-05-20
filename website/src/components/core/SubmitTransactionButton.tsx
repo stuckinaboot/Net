@@ -25,6 +25,7 @@ export default function SubmitTransactionButton(props: {
   onTransactionConfirmed?: (transactionHash: string) => void;
   prePerformTransasctionValidation?: () => string | undefined;
   disabled?: boolean;
+  value?: string;
 }) {
   const { toast } = useToast();
   const chainId = useChainId();
@@ -79,6 +80,7 @@ export default function SubmitTransactionButton(props: {
         abi: props.abi,
         functionName: props.functionName,
         args: props.args,
+        value: props.value != null ? BigInt(props.value) : undefined,
       });
     } catch (e) {
       if (e instanceof Error) {
