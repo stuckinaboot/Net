@@ -34,7 +34,9 @@ export default function Page({ params }: { params: { tokenId: string } }) {
     ],
   });
 
-  function convertDataToMintConfigDefined(data: any): MintConfigDefined {}
+  function convertDataToMintConfigDefined(data: any): MintConfigDefined {
+    return { priceInEth: 0, maxSupply: 0, mintEndTimestamp: 0 };
+  }
 
   const mintConfigDefined = convertDataToMintConfigDefined(data);
 
@@ -51,7 +53,7 @@ export default function Page({ params }: { params: { tokenId: string } }) {
               onChange={(e) => {
                 const updated = e.target.value;
                 if (updated.length === 0) {
-                  setQuantityToMint("1");
+                  setQuantityToMint("");
                   return;
                 }
                 try {
