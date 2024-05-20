@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
 import { getDisplayableErrorMessageFromSubmitTransactionError } from "@/app/utils";
+import { Log } from "viem";
 
 const SHOW_TX_SUBMISSION_TEXT = false;
 const SHOW_TX_RECEIPT_TEXT = false;
@@ -22,7 +23,10 @@ export default function SubmitTransactionButton(props: {
   };
   useDefaultButtonMessageOnSuccess?: boolean;
   className?: string;
-  onTransactionConfirmed?: (transactionHash: string) => Promise<void> | void;
+  onTransactionConfirmed?: (
+    transactionHash: string,
+    logs: Log<bigint, number, false>[]
+  ) => Promise<void> | void;
   prePerformTransasctionValidation?: () => string | undefined;
   disabled?: boolean;
   value?: string;
@@ -51,11 +55,14 @@ export default function SubmitTransactionButton(props: {
     if (!receipt.isSuccess || shownSuccessToast) {
       return;
     }
+
     toast({
       title: props.messages.toasts.title,
       description: props.messages.toasts.success,
     });
-    hash && props.onTransactionConfirmed && props.onTransactionConfirmed(hash);
+    hash &&
+      props.onTransactionConfirmed &&
+      props.onTransactionConfirmed(hash, receipt.data.logs);
     setShownSucccessToast(true);
   }, [receipt.isSuccess]);
 
