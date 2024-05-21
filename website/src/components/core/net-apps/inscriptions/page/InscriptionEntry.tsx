@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import IpfsUpload from "../../inscribed-drops/page/IpfsUpload";
 
 export default function InscriptionEntry(props: {
   onInscriptionChanged: (inscriptionMessage: string) => void;
@@ -60,6 +61,7 @@ export default function InscriptionEntry(props: {
         }}
         value={image}
       />
+      <IpfsUpload onUpload={(ipfsUrl) => setImage(ipfsUrl)} />
       <Spacing />
       <Label>Animation URL (optional):</Label>
       <Textarea

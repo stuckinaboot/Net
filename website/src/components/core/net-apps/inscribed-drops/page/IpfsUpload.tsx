@@ -1,10 +1,11 @@
+import { Spacing } from "@/components/core/Spacing";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import Dropzone from "react-dropzone";
 
-export default function NftStorageUpload(props: {
+export default function IpfsUpload(props: {
   onUpload: (ipfsUrl: string) => void;
 }) {
   const [file, setFile] = useState<File>();
@@ -50,25 +51,21 @@ export default function NftStorageUpload(props: {
         {({ getRootProps, getInputProps }) => (
           <div {...getRootProps()}>
             <input {...getInputProps()} />
-            <div
-              style={{
-                backgroundColor: "#181717",
-                borderRadius: "10px",
-                padding: "30px",
-              }}
-            >
+            <br />
+            <div className="border bg-background rounded p-3">
               <Label>
                 <b>Selected image: {file ? file.name : "None"}</b>
               </Label>
               <br />
-              Drag 'n' drop an image to this black area, or click here to select
-              a new image. <br />
+              Drag 'n' drop image or click here
+              <br />
               <br />
               Then press "Upload to IPFS" and your image will be infused
             </div>
           </div>
         )}
       </Dropzone>
+      <Spacing />
       <Button disabled={!file} onClick={uploadToNftStorage} variant="outline">
         {uploading ? <>Uploading...</> : "Upload to IPFS"}
       </Button>
