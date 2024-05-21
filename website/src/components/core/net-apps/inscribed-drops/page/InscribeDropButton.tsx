@@ -112,11 +112,12 @@ export default function InscribeDropButton(props: {
               }}
               useDefaultButtonMessageOnSuccess={true}
               onTransactionConfirmed={async (hash, logs) => {
+                setDialogOpen(false);
                 // TODO filter by address and event topic hash instead of always assuming log 1
                 const eventLog = logs[1];
                 const tokenId = fromHex(eventLog.data, "number");
+                // Push to mint page for token id
                 router.push("/app/inscribed-drops/mint/" + tokenId);
-                setDialogOpen(false);
               }}
               prePerformTransasctionValidation={() => {
                 // TODO check if message is valid
