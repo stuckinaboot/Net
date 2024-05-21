@@ -72,8 +72,9 @@ app.frame("/:chainId/:tokenId", async (c) => {
       </div>
     ),
     intents: [
-      <TextInput placeholder="Amount to mint (default 1)" />,
+      <TextInput key={0} placeholder="Amount to mint (default 1)" />,
       <Button.Transaction
+        key={1}
         target={`/mint?chainId=${openSeaChainId}&tokenId=${tokenId}`}
         action={`/${openSeaChainId}/${tokenId}`}
       >
