@@ -6,8 +6,6 @@ import InscribeDropButton from "@/components/core/net-apps/inscribed-drops/page/
 import InscribeDropMintConfigEntry, {
   MintConfig,
 } from "@/components/core/net-apps/inscribed-drops/page/InscribeDropMintConfigEntry";
-import { INSCRIPTIONS_COLLECTION_URL } from "@/components/core/net-apps/inscriptions/constants";
-import InscribeButton from "@/components/core/net-apps/inscriptions/page/InscribeButton";
 import InscriptionEntry from "@/components/core/net-apps/inscriptions/page/InscriptionEntry";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
