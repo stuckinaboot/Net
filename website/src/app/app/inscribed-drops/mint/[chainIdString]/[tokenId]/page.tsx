@@ -19,6 +19,8 @@ import { useChainId, useReadContract } from "wagmi";
 import { fromHex } from "viem";
 import { Spacing } from "@/components/core/Spacing";
 import { getInscribedDropFromOnchainMessage } from "@/components/core/net-apps/inscribed-drops/utils";
+import CopyInscribedDropLinkButton from "@/components/core/net-apps/inscribed-drops/page/CopyInscribedDropLinkButton";
+import ShareDropInCastButton from "@/components/core/net-apps/inscribed-drops/page/ShareDropInCastButton";
 
 export default function Page({ params }: { params: { tokenId: string } }) {
   const [quantityToMint, setQuantityToMint] = useState("1");
@@ -39,7 +41,15 @@ export default function Page({ params }: { params: { tokenId: string } }) {
 
   return (
     <BasePageCard
-      description={<>Mint from an inscribed drop on Net.</>}
+      description={
+        <>
+          Mint from an inscribed drop on Net. <br />
+          <div className="flex space-x-1">
+            <CopyInscribedDropLinkButton />
+            <ShareDropInCastButton />
+          </div>
+        </>
+      }
       content={{
         node: typedData ? (
           <>
