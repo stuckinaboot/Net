@@ -35,6 +35,7 @@
     "nft.storage": "^7.1.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-dropzone": "^14.2.3",
     "react-player": "^2.16.0",
     "react-timeago": "^7.2.0",
     "shadcn-ui": "^0.8.0",
