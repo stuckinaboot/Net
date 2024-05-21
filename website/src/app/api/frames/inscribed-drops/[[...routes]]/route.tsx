@@ -23,4 +23,13 @@ app.frame("/", (c) => {
   });
 });
 
+app.transaction("/mint", async (c) => {
+  const { buttonValue, status } = c;
+  return c.send({
+    chainId: "eip155:10",
+    to: "0xd2135CfB216b74109775236E36d4b433F1DF507B",
+    value: parseEther(inputText),
+  });
+});
+
 devtools(app, { serveStatic });
