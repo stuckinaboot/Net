@@ -8,7 +8,7 @@ export default function ShareDropInCastButton() {
       variant="outline"
       onClick={() => {
         // https://docs.farcaster.xyz/reference/warpcast/cast-composer-intents
-        const url = `https://warpcast.com/~/compose?text=Mint%20my%20NFT!&embeds[]=${window.location.href}`;
+        const url = `https://warpcast.com/~/compose?text=Check%20out%20my%20drop!&embeds[]=${window.location.href}`;
         window.open(url, "_blank");
       }}
     >
