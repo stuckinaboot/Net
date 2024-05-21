@@ -18,6 +18,8 @@ import { MintConfig } from "./InscribeDropMintConfigEntry";
 import { InscribeDropDialogContents } from "./InscribeDropDialogContents";
 import { useRouter } from "next/navigation";
 import { fromHex } from "viem";
+import { useAccount, useChainId } from "wagmi";
+import { chainIdToOpenSeaChainString } from "@/app/utils";
 
 const TOASTS = {
   title: "Inscribed Drops",
@@ -38,6 +40,9 @@ export default function InscribeDropButton(props: {
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
+  const chainId = useChainId();
+
+  const chainString = chainIdToOpenSeaChainString(chainId);
 
   let inscriptionJson;
   try {
@@ -54,10 +59,6 @@ export default function InscribeDropButton(props: {
     maxSupply: props.mintConfig.maxSupply || 0,
     mintEndTimestamp: props.mintConfig.mintEndTimestamp || 0,
   };
-
-  // TODO look at return value of `inscribe` function, use this -> https://stackoverflow.com/questions/74104378/how-to-return-a-value-from-a-solidity-function-when-using-wagmi-usecontractwrite
-  // TODO push to mint page on token id
-  // TODO redeploy contract with latest contract code
 
   return (
     <Dialog
@@ -117,7 +118,9 @@ export default function InscribeDropButton(props: {
                 const eventLog = logs[1];
                 const tokenId = fromHex(eventLog.data, "number");
                 // Push to mint page for token id
-                router.push("/app/inscribed-drops/mint/" + tokenId);
+                router.push(
+                  `/app/inscribed-drops/mint/${chainString}/${tokenId}`
+                );
               }}
               prePerformTransasctionValidation={() => {
                 // TODO check if message is valid

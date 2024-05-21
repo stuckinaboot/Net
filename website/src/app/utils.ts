@@ -1,5 +1,5 @@
-import { Chain, base, baseSepolia, degen } from "viem/chains";
-import { WEBSITE_BASE_URL } from "./constants";
+import { Chain } from "viem/chains";
+import { CHAIN_ID_TO_OPENSEA_CHAIN_MAP, WEBSITE_BASE_URL } from "./constants";
 import { createPublicClient, http } from "viem";
 
 export function chainTimeToMilliseconds(chainTime: number) {
@@ -46,13 +46,14 @@ export async function getDisplayableErrorMessageFromSubmitTransactionError(
 }
 
 export function chainIdToOpenSeaChainString(chainId: number) {
-  return chainId === baseSepolia.id
-    ? "base-sepolia"
-    : chainId === base.id
-    ? "base"
-    : chainId === degen.id
-    ? "degen"
-    : "unknown";
+  return CHAIN_ID_TO_OPENSEA_CHAIN_MAP.find((m) => m.chain.id === chainId)
+    ?.openSeaChainString;
+}
+
+export function openSeaChainStringToChain(chainString: string) {
+  return CHAIN_ID_TO_OPENSEA_CHAIN_MAP.find(
+    (m) => m.openSeaChainString === chainString
+  )?.chain;
 }
 
 export function publicClient(chain: Chain) {
