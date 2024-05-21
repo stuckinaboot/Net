@@ -8,7 +8,7 @@ import { devtools } from "frog/dev";
 import { serveStatic } from "frog/serve-static";
 import { handle } from "frog/next";
 
-export const app = new Frog({
+const app = new Frog({
   basePath: "/api/frames/inscribed-drops",
 });
 
