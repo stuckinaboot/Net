@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useChainId, useReadContract } from "wagmi";
 import { fromHex } from "viem";
 import { Spacing } from "@/components/core/Spacing";
+import { getInscribedDropFromOnchainMessage } from "@/components/core/net-apps/inscribed-drops/utils";
 
 export default function Page({ params }: { params: { tokenId: string } }) {
   const [quantityToMint, setQuantityToMint] = useState("1");
@@ -34,47 +35,7 @@ export default function Page({ params }: { params: { tokenId: string } }) {
     ],
   });
 
-  function convertDataToTyped(data: OnchainMessage):
-    | {
-        mintConfig: MintConfigDefined;
-        creator: string;
-        messageTextTyped: InscribeDropMessageTextTyped;
-      }
-    | undefined {
-    if (data == null) {
-      return undefined;
-    }
-
-    const msgDataFields: number[] = [];
-    const msgData = data.data.substring(2);
-    for (let i = 0; i < msgData.length; i += 64) {
-      msgDataFields.push(
-        fromHex(`0x${msgData.substring(i, i + 64)}`, "number")
-      );
-    }
-    if (msgDataFields.length < 3) {
-      return undefined;
-    }
-
-    let textTyped: InscribeDropMessageTextTyped;
-    try {
-      textTyped = JSON.parse(data.text);
-    } catch (e) {
-      return undefined;
-    }
-
-    return {
-      mintConfig: {
-        priceInEth: msgDataFields[0],
-        maxSupply: msgDataFields[1],
-        mintEndTimestamp: msgDataFields[2],
-      },
-      messageTextTyped: textTyped,
-      creator: data.sender,
-    };
-  }
-
-  const typedData = convertDataToTyped(data as OnchainMessage);
+  const typedData = getInscribedDropFromOnchainMessage(data as OnchainMessage);
 
   return (
     <BasePageCard
@@ -84,7 +45,7 @@ export default function Page({ params }: { params: { tokenId: string } }) {
           <>
             <InscribeDropMintPreview
               previewParams={{
-                ...typedData.messageTextTyped,
+                ...typedData.metadata,
                 creator: typedData.creator,
                 tokenId: params.tokenId,
                 chainId,

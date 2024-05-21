@@ -56,6 +56,12 @@ export function openSeaChainStringToChain(chainString: string) {
   )?.chain;
 }
 
+export function openSeaChainStringToCrossChainId(chainString: string) {
+  return CHAIN_ID_TO_OPENSEA_CHAIN_MAP.find(
+    (m) => m.openSeaChainString === chainString
+  )?.crossChainId;
+}
+
 export function publicClient(chain: Chain) {
   return createPublicClient({
     chain,

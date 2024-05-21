@@ -1,6 +1,9 @@
+import { openSeaChainStringToCrossChainId } from "@/app/utils";
+import { INSCRIBED_DROPS_CONTRACT } from "@/components/core/net-apps/inscribed-drops/constants";
 import { Button, Frog } from "frog";
 import { devtools } from "frog/dev";
 import { serveStatic } from "frog/serve-static";
+import { parseEther } from "viem";
 
 export const app = new Frog({ basePath: "/api/frames/inscribed-drops" });
 
@@ -25,10 +28,13 @@ app.frame("/", (c) => {
 
 app.transaction("/mint", async (c) => {
   const { buttonValue, status } = c;
+  // TODO
+  const openSeaChainId = "";
+  const crossChainId = openSeaChainStringToCrossChainId(openSeaChainId);
   return c.send({
-    chainId: "eip155:10",
-    to: "0xd2135CfB216b74109775236E36d4b433F1DF507B",
-    value: parseEther(inputText),
+    chainId: crossChainId as any,
+    to: INSCRIBED_DROPS_CONTRACT.address as any,
+    value: parseEther(""),
   });
 });
 
