@@ -17,6 +17,7 @@ import {
 import { MintConfig } from "./InscribeDropMintConfigEntry";
 import { InscribeDropDialogContents } from "./InscribeDropDialogContents";
 import { useRouter } from "next/navigation";
+import { fromHex } from "viem";
 
 const TOASTS = {
   title: "Inscribed Drops",
@@ -110,7 +111,11 @@ export default function InscribeDropButton(props: {
                 button: BUTTONS,
               }}
               useDefaultButtonMessageOnSuccess={true}
-              onTransactionConfirmed={async () => {
+              onTransactionConfirmed={async (hash, logs) => {
+                // TODO filter by address and event topic hash instead of always assuming log 1
+                const eventLog = logs[1];
+                const tokenId = fromHex(eventLog.data, "number");
+                router.push("/app/inscribed-drops/mint/" + tokenId);
                 setDialogOpen(false);
               }}
               prePerformTransasctionValidation={() => {
