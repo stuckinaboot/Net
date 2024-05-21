@@ -186,12 +186,8 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         assertEq(drops.balanceOf(users[2], tokenId), 3);
         assertEq(drops.balanceOf(users[1], tokenId), 1);
 
-        // Mint quantity 0 succeeds and doesn't affect anything
-        assertEq(drops.totalSupply(tokenId), 9);
-        assertEq(drops.totalDrops(), 1);
-        assertEq(drops.balanceOf(users[3], tokenId), 5);
-        assertEq(drops.balanceOf(users[2], tokenId), 3);
-        assertEq(drops.balanceOf(users[1], tokenId), 1);
+        // Mint quantity 0 fails and doesn't affect anything
+        vm.expectRevert(InscribedDrops.CannotMintQuantityZero.selector);
         drops.mint(tokenId, 0);
     }
 

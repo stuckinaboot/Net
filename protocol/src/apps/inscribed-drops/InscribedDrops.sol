@@ -28,6 +28,7 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
     error MintPaymentIncorrect();
     error MintSupplyReached();
     error MintEndTimestampReached();
+    error CannotMintQuantityZero();
 
     event InscribedDrop(address indexed creator, uint256 id);
 
@@ -78,6 +79,9 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
     function mint(uint256 id, uint256 quantity) external payable {
         if (id >= totalDrops) {
             revert TokenDoesNotExist();
+        }
+        if (quantity == 0) {
+            revert CannotMintQuantityZero();
         }
 
         // Get message
