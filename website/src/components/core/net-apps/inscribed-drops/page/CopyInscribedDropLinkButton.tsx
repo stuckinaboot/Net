@@ -12,10 +12,7 @@ export default function CopyInscribedDropLinkButton() {
         toast({
           title: "Copied link",
           description: (
-            <>
-              Successfully copied drop link. Share it with others and paste into
-              a farcaster cast to mint from frame
-            </>
+            <>Successfully copied drop link. Share it with friends!</>
           ),
         });
       }}
