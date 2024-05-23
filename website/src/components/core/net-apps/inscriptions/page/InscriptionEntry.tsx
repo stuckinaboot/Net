@@ -45,26 +45,6 @@ export default function InscriptionEntry(props: {
 
   return (
     <>
-      <Label>Name:</Label>
-      <Input
-        onChange={(e) => {
-          const updated = e.target.value;
-          setName(updated);
-          updateInscription({ name: updated, description, image, animation });
-        }}
-        value={name}
-      />
-      <Spacing />
-      <Label>Description:</Label>
-      <Textarea
-        onChange={(e) => {
-          const updated = e.target.value;
-          setDescription(updated);
-          updateInscription({ name, description: updated, image, animation });
-        }}
-        value={description}
-      />
-      <Spacing />
       <Label>Image URL:</Label>
       <Textarea
         contentEditable
@@ -88,6 +68,26 @@ export default function InscriptionEntry(props: {
             animation,
           });
         }}
+      />
+      <Spacing />
+      <Label>Name:</Label>
+      <Input
+        onChange={(e) => {
+          const updated = e.target.value;
+          setName(updated);
+          updateInscription({ name: updated, description, image, animation });
+        }}
+        value={name}
+      />
+      <Spacing />
+      <Label>Description:</Label>
+      <Textarea
+        onChange={(e) => {
+          const updated = e.target.value;
+          setDescription(updated);
+          updateInscription({ name, description: updated, image, animation });
+        }}
+        value={description}
       />
       <Spacing />
       <Label>Animation URL (optional):</Label>
