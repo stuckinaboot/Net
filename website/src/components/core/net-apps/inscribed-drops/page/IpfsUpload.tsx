@@ -6,6 +6,7 @@ import { useState } from "react";
 import Dropzone from "react-dropzone";
 
 export default function IpfsUpload(props: {
+  onFileSelected: (file: File | undefined) => void;
   onUpload: (ipfsUrl: string) => void;
 }) {
   const [file, setFile] = useState<File>();
@@ -45,6 +46,7 @@ export default function IpfsUpload(props: {
         onDrop={(acceptedFiles) => {
           if (acceptedFiles.length > 0) {
             setFile(acceptedFiles[0]);
+            props.onFileSelected(acceptedFiles[0]);
           }
         }}
       >
@@ -54,10 +56,10 @@ export default function IpfsUpload(props: {
             <br />
             <div className="border bg-background rounded p-3">
               <Label>
-                <b>Selected image: {file ? file.name : "None"}</b>
+                <b>Selected file: {file ? file.name : "None"}</b>
               </Label>
               <br />
-              Drag 'n' drop image or click here
+              Drag 'n' drop file or click here
               <br />
               <br />
               Then press "Upload to IPFS" and your image will be infused

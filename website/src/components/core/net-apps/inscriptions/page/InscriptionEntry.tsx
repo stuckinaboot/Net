@@ -7,6 +7,8 @@ import IpfsUpload from "../../inscribed-drops/page/IpfsUpload";
 
 export default function InscriptionEntry(props: {
   onInscriptionChanged: (inscriptionMessage: string) => void;
+  onImageFileChanged: (file: File | undefined) => void;
+  onAnimationFileChanged: (file: File | undefined) => void;
 }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -61,7 +63,20 @@ export default function InscriptionEntry(props: {
         }}
         value={image}
       />
-      <IpfsUpload onUpload={(ipfsUrl) => setImage(ipfsUrl)} />
+      <IpfsUpload
+        onFileSelected={(file) => {
+          props.onImageFileChanged(file);
+
+          const updatedFileName = file?.name || "";
+          setImage(updatedFileName);
+          updateInscription({
+            name,
+            description,
+            image: updatedFileName,
+            animation,
+          });
+        }}
+      />
       <Spacing />
       <Label>Animation URL (optional):</Label>
       <Textarea
@@ -72,6 +87,20 @@ export default function InscriptionEntry(props: {
           updateInscription({ name, description, image, animation: updated });
         }}
         value={animation}
+      />
+      <IpfsUpload
+        onFileSelected={(file) => {
+          props.onAnimationFileChanged(file);
+
+          const updatedFileName = file?.name || "";
+          setAnimation(updatedFileName);
+          updateInscription({
+            name,
+            description,
+            animation: updatedFileName,
+            image,
+          });
+        }}
       />
     </>
   );
