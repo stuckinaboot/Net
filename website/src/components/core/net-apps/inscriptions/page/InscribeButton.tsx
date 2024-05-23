@@ -13,6 +13,8 @@ import { INSCRIPTIONS_CONTRACT, config } from "../InscriptionInferredAppConfig";
 import { useState } from "react";
 import { INSCRIPTIONS_COLLECTION_URL } from "../constants";
 import { InscriptionContents, MediaFiles } from "./InscriptionEntry";
+import { uploadToNftStorage } from "@/app/utils";
+import { generateInscriptionContentsAfterUploadingMedia } from "../utils";
 
 const TOASTS = {
   title: "Inscriptions",
@@ -87,6 +89,17 @@ export default function InscribeButton(props: {
               useDefaultButtonMessageOnSuccess={true}
               onTransactionConfirmed={() => {
                 setDialogOpen(false);
+              }}
+              preProcessArgs={async (args) => {
+                if (!props.mediaFiles.image && !props.mediaFiles.animation) {
+                  return args;
+                }
+                const inscriptionContents =
+                  await generateInscriptionContentsAfterUploadingMedia({
+                    mediaFiles: props.mediaFiles,
+                    inscriptionContents: JSON.parse(args[0]),
+                  });
+                return [JSON.stringify(inscriptionContents)];
               }}
               prePerformTransactionValidation={() => {
                 // TODO check if message is valid

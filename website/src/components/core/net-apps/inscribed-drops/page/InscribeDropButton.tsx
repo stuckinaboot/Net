@@ -24,6 +24,7 @@ import {
   InscriptionContents,
   MediaFiles,
 } from "../../inscriptions/page/InscriptionEntry";
+import { generateInscriptionContentsAfterUploadingMedia } from "../../inscriptions/utils";
 
 const TOASTS = {
   title: "Inscribed Drops",
@@ -123,6 +124,22 @@ export default function InscribeDropButton(props: {
                 router.push(
                   `/app/inscribed-drops/mint/${chainString}/${tokenId}`
                 );
+              }}
+              preProcessArgs={async (args) => {
+                if (!props.mediaFiles.image && !props.mediaFiles.animation) {
+                  return args;
+                }
+                const inscriptionContents =
+                  await generateInscriptionContentsAfterUploadingMedia({
+                    mediaFiles: props.mediaFiles,
+                    inscriptionContents: JSON.parse(args[3]),
+                  });
+                return [
+                  args[0],
+                  args[1],
+                  args[2],
+                  JSON.stringify(inscriptionContents),
+                ];
               }}
               prePerformTransactionValidation={() => {
                 // TODO check if message is valid
