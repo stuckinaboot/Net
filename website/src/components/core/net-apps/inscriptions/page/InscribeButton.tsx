@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { INSCRIPTIONS_CONTRACT, config } from "../InscriptionInferredAppConfig";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { INSCRIPTIONS_COLLECTION_URL } from "../constants";
 import { InscriptionContents, MediaFiles } from "./InscriptionEntry";
 import { uploadToNftStorage } from "@/app/utils";
@@ -35,13 +35,33 @@ export default function InscribeButton(props: {
 }) {
   const DialogContents = config.dialogContents;
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [inscription, setInscription] = useState(props.inscription);
+  const [uploadingMedia, setUploadingMedia] = useState(false);
+
+  useEffect(() => {
+    setInscription(props.inscription);
+  }, [props.inscription]);
 
   const inscriptionJson = props.inscription;
 
   function isValidInscription(json: any) {
-    return json?.name?.length > 0 && json?.image?.length > 0;
+    return json?.image?.length > 0;
   }
   const validInscription = isValidInscription(inscriptionJson);
+
+  async function uploadMedia() {
+    if (!props.mediaFiles.image && !props.mediaFiles.animation) {
+      return;
+    }
+    setUploadingMedia(true);
+    const updatedInscriptionContents =
+      await generateInscriptionContentsAfterUploadingMedia({
+        mediaFiles: props.mediaFiles,
+        inscriptionContents: inscription,
+      });
+    setInscription(updatedInscriptionContents);
+    setUploadingMedia(false);
+  }
 
   return (
     <Dialog
@@ -49,12 +69,23 @@ export default function InscribeButton(props: {
       onOpenChange={(updatedOpen) => setDialogOpen(updatedOpen)}
     >
       <DialogTrigger asChild>
-        <Button className="w-full">Inscribe</Button>
+        <Button
+          onClick={async () => {
+            await uploadMedia();
+          }}
+          className="w-full"
+        >
+          Inscribe
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogDescription>
-            <DialogContents message={JSON.stringify(props.inscription)} />
+            {uploadingMedia ? (
+              "Uploading media to IPFS..."
+            ) : (
+              <DialogContents message={JSON.stringify(inscription)} />
+            )}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex">
@@ -67,7 +98,7 @@ export default function InscribeButton(props: {
               functionName="inscribe"
               abi={INSCRIPTIONS_CONTRACT.abi}
               to={INSCRIPTIONS_CONTRACT.address}
-              args={[props.inscription]}
+              args={[JSON.stringify(inscription)]}
               messages={{
                 toasts: {
                   ...TOASTS,
@@ -89,17 +120,6 @@ export default function InscribeButton(props: {
               useDefaultButtonMessageOnSuccess={true}
               onTransactionConfirmed={() => {
                 setDialogOpen(false);
-              }}
-              preProcessArgs={async (args) => {
-                if (!props.mediaFiles.image && !props.mediaFiles.animation) {
-                  return args;
-                }
-                const inscriptionContents =
-                  await generateInscriptionContentsAfterUploadingMedia({
-                    mediaFiles: props.mediaFiles,
-                    inscriptionContents: JSON.parse(args[0]),
-                  });
-                return [JSON.stringify(inscriptionContents)];
               }}
               prePerformTransactionValidation={() => {
                 // TODO check if message is valid

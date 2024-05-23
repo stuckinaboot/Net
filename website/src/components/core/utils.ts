@@ -1,4 +1,5 @@
-const IPFS_URL_WEBSITE = "https://ipfs.io/ipfs/";
+// Use nft storage gateway as that's where media is stored
+const IPFS_URL_WEBSITE = "https://nftstorage.link/ipfs/"; //"https://ipfs.io/ipfs/";
 const IPFS_PREFIX = "ipfs://";
 
 // TODO sanitize to nft storage link

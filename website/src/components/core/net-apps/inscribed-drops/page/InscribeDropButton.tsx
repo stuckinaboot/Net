@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   INSCRIBED_DROPS_CONTRACT,
   INSCRIBED_DROPS_COLLECTION_URL,
@@ -18,7 +18,7 @@ import { MintConfig } from "./InscribeDropMintConfigEntry";
 import { InscribeDropDialogContents } from "./InscribeDropDialogContents";
 import { useRouter } from "next/navigation";
 import { fromHex } from "viem";
-import { useAccount, useChainId } from "wagmi";
+import { useChainId } from "wagmi";
 import { chainIdToOpenSeaChainString } from "@/app/utils";
 import {
   InscriptionContents,
@@ -45,15 +45,21 @@ export default function InscribeDropButton(props: {
   disabled?: boolean;
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [inscription, setInscription] = useState(props.inscription);
+  const [uploadingMedia, setUploadingMedia] = useState(false);
   const router = useRouter();
   const chainId = useChainId();
 
+  useEffect(() => {
+    setInscription(props.inscription);
+  }, [props.inscription]);
+
   const chainString = chainIdToOpenSeaChainString(chainId);
 
-  const inscriptionJson = props.inscription;
+  const inscriptionJson = inscription;
 
   function isValidInscription(json: any) {
-    return json?.name?.length > 0 && json?.image?.length > 0;
+    return json?.image?.length > 0;
   }
   const validInscription = isValidInscription(inscriptionJson);
 
@@ -63,21 +69,46 @@ export default function InscribeDropButton(props: {
     mintEndTimestamp: props.mintConfig.mintEndTimestamp || 0,
   };
 
+  async function uploadMedia() {
+    if (!props.mediaFiles.image && !props.mediaFiles.animation) {
+      return;
+    }
+    setUploadingMedia(true);
+    const updatedInscriptionContents =
+      await generateInscriptionContentsAfterUploadingMedia({
+        mediaFiles: props.mediaFiles,
+        inscriptionContents: inscription,
+      });
+    setInscription(updatedInscriptionContents);
+    setUploadingMedia(false);
+  }
+
   return (
     <Dialog
       open={dialogOpen}
       onOpenChange={(updatedOpen) => setDialogOpen(updatedOpen)}
     >
       <DialogTrigger asChild>
-        <Button className="w-full">Inscribe</Button>
+        <Button
+          onClick={async () => {
+            await uploadMedia();
+          }}
+          className="w-full"
+        >
+          Inscribe
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogDescription>
-            <InscribeDropDialogContents
-              inscriptionContents={props.inscription}
-              mintConfig={props.mintConfig}
-            />
+            {uploadingMedia ? (
+              "Uploading media to IPFS..."
+            ) : (
+              <InscribeDropDialogContents
+                inscriptionContents={inscription}
+                mintConfig={props.mintConfig}
+              />
+            )}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex">
@@ -94,7 +125,7 @@ export default function InscribeDropButton(props: {
                 sanitizedMintConfig.priceInEth,
                 sanitizedMintConfig.maxSupply,
                 sanitizedMintConfig.mintEndTimestamp,
-                JSON.stringify(props.inscription),
+                JSON.stringify(inscription),
               ]}
               messages={{
                 toasts: {
@@ -124,22 +155,6 @@ export default function InscribeDropButton(props: {
                 router.push(
                   `/app/inscribed-drops/mint/${chainString}/${tokenId}`
                 );
-              }}
-              preProcessArgs={async (args) => {
-                if (!props.mediaFiles.image && !props.mediaFiles.animation) {
-                  return args;
-                }
-                const inscriptionContents =
-                  await generateInscriptionContentsAfterUploadingMedia({
-                    mediaFiles: props.mediaFiles,
-                    inscriptionContents: JSON.parse(args[3]),
-                  });
-                return [
-                  args[0],
-                  args[1],
-                  args[2],
-                  JSON.stringify(inscriptionContents),
-                ];
               }}
               prePerformTransactionValidation={() => {
                 // TODO check if message is valid
