@@ -3,24 +3,16 @@ import { Separator } from "@/components/ui/separator";
 import InscriptionAnimationPreview from "../../../../MetadataAnimationPreview";
 import InscriptionImagePreview from "../../../../MetadataImagePreview";
 import { MintConfig } from "./InscribeDropMintConfigEntry";
+import { InscriptionContents } from "../../inscriptions/page/InscriptionEntry";
 
 export function InscribeDropDialogContents(props: {
-  message: string;
+  inscriptionContents: InscriptionContents;
   mintConfig: MintConfig;
 }): React.ReactNode {
-  let inscriptionMetadata;
   let error;
-  try {
-    inscriptionMetadata = JSON.parse(props.message);
-    if (!inscriptionMetadata.image) {
-      error = "No image found";
-    }
-  } catch (e) {
-    if (props.message.length === 0) {
-      error = "Empty inscription";
-    } else {
-      error = "Failed to load inscription";
-    }
+  const inscriptionMetadata = props.inscriptionContents;
+  if (!inscriptionMetadata.image) {
+    error = "No image found";
   }
 
   return (

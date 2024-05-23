@@ -20,6 +20,10 @@ import { useRouter } from "next/navigation";
 import { fromHex } from "viem";
 import { useAccount, useChainId } from "wagmi";
 import { chainIdToOpenSeaChainString } from "@/app/utils";
+import {
+  InscriptionContents,
+  MediaFiles,
+} from "../../inscriptions/page/InscriptionEntry";
 
 const TOASTS = {
   title: "Inscribed Drops",
@@ -34,8 +38,9 @@ const BUTTONS = {
 };
 
 export default function InscribeDropButton(props: {
-  inscription: string;
+  inscription: InscriptionContents;
   mintConfig: MintConfig;
+  mediaFiles: MediaFiles;
   disabled?: boolean;
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -44,10 +49,7 @@ export default function InscribeDropButton(props: {
 
   const chainString = chainIdToOpenSeaChainString(chainId);
 
-  let inscriptionJson;
-  try {
-    inscriptionJson = JSON.parse(props.inscription);
-  } catch (e) {}
+  const inscriptionJson = props.inscription;
 
   function isValidInscription(json: any) {
     return json?.name?.length > 0 && json?.image?.length > 0;
@@ -72,7 +74,7 @@ export default function InscribeDropButton(props: {
         <DialogHeader>
           <DialogDescription>
             <InscribeDropDialogContents
-              message={props.inscription}
+              inscriptionContents={props.inscription}
               mintConfig={props.mintConfig}
             />
           </DialogDescription>

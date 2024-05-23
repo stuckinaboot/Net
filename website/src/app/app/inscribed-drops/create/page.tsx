@@ -6,12 +6,19 @@ import InscribeDropButton from "@/components/core/net-apps/inscribed-drops/page/
 import InscribeDropMintConfigEntry, {
   MintConfig,
 } from "@/components/core/net-apps/inscribed-drops/page/InscribeDropMintConfigEntry";
-import InscriptionEntry from "@/components/core/net-apps/inscriptions/page/InscriptionEntry";
+import InscriptionEntry, {
+  InscriptionContents,
+  MediaFiles,
+} from "@/components/core/net-apps/inscriptions/page/InscriptionEntry";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 export default function Page() {
-  const [message, setMessage] = useState("");
+  const [inscription, setInscription] = useState<InscriptionContents>({});
+  const [files, setFiles] = useState<MediaFiles>({
+    image: undefined,
+    animation: undefined,
+  });
   const [mintConfig, setMintConfig] = useState({
     priceInEth: undefined,
     maxSupply: undefined,
@@ -39,7 +46,15 @@ export default function Page() {
         node: (
           <>
             <InscriptionEntry
-              onInscriptionChanged={(inscription) => setMessage(inscription)}
+              onInscriptionChanged={(inscription) =>
+                setInscription(inscription)
+              }
+              onImageFileChanged={(file) => {
+                setFiles((files) => ({ ...files, image: file }));
+              }}
+              onAnimationFileChanged={(file) => {
+                setFiles((files) => ({ ...files, animation: file }));
+              }}
             />
             <br />
             <InscribeDropMintConfigEntry
@@ -50,8 +65,9 @@ export default function Page() {
       }}
       footer={(disabled) => (
         <InscribeDropButton
-          inscription={message}
+          inscription={inscription}
           mintConfig={mintConfig}
+          mediaFiles={files}
           disabled={disabled}
         />
       )}

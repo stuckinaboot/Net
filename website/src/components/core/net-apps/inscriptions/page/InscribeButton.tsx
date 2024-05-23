@@ -12,6 +12,7 @@ import {
 import { INSCRIPTIONS_CONTRACT, config } from "../InscriptionInferredAppConfig";
 import { useState } from "react";
 import { INSCRIPTIONS_COLLECTION_URL } from "../constants";
+import { InscriptionContents, MediaFiles } from "./InscriptionEntry";
 
 const TOASTS = {
   title: "Inscriptions",
@@ -26,16 +27,14 @@ const BUTTONS = {
 };
 
 export default function InscribeButton(props: {
-  inscription: string;
+  inscription: InscriptionContents;
+  mediaFiles: MediaFiles;
   disabled?: boolean;
 }) {
   const DialogContents = config.dialogContents;
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  let inscriptionJson;
-  try {
-    inscriptionJson = JSON.parse(props.inscription);
-  } catch (e) {}
+  const inscriptionJson = props.inscription;
 
   function isValidInscription(json: any) {
     return json?.name?.length > 0 && json?.image?.length > 0;
@@ -53,7 +52,7 @@ export default function InscribeButton(props: {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogDescription>
-            {<DialogContents message={props.inscription} />}
+            <DialogContents message={JSON.stringify(props.inscription)} />
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex">

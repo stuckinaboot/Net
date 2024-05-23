@@ -3,10 +3,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-import IpfsUpload from "../../inscribed-drops/page/IpfsUpload";
+import FileUpload from "../../inscribed-drops/page/FileUpload";
+
+export type MediaFiles = {
+  image: File | undefined;
+  animation: File | undefined;
+};
+
+export type InscriptionContents = {
+  image?: string;
+  name?: string;
+  description?: string;
+  animation_url?: string;
+  traits?: any;
+};
 
 export default function InscriptionEntry(props: {
-  onInscriptionChanged: (inscriptionMessage: string) => void;
+  onInscriptionChanged: (inscription: InscriptionContents) => void;
   onImageFileChanged: (file: File | undefined) => void;
   onAnimationFileChanged: (file: File | undefined) => void;
 }) {
@@ -27,8 +40,7 @@ export default function InscriptionEntry(props: {
       image: params.image,
       animation_url: params.animation,
     };
-    const inscription = JSON.stringify(final);
-    props.onInscriptionChanged(inscription);
+    props.onInscriptionChanged(final);
   }
 
   return (
@@ -63,7 +75,7 @@ export default function InscriptionEntry(props: {
         }}
         value={image}
       />
-      <IpfsUpload
+      <FileUpload
         onFileSelected={(file) => {
           props.onImageFileChanged(file);
 
@@ -88,7 +100,7 @@ export default function InscriptionEntry(props: {
         }}
         value={animation}
       />
-      <IpfsUpload
+      <FileUpload
         onFileSelected={(file) => {
           props.onAnimationFileChanged(file);
 
