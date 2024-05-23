@@ -55,10 +55,11 @@ export default function Page() {
               onAnimationFileChanged={(file) => {
                 setFiles((files) => ({ ...files, animation: file }));
               }}
-            />
-            <br />
-            <InscribeDropMintConfigEntry
-              onMintConfigChanged={(config) => setMintConfig(config)}
+              additionalOptionalComponent={
+                <InscribeDropMintConfigEntry
+                  onMintConfigChanged={(config) => setMintConfig(config)}
+                />
+              }
             />
           </>
         ),

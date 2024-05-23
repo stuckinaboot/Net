@@ -28,6 +28,7 @@ export default function InscriptionEntry(props: {
   onInscriptionChanged: (inscription: InscriptionContents) => void;
   onImageFileChanged: (file: File | undefined) => void;
   onAnimationFileChanged: (file: File | undefined) => void;
+  additionalOptionalComponent?: React.ReactNode;
 }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -85,6 +86,7 @@ export default function InscriptionEntry(props: {
       </CollapsibleTrigger>
       <CollapsibleContent>
         <>
+          <Spacing />
           <Label>Name:</Label>
           <Input
             onChange={(e) => {
@@ -144,6 +146,12 @@ export default function InscriptionEntry(props: {
               });
             }}
           />
+          {props.additionalOptionalComponent ? (
+            <>
+              <Spacing />
+              {props.additionalOptionalComponent}
+            </>
+          ) : undefined}
         </>
       </CollapsibleContent>
     </Collapsible>
