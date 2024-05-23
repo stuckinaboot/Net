@@ -94,7 +94,7 @@ export default function InscribeDropButton(props: {
                 sanitizedMintConfig.priceInEth,
                 sanitizedMintConfig.maxSupply,
                 sanitizedMintConfig.mintEndTimestamp,
-                props.inscription,
+                JSON.stringify(props.inscription),
               ]}
               messages={{
                 toasts: {

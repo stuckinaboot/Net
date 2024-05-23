@@ -101,7 +101,7 @@ export default function SubmitTransactionButton(props: {
         address: props.to as any,
         abi: props.abi,
         functionName: props.functionName,
-        args: props.args,
+        args,
         value: props.value != null ? BigInt(props.value) : undefined,
       });
     } catch (e) {

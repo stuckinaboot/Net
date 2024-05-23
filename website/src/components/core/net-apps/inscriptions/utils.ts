@@ -1,11 +1,15 @@
 import { uploadToNftStorage } from "@/app/utils";
 import { InscriptionContents, MediaFiles } from "./page/InscriptionEntry";
 
+const IPFS_PREFIX = "ipfs://";
+const IPFS_IO_PREFIX = "https://ipfs.io/ipfs/";
+
 export async function generateInscriptionContentsAfterUploadingMedia(params: {
   mediaFiles: MediaFiles;
   inscriptionContents: InscriptionContents;
 }): Promise<InscriptionContents> {
   const { mediaFiles, inscriptionContents } = params;
+  const newContents = { ...inscriptionContents };
   if (mediaFiles.image) {
     const res = await uploadToNftStorage(mediaFiles.image);
     if (res.error) {
@@ -14,7 +18,7 @@ export async function generateInscriptionContentsAfterUploadingMedia(params: {
     if (!res.ipfsUrl) {
       throw new Error("Failed to upload image to IPFS");
     }
-    inscriptionContents.image = res.ipfsUrl;
+    newContents.image = res.ipfsUrl.replace(IPFS_IO_PREFIX, IPFS_PREFIX);
   }
 
   if (mediaFiles.animation) {
@@ -25,7 +29,10 @@ export async function generateInscriptionContentsAfterUploadingMedia(params: {
     if (!res.ipfsUrl) {
       throw new Error("Failed to upload animation to IPFS");
     }
-    inscriptionContents.animation_url = res.ipfsUrl;
+    newContents.animation_url = res.ipfsUrl.replace(
+      IPFS_IO_PREFIX,
+      IPFS_PREFIX
+    );
   }
-  return inscriptionContents;
+  return newContents;
 }

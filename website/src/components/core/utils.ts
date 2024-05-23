@@ -1,6 +1,8 @@
 const IPFS_URL_WEBSITE = "https://ipfs.io/ipfs/";
 const IPFS_PREFIX = "ipfs://";
 
+// TODO sanitize to nft storage link
+
 export function sanitizeMediaUrl(inputUrl: string) {
   let url = inputUrl;
   if (url.startsWith(IPFS_PREFIX)) {

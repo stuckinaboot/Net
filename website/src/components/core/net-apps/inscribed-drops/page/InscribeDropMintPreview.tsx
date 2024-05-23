@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { getInscribedDropUrlForTokenId } from "../utils";
 
+// TODO preview on NFT storage
+
 export type InscribeDropMessageTextTyped = {
   name?: string;
   description?: string;
