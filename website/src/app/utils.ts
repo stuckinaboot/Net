@@ -68,3 +68,23 @@ export function publicClient(chain: Chain) {
     transport: http(),
   });
 }
+
+export async function uploadToNftStorage(
+  file: File
+): Promise<{ ipfsUrl?: string; error?: string }> {
+  const body = new FormData();
+  body.append("file", file);
+  const res = await fetch("/api/uploadToIpfs", {
+    method: "POST",
+    body,
+  });
+  const resJson = await res.json();
+
+  if (resJson.error) {
+    return { error: resJson.error };
+  }
+  if (resJson.ipfsUrl) {
+    return { ipfsUrl: resJson.ipfsUrl };
+  }
+  return { error: "Failed to upload" };
+}

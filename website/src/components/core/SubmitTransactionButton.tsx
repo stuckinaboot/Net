@@ -27,7 +27,8 @@ export default function SubmitTransactionButton(props: {
     transactionHash: string,
     logs: Log<bigint, number, false>[]
   ) => Promise<void> | void;
-  prePerformTransasctionValidation?: () => string | undefined;
+  preProcessArgs?: (args: any[]) => Promise<any[]>;
+  prePerformTransactionValidation?: () => string | undefined;
   disabled?: boolean;
   value?: string;
 }) {
@@ -67,8 +68,8 @@ export default function SubmitTransactionButton(props: {
   }, [receipt.isSuccess]);
 
   async function performTransaction() {
-    if (props.prePerformTransasctionValidation) {
-      const validationError = props.prePerformTransasctionValidation();
+    if (props.prePerformTransactionValidation) {
+      const validationError = props.prePerformTransactionValidation();
       if (validationError) {
         toast({
           title: "Error",
@@ -81,6 +82,20 @@ export default function SubmitTransactionButton(props: {
       // Don't allow pressing the button again if status is pending
       return;
     }
+
+    let args = props.args;
+    if (props.preProcessArgs) {
+      try {
+        args = await props.preProcessArgs(args);
+      } catch (e) {
+        toast({
+          title: "Error",
+          // TODO add custom dynamic error
+          description: "Failed to process arguments",
+        });
+      }
+    }
+
     try {
       await writeContractAsync({
         address: props.to as any,

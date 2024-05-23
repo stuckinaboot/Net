@@ -88,7 +88,7 @@ export default function InscribeButton(props: {
               onTransactionConfirmed={() => {
                 setDialogOpen(false);
               }}
-              prePerformTransasctionValidation={() => {
+              prePerformTransactionValidation={() => {
                 // TODO check if message is valid
                 return undefined;
               }}

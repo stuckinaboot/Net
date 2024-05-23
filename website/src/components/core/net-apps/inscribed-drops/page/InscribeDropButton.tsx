@@ -124,7 +124,7 @@ export default function InscribeDropButton(props: {
                   `/app/inscribed-drops/mint/${chainString}/${tokenId}`
                 );
               }}
-              prePerformTransasctionValidation={() => {
+              prePerformTransactionValidation={() => {
                 // TODO check if message is valid
                 return undefined;
               }}

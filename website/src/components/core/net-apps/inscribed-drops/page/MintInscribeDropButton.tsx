@@ -64,7 +64,7 @@ export default function MintInscribeDropButton(props: {
       }}
       useDefaultButtonMessageOnSuccess={true}
       onTransactionConfirmed={() => {}}
-      prePerformTransasctionValidation={() => {
+      prePerformTransactionValidation={() => {
         // TODO check if message is valid
         return undefined;
       }}
