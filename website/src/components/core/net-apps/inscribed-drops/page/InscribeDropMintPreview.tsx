@@ -3,7 +3,7 @@ import MetadataImagePreview from "@/components/MetadataImagePreview";
 import { Spacing } from "@/components/core/Spacing";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { getInscribedDropUrlForTokenId } from "../utils";
+import { InscribedDrop, getInscribedDropUrlForTokenId } from "../utils";
 
 // TODO preview on NFT storage
 
@@ -16,17 +16,30 @@ export type InscribeDropMessageTextTyped = {
 };
 
 export default function InscribeDropMintPreview(props: {
-  previewParams: InscribeDropMessageTextTyped & {
+  previewParams: {
+    inscribedDrop: InscribedDrop;
     creator: string;
     tokenId: string;
     chainId: number;
   };
 }) {
+  const metadata = props.previewParams.inscribedDrop.metadata;
+  const mintConfig = props.previewParams.inscribedDrop.mintConfig;
+
+  function LabelWithSpacing(props: { children: React.ReactNode }) {
+    return (
+      <>
+        <Label>{props.children}</Label>
+        <Spacing />
+      </>
+    );
+  }
+
   return (
     <>
-      {props.previewParams.name && (
+      {metadata.name && (
         <>
-          <Label>Inscribed Drop: {props.previewParams.name}</Label>
+          <Label>Inscribed Drop: {metadata.name}</Label>
           <Spacing />
         </>
       )}
@@ -36,34 +49,42 @@ export default function InscribeDropMintPreview(props: {
           <Spacing />
         </>
       )}
-      {props.previewParams.description && (
+      {metadata.description && (
         <>
-          <Label>Description: {props.previewParams.description}</Label>
+          <Label>Description: {metadata.description}</Label>
           <Spacing />
         </>
       )}
-      {props.previewParams.traits && (
+      {metadata.traits && (
         <>
-          <Label>Traits: {props.previewParams.traits}</Label>
+          <Label>Traits: {metadata.traits}</Label>
           <Spacing />
         </>
       )}
-      {props.previewParams.image && (
+      {metadata.image && (
         <>
           <Label>Image:</Label>
-          <MetadataImagePreview image={props.previewParams.image} />
+          <MetadataImagePreview image={metadata.image} />
           <Spacing />
         </>
       )}
-      {props.previewParams.animationUrl && (
+      {metadata.animationUrl && (
         <>
           <Label>Animation:</Label>
-          <MetadataAnimationPreview
-            animationUrl={props.previewParams.animationUrl}
-          />
+          <MetadataAnimationPreview animationUrl={metadata.animationUrl} />
           <Spacing />
         </>
       )}
+      <LabelWithSpacing>
+        Max supply: {mintConfig.maxSupply || "Open Edition"}
+      </LabelWithSpacing>
+      <LabelWithSpacing>
+        Mint price (in ETH): {mintConfig.priceInEth}
+      </LabelWithSpacing>
+      <LabelWithSpacing>
+        Mint end timestamp (in block time):{" "}
+        {mintConfig.mintEndTimestamp || "Open Forever"}
+      </LabelWithSpacing>
       <Button
         onClick={() =>
           window.open(

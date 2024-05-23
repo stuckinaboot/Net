@@ -1,6 +1,6 @@
 import { NFTStorage, Blob } from "nft.storage";
 
-const IPFS_GATEWAY_PREFIX = "https://ipfs.io/ipfs/";
+const IPFS_GATEWAY_PREFIX = "https://nftstorage.link/ipfs/";
 const IPFS_PREFIX = "ipfs://";
 
 // Paste your NFT.Storage API key into the quotes:

@@ -55,7 +55,7 @@ export default function Page({ params }: { params: { tokenId: string } }) {
           <>
             <InscribeDropMintPreview
               previewParams={{
-                ...typedData.metadata,
+                inscribedDrop: typedData,
                 creator: typedData.creator,
                 tokenId: params.tokenId,
                 chainId,

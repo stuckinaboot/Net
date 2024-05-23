@@ -3,6 +3,8 @@ import { Spacing, SpacingSize } from "../../Spacing";
 import FileUpload from "../inscribed-drops/page/FileUpload";
 import { Label } from "@/components/ui/label";
 
+const SHOW_TEXT_INPUT = false;
+
 export default function UploadMediaInput(props: {
   value?: string;
   file?: File;
@@ -16,17 +18,21 @@ export default function UploadMediaInput(props: {
           props.onChange && props.onChange(file?.name || "", file);
         }}
       />
-      <Spacing size={SpacingSize.SMALL} />
-      <Label>or</Label>
-      <Spacing size={SpacingSize.SMALL} />
-      <Input
-        onChange={(e) => {
-          const updated = e.target.value;
-          props.onChange && props.onChange(updated);
-        }}
-        value={props.value}
-        placeholder="Enter url manually..."
-      />
+      {SHOW_TEXT_INPUT && (
+        <>
+          <Spacing size={SpacingSize.SMALL} />
+          <Label>or</Label>
+          <Spacing size={SpacingSize.SMALL} />
+          <Input
+            onChange={(e) => {
+              const updated = e.target.value;
+              props.onChange && props.onChange(updated);
+            }}
+            value={props.value}
+            placeholder="Enter url manually..."
+          />
+        </>
+      )}
     </div>
   );
 }

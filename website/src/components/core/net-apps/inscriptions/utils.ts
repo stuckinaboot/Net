@@ -2,7 +2,8 @@ import { uploadToNftStorage } from "@/app/utils";
 import { InscriptionContents, MediaFiles } from "./page/InscriptionEntry";
 
 const IPFS_PREFIX = "ipfs://";
-const IPFS_IO_PREFIX = "https://ipfs.io/ipfs/";
+// NOTE: this must match the IPFS gateway prefix in the NFT storage service
+const IPFS_GATEWAY_PREFIX = "https://nftstorage.link/ipfs/";
 
 export async function generateInscriptionContentsAfterUploadingMedia(params: {
   mediaFiles: MediaFiles;
@@ -18,7 +19,7 @@ export async function generateInscriptionContentsAfterUploadingMedia(params: {
     if (!res.ipfsUrl) {
       throw new Error("Failed to upload image to IPFS");
     }
-    newContents.image = res.ipfsUrl.replace(IPFS_IO_PREFIX, IPFS_PREFIX);
+    newContents.image = res.ipfsUrl.replace(IPFS_GATEWAY_PREFIX, IPFS_PREFIX);
   }
 
   if (mediaFiles.animation) {
@@ -30,7 +31,7 @@ export async function generateInscriptionContentsAfterUploadingMedia(params: {
       throw new Error("Failed to upload animation to IPFS");
     }
     newContents.animation_url = res.ipfsUrl.replace(
-      IPFS_IO_PREFIX,
+      IPFS_GATEWAY_PREFIX,
       IPFS_PREFIX
     );
   }

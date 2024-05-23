@@ -1,5 +1,4 @@
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
 import Dropzone from "react-dropzone";
 
 export default function FileUpload(props: {
@@ -17,14 +16,19 @@ export default function FileUpload(props: {
       {({ getRootProps, getInputProps }) => (
         <div {...getRootProps()}>
           <input {...getInputProps()} />
-          <div className="border bg-background rounded p-3">
+          <div className="border bg-background rounded p-3 min-h-32 text-center flex items-center justify-center">
             {props.file?.name ? (
-              <Label>
+              <Label className="flex">
                 <b>File: {props.file ? props.file.name : "None"}</b>
                 <br />
               </Label>
             ) : (
-              <Label>Drop file here, or click to upload</Label>
+              <Label>
+                Drop file here
+                <br />
+                <br />
+                or click to upload
+              </Label>
             )}
           </div>
         </div>

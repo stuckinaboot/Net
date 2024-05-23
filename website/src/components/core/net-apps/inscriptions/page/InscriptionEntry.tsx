@@ -56,7 +56,7 @@ export default function InscriptionEntry(props: {
   }
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
       <Label>
         <b>Choose image:</b>
       </Label>
@@ -85,29 +85,6 @@ export default function InscriptionEntry(props: {
           updateInscription({ name, description, image: value, animation });
         }}
       />
-      {/* <Textarea
-        contentEditable
-        onChange={(e) => {
-          const updated = e.target.value;
-          setImage(updated);
-          updateInscription({ name, description, image: updated, animation });
-        }}
-        value={image}
-      />
-      <FileUpload
-        onFileSelected={(file) => {
-          props.onImageFileChanged(file);
-
-          const updatedFileName = file?.name || "";
-          setImage(updatedFileName);
-          updateInscription({
-            name,
-            description,
-            image: updatedFileName,
-            animation,
-          });
-        }}
-      /> */}
       <Spacing size={SpacingSize.LARGE} />
       <CollapsibleTrigger asChild>
         <Button variant="outline" size="sm">
@@ -177,35 +154,6 @@ export default function InscriptionEntry(props: {
               props.onAnimationFileChanged(undefined);
               setAnimation(value);
               updateInscription({ name, description, image, animation: value });
-            }}
-          />
-          {/* <Label>Animation URL (optional):</Label>
-          <Textarea
-            contentEditable
-            onChange={(e) => {
-              const updated = e.target.value;
-              setAnimation(updated);
-              updateInscription({
-                name,
-                description,
-                image,
-                animation: updated,
-              });
-            }}
-            value={animation}
-          /> */}
-          <FileUpload
-            onFileSelected={(file) => {
-              props.onAnimationFileChanged(file);
-
-              const updatedFileName = file?.name || "";
-              setAnimation(updatedFileName);
-              updateInscription({
-                name,
-                description,
-                animation: updatedFileName,
-                image,
-              });
             }}
           />
           {props.additionalOptionalComponent ? (

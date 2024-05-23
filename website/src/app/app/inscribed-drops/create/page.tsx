@@ -13,6 +13,8 @@ import InscriptionEntry, {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
+const SHOW_VIEW_DROPS_ON_OPENSEA_BUTTON = false;
+
 export default function Page() {
   const [inscription, setInscription] = useState<InscriptionContents>({});
   const [files, setFiles] = useState<MediaFiles>({
@@ -31,15 +33,19 @@ export default function Page() {
         <>
           Inscribe your art on Net and allow others to mint. Enter metadata for
           your art, configure your mint, and press inscribe.
-          <br />
-          <Button
-            onClick={() =>
-              window.open(INSCRIBED_DROPS_COLLECTION_URL, "_blank")
-            }
-            variant="outline"
-          >
-            View Inscribed Drops on OpenSea
-          </Button>
+          {SHOW_VIEW_DROPS_ON_OPENSEA_BUTTON && (
+            <>
+              <br />
+              <Button
+                onClick={() =>
+                  window.open(INSCRIBED_DROPS_COLLECTION_URL, "_blank")
+                }
+                variant="outline"
+              >
+                View Inscribed Drops on OpenSea
+              </Button>
+            </>
+          )}
         </>
       }
       content={{

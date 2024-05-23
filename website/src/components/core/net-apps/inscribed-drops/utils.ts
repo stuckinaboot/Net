@@ -21,7 +21,7 @@ export function getInscribedDropUrlForTokenId(
   return `https://testnets.opensea.io/assets/${chainString}/${INSCRIBED_DROPS_CONTRACT.address}/${tokenId}`;
 }
 
-type InscribedDrop = {
+export type InscribedDrop = {
   metadata: {
     name: string;
     description: string;

@@ -95,7 +95,7 @@ export default function InscribeDropButton(props: {
           }}
           className="w-full"
         >
-          Inscribe
+          Inscribe drop
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
