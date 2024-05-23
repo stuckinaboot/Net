@@ -4,6 +4,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import FileUpload from "../../inscribed-drops/page/FileUpload";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
 
 export type MediaFiles = {
   image: File | undefined;
@@ -28,6 +34,8 @@ export default function InscriptionEntry(props: {
   const [image, setImage] = useState("");
   const [animation, setAnimation] = useState("");
 
+  const [isOpen, setIsOpen] = useState(false);
+
   function updateInscription(params: {
     name: string;
     description: string;
@@ -44,7 +52,7 @@ export default function InscriptionEntry(props: {
   }
 
   return (
-    <>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <Label>Image URL:</Label>
       <Textarea
         contentEditable
@@ -70,50 +78,74 @@ export default function InscriptionEntry(props: {
         }}
       />
       <Spacing />
-      <Label>Name:</Label>
-      <Input
-        onChange={(e) => {
-          const updated = e.target.value;
-          setName(updated);
-          updateInscription({ name: updated, description, image, animation });
-        }}
-        value={name}
-      />
-      <Spacing />
-      <Label>Description:</Label>
-      <Textarea
-        onChange={(e) => {
-          const updated = e.target.value;
-          setDescription(updated);
-          updateInscription({ name, description: updated, image, animation });
-        }}
-        value={description}
-      />
-      <Spacing />
-      <Label>Animation URL (optional):</Label>
-      <Textarea
-        contentEditable
-        onChange={(e) => {
-          const updated = e.target.value;
-          setAnimation(updated);
-          updateInscription({ name, description, image, animation: updated });
-        }}
-        value={animation}
-      />
-      <FileUpload
-        onFileSelected={(file) => {
-          props.onAnimationFileChanged(file);
+      <CollapsibleTrigger asChild>
+        <Button variant="outline" size="sm">
+          Show optional fields
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <>
+          <Label>Name:</Label>
+          <Input
+            onChange={(e) => {
+              const updated = e.target.value;
+              setName(updated);
+              updateInscription({
+                name: updated,
+                description,
+                image,
+                animation,
+              });
+            }}
+            value={name}
+          />
+          <Spacing />
+          <Label>Description:</Label>
+          <Textarea
+            onChange={(e) => {
+              const updated = e.target.value;
+              setDescription(updated);
+              updateInscription({
+                name,
+                description: updated,
+                image,
+                animation,
+              });
+            }}
+            value={description}
+          />
+          <Spacing />
+          <Label>Animation URL (optional):</Label>
+          <Textarea
+            contentEditable
+            onChange={(e) => {
+              const updated = e.target.value;
+              setAnimation(updated);
+              updateInscription({
+                name,
+                description,
+                image,
+                animation: updated,
+              });
+            }}
+            value={animation}
+          />
+          <FileUpload
+            onFileSelected={(file) => {
+              props.onAnimationFileChanged(file);
 
-          const updatedFileName = file?.name || "";
-          setAnimation(updatedFileName);
-          updateInscription({
-            name,
-            description,
-            animation: updatedFileName,
-            image,
-          });
-        }}
-      />
-    </>
+              const updatedFileName = file?.name || "";
+              setAnimation(updatedFileName);
+              updateInscription({
+                name,
+                description,
+                animation: updatedFileName,
+                image,
+              });
+            }}
+          />
+        </>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
