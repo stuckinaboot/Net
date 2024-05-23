@@ -26,10 +26,7 @@ export default function FileUpload(props: {
                 <b>Selected file: {file ? file.name : "None"}</b>
               </Label>
               <br />
-              Drag 'n' drop file or click here
-              <br />
-              <br />
-              Then press "Upload to IPFS" and your image will be infused
+              Drag 'n' drop file or click here to upload
             </div>
           </div>
         )}
