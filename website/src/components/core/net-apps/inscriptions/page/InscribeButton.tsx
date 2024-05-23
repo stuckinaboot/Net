@@ -92,7 +92,7 @@ export default function InscribeButton(props: {
           <DialogClose asChild>
             <Button className="flex-1 mr-2">Cancel</Button>
           </DialogClose>
-          {validInscription && (
+          {validInscription && !uploadingMedia && (
             <SubmitTransactionButton
               className="flex-1"
               functionName="inscribe"

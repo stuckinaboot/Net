@@ -20,7 +20,7 @@ export default function FileUpload(props: {
           <div className="border bg-background rounded p-3">
             {props.file?.name ? (
               <Label>
-                <b>Selected file: {props.file ? props.file.name : "None"}</b>
+                <b>File: {props.file ? props.file.name : "None"}</b>
                 <br />
               </Label>
             ) : (
