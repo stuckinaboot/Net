@@ -17,7 +17,7 @@ import {
 import { MintConfig } from "./InscribeDropMintConfigEntry";
 import { InscribeDropDialogContents } from "./InscribeDropDialogContents";
 import { useRouter } from "next/navigation";
-import { fromHex } from "viem";
+import { fromHex, parseEther, parseUnits } from "viem";
 import { useChainId } from "wagmi";
 import { chainIdToOpenSeaChainString } from "@/app/utils";
 import {
@@ -83,6 +83,14 @@ export default function InscribeDropButton(props: {
     setUploadingMedia(false);
   }
 
+  console.log(
+    "HIT HERE!",
+    sanitizedMintConfig.priceInEth,
+    sanitizedMintConfig.maxSupply,
+    sanitizedMintConfig.mintEndTimestamp,
+    JSON.stringify(inscription)
+  );
+
   return (
     <Dialog
       open={dialogOpen}
@@ -122,7 +130,7 @@ export default function InscribeDropButton(props: {
               abi={INSCRIBED_DROPS_CONTRACT.abi}
               to={INSCRIBED_DROPS_CONTRACT.address}
               args={[
-                sanitizedMintConfig.priceInEth,
+                parseEther(sanitizedMintConfig.priceInEth.toString()),
                 sanitizedMintConfig.maxSupply,
                 sanitizedMintConfig.mintEndTimestamp,
                 JSON.stringify(inscription),

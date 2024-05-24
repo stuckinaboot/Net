@@ -57,7 +57,7 @@
       },
       { "name": "tokenUri", "type": "string", "internalType": "string" }
     ],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [],
     "stateMutability": "nonpayable"
   },
   {
@@ -369,6 +369,7 @@
   },
   { "type": "error", "name": "AccountBalanceOverflow", "inputs": [] },
   { "type": "error", "name": "ArrayLengthsMismatch", "inputs": [] },
+  { "type": "error", "name": "CannotMintQuantityZero", "inputs": [] },
   { "type": "error", "name": "InsufficientBalance", "inputs": [] },
   { "type": "error", "name": "MintEndTimestampReached", "inputs": [] },
   { "type": "error", "name": "MintPaymentIncorrect", "inputs": [] },
