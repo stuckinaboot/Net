@@ -15,7 +15,6 @@ async function uploadToNftStorage(buffer: Buffer) {
 }
 
 export async function POST(req: NextRequest) {
-  console.log("Incoming!");
   // https://codersteps.com/articles/building-a-file-uploader-from-scratch-with-next-js-app-directory
   const formData = await req.formData();
 
