@@ -6,13 +6,6 @@ type Response = {
   error?: string;
 };
 
-export const config = {
-  api: {
-    bodyParser: false,
-    sizeLimit: "10mb",
-  },
-};
-
 const nftStorageHelper = new NFTStorageHelper();
 
 async function uploadToNftStorage(buffer: Buffer) {
