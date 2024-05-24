@@ -3,7 +3,7 @@ import { Spacing, SpacingSize } from "../../Spacing";
 import FileUpload from "../inscribed-drops/page/FileUpload";
 import { Label } from "@/components/ui/label";
 
-const SHOW_TEXT_INPUT = false;
+const SHOW_TEXT_INPUT = true;
 
 export default function UploadMediaInput(props: {
   value?: string;
