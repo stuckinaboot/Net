@@ -83,14 +83,6 @@ export default function InscribeDropButton(props: {
     setUploadingMedia(false);
   }
 
-  console.log(
-    "HIT HERE!",
-    sanitizedMintConfig.priceInEth,
-    sanitizedMintConfig.maxSupply,
-    sanitizedMintConfig.mintEndTimestamp,
-    JSON.stringify(inscription)
-  );
-
   return (
     <Dialog
       open={dialogOpen}

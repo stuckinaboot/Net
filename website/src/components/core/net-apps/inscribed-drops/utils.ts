@@ -8,7 +8,7 @@ import {
   publicClient,
 } from "@/app/utils";
 import { MintConfigDefined } from "./page/InscribeDropMintConfigEntry";
-import { fromHex } from "viem";
+import { formatEther, fromHex, parseEther } from "viem";
 import { OnchainMessage } from "../../types";
 import { WILLIE_NET_CONTRACT } from "@/app/constants";
 import { readContract } from "viem/actions";
@@ -58,7 +58,7 @@ export function getInscribedDropFromOnchainMessage(
 
   return {
     mintConfig: {
-      priceInEth: msgDataFields[0],
+      priceInEth: +formatEther(BigInt(msgDataFields[0].toString())),
       maxSupply: msgDataFields[1],
       mintEndTimestamp: msgDataFields[2],
     },

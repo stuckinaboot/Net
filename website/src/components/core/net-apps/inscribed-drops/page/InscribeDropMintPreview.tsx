@@ -4,6 +4,7 @@ import { Spacing } from "@/components/core/Spacing";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { InscribedDrop, getInscribedDropUrlForTokenId } from "../utils";
+import { formatEther, parseUnits } from "viem";
 
 // TODO preview on NFT storage
 
@@ -63,14 +64,14 @@ export default function InscribeDropMintPreview(props: {
       )}
       {metadata.image && (
         <>
-          <Label>Image:</Label>
+          <Label>Image: </Label>
           <MetadataImagePreview image={metadata.image} />
           <Spacing />
         </>
       )}
       {metadata.animationUrl && (
         <>
-          <Label>Animation:</Label>
+          <Label>Animation: </Label>
           <MetadataAnimationPreview animationUrl={metadata.animationUrl} />
           <Spacing />
         </>
