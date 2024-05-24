@@ -61,7 +61,14 @@ export default function Page({ params }: { params: { tokenId: string } }) {
                 chainId,
               }}
             />
-            <Spacing />
+          </>
+        ) : (
+          <>Loading mint...</>
+        ),
+      }}
+      footer={(disabled) =>
+        typedData ? (
+          <>
             <Label>Enter quantity to mint:</Label>
             <Input
               onChange={(e) => {
@@ -79,20 +86,15 @@ export default function Page({ params }: { params: { tokenId: string } }) {
               }}
               value={quantityToMint}
             />
+            <Spacing />
+            <MintInscribeDropButton
+              tokenId={params.tokenId}
+              chainId={chainId}
+              quantity={+quantityToMint}
+              priceInEth={typedData.mintConfig.priceInEth}
+              disabled={disabled}
+            />
           </>
-        ) : (
-          <>Loading mint...</>
-        ),
-      }}
-      footer={(disabled) =>
-        typedData ? (
-          <MintInscribeDropButton
-            tokenId={params.tokenId}
-            chainId={chainId}
-            quantity={+quantityToMint}
-            priceInEth={typedData.mintConfig.priceInEth}
-            disabled={disabled}
-          />
         ) : null
       }
     />
