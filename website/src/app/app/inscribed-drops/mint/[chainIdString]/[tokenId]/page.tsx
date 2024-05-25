@@ -6,21 +6,19 @@ import {
   INSCRIBED_DROPS_CONTRACT,
   INSCRIBE_DROP_INSCRIBE_TOPIC,
 } from "@/components/core/net-apps/inscribed-drops/constants";
-import { MintConfigDefined } from "@/components/core/net-apps/inscribed-drops/page/InscribeDropMintConfigEntry";
-import InscribeDropMintPreview, {
-  InscribeDropMessageTextTyped,
-} from "@/components/core/net-apps/inscribed-drops/page/InscribeDropMintPreview";
+import InscribeDropMintPreview from "@/components/core/net-apps/inscribed-drops/page/InscribeDropMintPreview";
+import { Button } from "@/components/ui/button";
 import MintInscribeDropButton from "@/components/core/net-apps/inscribed-drops/page/MintInscribeDropButton";
 import { OnchainMessage } from "@/components/core/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useChainId, useReadContract } from "wagmi";
-import { fromHex } from "viem";
 import { Spacing } from "@/components/core/Spacing";
 import { getInscribedDropFromOnchainMessage } from "@/components/core/net-apps/inscribed-drops/utils";
 import CopyInscribedDropLinkButton from "@/components/core/net-apps/inscribed-drops/page/CopyInscribedDropLinkButton";
 import ShareDropInCastButton from "@/components/core/net-apps/inscribed-drops/page/ShareDropInCastButton";
+import { getInscribedDropUrlForTokenId } from "@/components/core/net-apps/inscribed-drops/utils";
 
 export default function Page({ params }: { params: { tokenId: string } }) {
   const [quantityToMint, setQuantityToMint] = useState("1");
