@@ -3,12 +3,21 @@
 import BasePageCard from "@/components/core/BasePageCard";
 import { INSCRIPTIONS_COLLECTION_URL } from "@/components/core/net-apps/inscriptions/constants";
 import InscribeButton from "@/components/core/net-apps/inscriptions/page/InscribeButton";
-import InscriptionEntry from "@/components/core/net-apps/inscriptions/page/InscriptionEntry";
+import InscriptionEntry, {
+  InscriptionContents,
+  MediaFiles,
+} from "@/components/core/net-apps/inscriptions/page/InscriptionEntry";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 export default function Page() {
-  const [message, setMessage] = useState("");
+  const [inscription, setInscriptionContents] = useState<InscriptionContents>(
+    {}
+  );
+  const [mediaFiles, setMediaFiles] = useState<MediaFiles>({
+    image: undefined,
+    animation: undefined,
+  });
 
   return (
     <BasePageCard
@@ -28,12 +37,24 @@ export default function Page() {
       content={{
         node: (
           <InscriptionEntry
-            onInscriptionChanged={(inscription) => setMessage(inscription)}
+            onInscriptionChanged={(inscription) =>
+              setInscriptionContents(inscription)
+            }
+            onImageFileChanged={(file) => {
+              setMediaFiles((files) => ({ ...files, image: file }));
+            }}
+            onAnimationFileChanged={(file) => {
+              setMediaFiles((files) => ({ ...files, animation: file }));
+            }}
           />
         ),
       }}
       footer={(disabled) => (
-        <InscribeButton inscription={message} disabled={disabled} />
+        <InscribeButton
+          inscription={inscription}
+          mediaFiles={mediaFiles}
+          disabled={disabled}
+        />
       )}
     />
   );

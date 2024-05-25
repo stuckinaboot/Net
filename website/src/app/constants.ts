@@ -1,3 +1,4 @@
+import { base, baseSepolia, degen, sepolia } from "viem/chains";
 import willienetAbi from "../../assets/abis/willienet.json";
 
 export const TESTNETS_ENABLED =
@@ -17,3 +18,23 @@ export const WILLIE_NET_CONTRACT = {
 export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export const SHOW_COPY_MESSAGE_LINK_BUTTON = false;
+
+// Maps chain ID to opensea chain string that is used in public OpenSea URLs
+export const CHAIN_ID_TO_OPENSEA_CHAIN_MAP = [
+  {
+    chain: baseSepolia,
+    openSeaChainString: "base-sepolia",
+    crossChainId: "eip155:84532",
+  },
+  {
+    chain: sepolia,
+    openSeaChainString: "sepolia",
+    crossChainId: "eip155:11155111",
+  },
+  { chain: base, openSeaChainString: "base", crossChainId: "eip155:8453" },
+  {
+    chain: degen,
+    openSeaChainString: "degen",
+    crossChainId: "eip155:666666666",
+  },
+];

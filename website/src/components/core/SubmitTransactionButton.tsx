@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
 import { getDisplayableErrorMessageFromSubmitTransactionError } from "@/app/utils";
+import { Log } from "viem";
 
 const SHOW_TX_SUBMISSION_TEXT = false;
 const SHOW_TX_RECEIPT_TEXT = false;
@@ -22,9 +23,14 @@ export default function SubmitTransactionButton(props: {
   };
   useDefaultButtonMessageOnSuccess?: boolean;
   className?: string;
-  onTransactionConfirmed?: (transactionHash: string) => void;
-  prePerformTransasctionValidation?: () => string | undefined;
+  onTransactionConfirmed?: (
+    transactionHash: string,
+    logs: Log<bigint, number, false>[]
+  ) => Promise<void> | void;
+  preProcessArgs?: (args: any[]) => Promise<any[]>;
+  prePerformTransactionValidation?: () => string | undefined;
   disabled?: boolean;
+  value?: string;
 }) {
   const { toast } = useToast();
   const chainId = useChainId();
@@ -50,17 +56,20 @@ export default function SubmitTransactionButton(props: {
     if (!receipt.isSuccess || shownSuccessToast) {
       return;
     }
+
     toast({
       title: props.messages.toasts.title,
       description: props.messages.toasts.success,
     });
-    hash && props.onTransactionConfirmed && props.onTransactionConfirmed(hash);
+    hash &&
+      props.onTransactionConfirmed &&
+      props.onTransactionConfirmed(hash, receipt.data.logs);
     setShownSucccessToast(true);
   }, [receipt.isSuccess]);
 
   async function performTransaction() {
-    if (props.prePerformTransasctionValidation) {
-      const validationError = props.prePerformTransasctionValidation();
+    if (props.prePerformTransactionValidation) {
+      const validationError = props.prePerformTransactionValidation();
       if (validationError) {
         toast({
           title: "Error",
@@ -73,12 +82,27 @@ export default function SubmitTransactionButton(props: {
       // Don't allow pressing the button again if status is pending
       return;
     }
+
+    let args = props.args;
+    if (props.preProcessArgs) {
+      try {
+        args = await props.preProcessArgs(args);
+      } catch (e) {
+        toast({
+          title: "Error",
+          // TODO add custom dynamic error
+          description: "Failed to process arguments",
+        });
+      }
+    }
+
     try {
       await writeContractAsync({
         address: props.to as any,
         abi: props.abi,
         functionName: props.functionName,
-        args: props.args,
+        args,
+        value: props.value != null ? BigInt(props.value) : undefined,
       });
     } catch (e) {
       if (e instanceof Error) {

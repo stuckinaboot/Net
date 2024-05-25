@@ -3,20 +3,15 @@ import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import truncateEthAddress from "truncate-eth-address";
 import { useChainId, useReadContract } from "wagmi";
-import { NetAppContext, SanitizedOnchainMessage } from "./types";
+import {
+  NetAppContext,
+  OnchainMessage,
+  SanitizedOnchainMessage,
+} from "./types";
 import DefaultMessageRenderer from "./DefaultMessageRenderer";
 import { APP_TO_CONFIG } from "./net-apps/AppManager";
 import { getEnsName } from "../utils/utils";
 import useAsyncEffect from "use-async-effect";
-
-type OnchainMessage = {
-  data: string;
-  text: string;
-  sender: string;
-  app: string;
-  timestamp: BigInt;
-  topic: string;
-};
 
 // TODO work on improving this to a lower value. Currently, if its too low,
 // we run into issues where it won't scroll at all

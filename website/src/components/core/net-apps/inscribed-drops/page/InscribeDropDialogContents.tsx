@@ -1,30 +1,23 @@
 import { Label } from "@/components/ui/label";
-import IframeRenderer from "../../IFrameRenderer";
 import { Separator } from "@/components/ui/separator";
-import InscriptionAnimationPreview from "../../../MetadataAnimationPreview";
-import InscriptionImagePreview from "../../../MetadataImagePreview";
+import InscriptionAnimationPreview from "../../../../MetadataAnimationPreview";
+import InscriptionImagePreview from "../../../../MetadataImagePreview";
+import { MintConfig } from "./InscribeDropMintConfigEntry";
+import { InscriptionContents } from "../../inscriptions/page/InscriptionEntry";
 
-export function InscriptionDialogContents(props: {
-  message: string;
+export function InscribeDropDialogContents(props: {
+  inscriptionContents: InscriptionContents;
+  mintConfig: MintConfig;
 }): React.ReactNode {
-  let inscriptionMetadata;
   let error;
-  try {
-    inscriptionMetadata = JSON.parse(props.message);
-    if (!inscriptionMetadata.image) {
-      error = "No image found";
-    }
-  } catch (e) {
-    if (props.message.length === 0) {
-      error = "Empty inscription";
-    } else {
-      error = "Failed to load inscription";
-    }
+  const inscriptionMetadata = props.inscriptionContents;
+  if (!inscriptionMetadata.image) {
+    error = "No image found";
   }
 
   return (
     <>
-      <Label>Inscribe message as NFT</Label>
+      <Label>Inscribe drop</Label>
       <Separator className="m-3" />
       {error && <Label className="text-red-500">Error: {error}</Label>}
       {inscriptionMetadata?.name && (
@@ -66,6 +59,22 @@ export function InscriptionDialogContents(props: {
           </Label>
         </>
       )}
+      <>
+        <br />
+        <Label>Mint price (in ETH): {props.mintConfig.priceInEth || "0"}</Label>
+      </>
+      <>
+        <br />
+        <Label>
+          Max supply: {props.mintConfig.maxSupply || "Open Edition"}
+        </Label>
+      </>
+      <>
+        <br />
+        <Label>
+          Mint end date: {props.mintConfig.mintEndTimestamp || "Open Forever"}
+        </Label>
+      </>
     </>
   );
 }

@@ -9,45 +9,65 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { INSCRIPTIONS_CONTRACT, config } from "../InscriptionInferredAppConfig";
 import { useEffect, useState } from "react";
-import { INSCRIPTIONS_COLLECTION_URL } from "../constants";
-import { InscriptionContents, MediaFiles } from "./InscriptionEntry";
-import { uploadToNftStorage } from "@/app/utils";
-import { generateInscriptionContentsAfterUploadingMedia } from "../utils";
+import {
+  INSCRIBED_DROPS_CONTRACT,
+  INSCRIBED_DROPS_COLLECTION_URL,
+} from "../constants";
+import { MintConfig } from "./InscribeDropMintConfigEntry";
+import { InscribeDropDialogContents } from "./InscribeDropDialogContents";
+import { useRouter } from "next/navigation";
+import { fromHex, parseEther, parseUnits } from "viem";
+import { useChainId } from "wagmi";
+import { chainIdToOpenSeaChainString } from "@/app/utils";
+import {
+  InscriptionContents,
+  MediaFiles,
+} from "../../inscriptions/page/InscriptionEntry";
+import { generateInscriptionContentsAfterUploadingMedia } from "../../inscriptions/utils";
 
 const TOASTS = {
-  title: "Inscriptions",
-  success: "Your art has been successfully inscribed on Net",
+  title: "Inscribed Drops",
+  success: "Your drop has been successfully inscribed on Net",
   error: "Failed to inscribe",
 };
 
 const BUTTONS = {
-  default: "Inscribe",
+  default: "Inscribe drop",
   pending: "Inscribing",
-  success: "Inscribed",
+  success: "Inscribed drop",
 };
 
-export default function InscribeButton(props: {
+export default function InscribeDropButton(props: {
   inscription: InscriptionContents;
+  mintConfig: MintConfig;
   mediaFiles: MediaFiles;
   disabled?: boolean;
 }) {
-  const DialogContents = config.dialogContents;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [inscription, setInscription] = useState(props.inscription);
   const [uploadingMedia, setUploadingMedia] = useState(false);
+  const router = useRouter();
+  const chainId = useChainId();
 
   useEffect(() => {
     setInscription(props.inscription);
   }, [props.inscription]);
 
-  const inscriptionJson = props.inscription;
+  const chainString = chainIdToOpenSeaChainString(chainId);
+
+  const inscriptionJson = inscription;
 
   function isValidInscription(json: any) {
     return json?.image?.length > 0;
   }
   const validInscription = isValidInscription(inscriptionJson);
+
+  const sanitizedMintConfig = {
+    priceInEth: props.mintConfig.priceInEth || 0,
+    maxSupply: props.mintConfig.maxSupply || 0,
+    mintEndTimestamp: props.mintConfig.mintEndTimestamp || 0,
+  };
 
   async function uploadMedia() {
     if (!props.mediaFiles.image && !props.mediaFiles.animation) {
@@ -75,7 +95,7 @@ export default function InscribeButton(props: {
           }}
           className="w-full"
         >
-          Inscribe
+          Inscribe drop
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -84,7 +104,10 @@ export default function InscribeButton(props: {
             {uploadingMedia ? (
               "Uploading media to IPFS..."
             ) : (
-              <DialogContents message={JSON.stringify(inscription)} />
+              <InscribeDropDialogContents
+                inscriptionContents={inscription}
+                mintConfig={props.mintConfig}
+              />
             )}
           </DialogDescription>
         </DialogHeader>
@@ -96,9 +119,14 @@ export default function InscribeButton(props: {
             <SubmitTransactionButton
               className="flex-1"
               functionName="inscribe"
-              abi={INSCRIPTIONS_CONTRACT.abi}
-              to={INSCRIPTIONS_CONTRACT.address}
-              args={[JSON.stringify(inscription)]}
+              abi={INSCRIBED_DROPS_CONTRACT.abi}
+              to={INSCRIBED_DROPS_CONTRACT.address}
+              args={[
+                parseEther(sanitizedMintConfig.priceInEth.toString()),
+                sanitizedMintConfig.maxSupply,
+                sanitizedMintConfig.mintEndTimestamp,
+                JSON.stringify(inscription),
+              ]}
               messages={{
                 toasts: {
                   ...TOASTS,
@@ -107,7 +135,7 @@ export default function InscribeButton(props: {
                       {TOASTS.success}
                       <Button
                         onClick={() =>
-                          window.open(INSCRIPTIONS_COLLECTION_URL, "_blank")
+                          window.open(INSCRIBED_DROPS_COLLECTION_URL, "_blank")
                         }
                       >
                         View on OpenSea
@@ -118,8 +146,15 @@ export default function InscribeButton(props: {
                 button: BUTTONS,
               }}
               useDefaultButtonMessageOnSuccess={true}
-              onTransactionConfirmed={() => {
+              onTransactionConfirmed={async (hash, logs) => {
                 setDialogOpen(false);
+                // TODO filter by address and event topic hash instead of always assuming log 1
+                const eventLog = logs[1];
+                const tokenId = fromHex(eventLog.data, "number");
+                // Push to mint page for token id
+                router.push(
+                  `/app/inscribed-drops/mint/${chainString}/${tokenId}`
+                );
               }}
               prePerformTransactionValidation={() => {
                 // TODO check if message is valid

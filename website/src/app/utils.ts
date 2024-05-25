@@ -1,4 +1,6 @@
-import { WEBSITE_BASE_URL } from "./constants";
+import { Chain } from "viem/chains";
+import { CHAIN_ID_TO_OPENSEA_CHAIN_MAP, WEBSITE_BASE_URL } from "./constants";
+import { createPublicClient, http } from "viem";
 
 export function chainTimeToMilliseconds(chainTime: number) {
   return chainTime * 1000;
@@ -41,4 +43,48 @@ export async function getDisplayableErrorMessageFromSubmitTransactionError(
     return msg;
   }
   return msg.substring(0, periodIdx);
+}
+
+export function chainIdToOpenSeaChainString(chainId: number) {
+  return CHAIN_ID_TO_OPENSEA_CHAIN_MAP.find((m) => m.chain.id === chainId)
+    ?.openSeaChainString;
+}
+
+export function openSeaChainStringToChain(chainString: string) {
+  return CHAIN_ID_TO_OPENSEA_CHAIN_MAP.find(
+    (m) => m.openSeaChainString === chainString
+  )?.chain;
+}
+
+export function openSeaChainStringToCrossChainId(chainString: string) {
+  return CHAIN_ID_TO_OPENSEA_CHAIN_MAP.find(
+    (m) => m.openSeaChainString === chainString
+  )?.crossChainId;
+}
+
+export function publicClient(chain: Chain) {
+  return createPublicClient({
+    chain,
+    transport: http(),
+  });
+}
+
+export async function uploadToNftStorage(
+  file: File
+): Promise<{ ipfsUrl?: string; error?: string }> {
+  const body = new FormData();
+  body.append("file", file);
+  const res = await fetch("/api/uploadToIpfs", {
+    method: "POST",
+    body,
+  });
+  const resJson = await res.json();
+
+  if (resJson.error) {
+    return { error: resJson.error };
+  }
+  if (resJson.ipfsUrl) {
+    return { ipfsUrl: resJson.ipfsUrl };
+  }
+  return { error: "Failed to upload" };
 }

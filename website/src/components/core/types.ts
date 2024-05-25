@@ -1,3 +1,12 @@
+export type OnchainMessage = {
+  data: string;
+  text: string;
+  sender: string;
+  app: string;
+  timestamp: BigInt;
+  topic: string;
+};
+
 export type SanitizedOnchainMessage = {
   sender: string;
   timestamp: number;

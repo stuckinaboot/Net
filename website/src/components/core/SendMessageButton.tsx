@@ -100,9 +100,7 @@ export default function SendMessageButton(props: {
                   props.onTransactionConfirmed &&
                     props.onTransactionConfirmed(hash);
                 }}
-                prePerformTransasctionValidation={
-                  validatePrePerformTransasction
-                }
+                prePerformTransactionValidation={validatePrePerformTransasction}
                 disabled={props.disabled}
               />
             </DialogFooter>
@@ -136,7 +134,7 @@ export default function SendMessageButton(props: {
         // TODO allow for custom logic to be executed before send message (ex. sanitizing message, displaying UI)
         // and post confirmation
         onTransactionConfirmed={props.onTransactionConfirmed}
-        prePerformTransasctionValidation={validatePrePerformTransasction}
+        prePerformTransactionValidation={validatePrePerformTransasction}
         disabled={props.disabled}
       />
     );
@@ -152,7 +150,7 @@ export default function SendMessageButton(props: {
       messages={{ toasts: TOASTS, button: BUTTONS }}
       useDefaultButtonMessageOnSuccess={true}
       onTransactionConfirmed={props.onTransactionConfirmed}
-      prePerformTransasctionValidation={validatePrePerformTransasction}
+      prePerformTransactionValidation={validatePrePerformTransasction}
       disabled={props.disabled}
     />
   );
