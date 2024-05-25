@@ -10,7 +10,7 @@ import {
 import { MintConfigDefined } from "./page/InscribeDropMintConfigEntry";
 import { formatEther, fromHex, parseEther } from "viem";
 import { OnchainMessage } from "../../types";
-import { WILLIE_NET_CONTRACT } from "@/app/constants";
+import { TESTNETS_ENABLED, WILLIE_NET_CONTRACT } from "@/app/constants";
 import { readContract } from "viem/actions";
 
 export function getInscribedDropUrlForTokenId(
@@ -18,7 +18,9 @@ export function getInscribedDropUrlForTokenId(
   chainId: number
 ) {
   const chainString = chainIdToOpenSeaChainString(chainId);
-  return `https://testnets.opensea.io/assets/${chainString}/${INSCRIBED_DROPS_CONTRACT.address}/${tokenId}`;
+  return TESTNETS_ENABLED
+    ? `https://testnets.opensea.io/assets/${chainString}/${INSCRIBED_DROPS_CONTRACT.address}/${tokenId}`
+    : `https://opensea.io/assets/${chainString}/${INSCRIBED_DROPS_CONTRACT.address}/${tokenId}`;
 }
 
 export type InscribedDrop = {
