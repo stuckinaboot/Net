@@ -2,12 +2,16 @@
 const IPFS_URL_WEBSITE = "https://nftstorage.link/ipfs/"; //"https://ipfs.io/ipfs/";
 const IPFS_PREFIX = "ipfs://";
 
-// TODO sanitize to nft storage link
+// Sometimes we may want to use ipfs.io domain specifically because our
+// main IPFS_URL_WEBSITE may involve redirects which isn't suitable for certain use-cases
+// (ex. including images in frames)
+const IPFS_IO_PREFIX = "https://ipfs.io/ipfs/";
 
-export function sanitizeMediaUrl(inputUrl: string) {
+export function sanitizeMediaUrl(inputUrl: string, useIpfsIoPrefix?: boolean) {
   let url = inputUrl;
   if (url.startsWith(IPFS_PREFIX)) {
-    url = IPFS_URL_WEBSITE + url.substring(IPFS_PREFIX.length);
+    const website = useIpfsIoPrefix ? IPFS_IO_PREFIX : IPFS_URL_WEBSITE;
+    url = website + url.substring(IPFS_PREFIX.length);
   }
   // Add future additional sanitization here
   return url;

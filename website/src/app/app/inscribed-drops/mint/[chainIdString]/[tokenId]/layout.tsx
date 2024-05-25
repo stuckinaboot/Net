@@ -16,7 +16,7 @@ export async function generateMetadata({
     return {};
   }
 
-  const image = sanitizeMediaUrl(inscribedDrop.metadata.image);
+  const image = sanitizeMediaUrl(inscribedDrop.metadata.image, true);
 
   return {
     other: {
