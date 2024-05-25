@@ -34,7 +34,7 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
     string public constant NET_APP_NAME = "Inscribed Drops";
 
     function name() external pure returns (string memory) {
-        return "Inscribed Drops";
+        return NET_APP_NAME;
     }
 
     function symbol() external pure returns (string memory) {
