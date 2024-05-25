@@ -14,11 +14,8 @@ import {LibString} from "@solady/utils/LibString.sol";
 contract InscribedDrops is ERC1155, TwoStepOwnable {
     using LibString for uint256;
 
-    string internal constant INSCRIBE_TOPIC = "i";
-    string internal constant MINT_TOPIC = "m";
-
     uint256 public totalDrops;
-    uint256 public feeBps;
+    uint256 public feeBps = 500;
     Net internal net = Net(0x00000000B24D62781dB359b07880a105cD0b64e6);
 
     mapping(uint256 id => uint256 supply) public totalSupply;
@@ -31,6 +28,10 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
     error CannotMintQuantityZero();
 
     event InscribedDrop(address indexed creator, uint256 id);
+
+    string internal constant INSCRIBE_TOPIC = "i";
+    string internal constant MINT_TOPIC = "m";
+    string public constant NET_APP_NAME = "Inscribed Drops";
 
     function name() external pure returns (string memory) {
         return "Inscribed Drops";

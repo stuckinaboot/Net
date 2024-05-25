@@ -34,6 +34,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         vm.etch(NET_ADDRESS, code);
 
         vm.deal(address(this), 1000 ether);
+        drops.setFeeBps(0);
 
         for (uint256 i = 0; i < users.length; i++) {
             users[i] = address(uint160(i + 1));
