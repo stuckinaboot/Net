@@ -185,10 +185,12 @@ export default function MessagesDisplay(props: {
         ? APP_TO_CONFIG[props.appContext.appAddress].messageRenderer
         : null;
     if (AppMessageRenderer == null) {
-      return <DefaultMessageRenderer idx={idx} message={message} />;
+      return (
+        <DefaultMessageRenderer idx={idx} message={message} chainId={chainId} />
+      );
     }
 
-    return <AppMessageRenderer idx={idx} message={message} />;
+    return <AppMessageRenderer idx={idx} message={message} chainId={chainId} />;
   };
 
   return (

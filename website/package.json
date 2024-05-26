@@ -31,6 +31,7 @@
     "hono": "^4.3.9",
     "is-html": "^3.1.0",
     "lucide-react": "^0.356.0",
+    "memoizee": "^0.4.17",
     "mime-types": "^2.1.35",
     "next": "14.1.3",
     "nft.storage": "^7.1.1",
@@ -48,6 +49,7 @@
     "wagmi": "^2.5.16"
   },
   "devDependencies": {
+    "@types/memoizee": "^0.4.11",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

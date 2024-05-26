@@ -64,6 +64,7 @@ export type AppControlsProps = {
 export type AppMessageRendererProps = {
   idx: number;
   message: SanitizedOnchainMessage;
+  chainId: number;
 };
 
 export type InferredAppComponentsConfig = {
