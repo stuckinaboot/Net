@@ -1,3 +1,4 @@
+import DatetimePicker from "@/components/ui/DatetimePicker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +22,7 @@ export default function InscribeDropMintConfigEntry(props: {
 }) {
   const [maxSupply, setMaxSupply] = useState<string>("");
   const [priceInEth, setPriceInEth] = useState<string>("");
+  const [mintEndDate, setMintEndDate] = useState(new Date());
   const [mintEndTimestamp, setMintEndTimestamp] = useState<string>("");
 
   function Spacing() {
@@ -89,20 +91,27 @@ export default function InscribeDropMintConfigEntry(props: {
       <Label>
         <b>Mint end block timestamp (Optional):</b>
       </Label>
-      <Textarea
-        contentEditable
-        onChange={(e) => {
-          const updated = e.target.value;
-          setMintEndTimestamp(updated);
-          updateMintConfig({
-            priceInEth,
-            maxSupply,
-            mintEndTimestamp: updated,
-          });
-        }}
-        value={mintEndTimestamp}
-        placeholder="Leave empty for open forever"
-      />
+      <Spacing />
+      {/* TODO include toggle datetime picker on/off */}
+      {/* Justify center on small screens since otherwise the date picker UI gets cut off.
+          On larger screens, justify start because it looks nicer */}
+      <div className="flex justify-center md:justify-start">
+        <DatetimePicker
+          selected={mintEndDate}
+          onChange={(date) => {
+            setMintEndDate(date);
+            updateMintConfig({
+              priceInEth,
+              maxSupply,
+              mintEndTimestamp: Math.ceil(
+                // Get time returns milliseconds but we expect time in seconds so
+                // divide by 1000
+                mintEndDate.getTime() / 1000
+              ).toString(),
+            });
+          }}
+        />
+      </div>
     </>
   );
 }
