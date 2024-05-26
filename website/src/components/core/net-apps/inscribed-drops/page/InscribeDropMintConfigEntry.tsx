@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import MintEndTimestampPicker from "./MintEndTimestampPicker";
 
 export type MintConfig = {
   maxSupply?: number;
@@ -22,7 +23,7 @@ export default function InscribeDropMintConfigEntry(props: {
 }) {
   const [maxSupply, setMaxSupply] = useState<string>("");
   const [priceInEth, setPriceInEth] = useState<string>("");
-  const [mintEndDate, setMintEndDate] = useState(new Date());
+  const [mintEndDate, setMintEndDate] = useState<Date | undefined>(undefined);
   const [mintEndTimestamp, setMintEndTimestamp] = useState<string>("");
 
   function Spacing() {
@@ -92,26 +93,25 @@ export default function InscribeDropMintConfigEntry(props: {
         <b>Mint end block timestamp (Optional):</b>
       </Label>
       <Spacing />
-      {/* TODO include toggle datetime picker on/off */}
-      {/* Justify center on small screens since otherwise the date picker UI gets cut off.
-          On larger screens, justify start because it looks nicer */}
-      <div className="flex justify-center md:justify-start">
-        <DatetimePicker
-          selected={mintEndDate}
-          onChange={(date) => {
-            setMintEndDate(date);
-            updateMintConfig({
-              priceInEth,
-              maxSupply,
-              mintEndTimestamp: Math.ceil(
-                // Get time returns milliseconds but we expect time in seconds so
-                // divide by 1000
-                mintEndDate.getTime() / 1000
-              ).toString(),
-            });
-          }}
-        />
-      </div>
+      <MintEndTimestampPicker
+        value={mintEndDate}
+        onChange={(date) => {
+          setMintEndDate(date);
+          updateMintConfig({
+            priceInEth,
+            maxSupply,
+            mintEndTimestamp:
+              date != null
+                ? Math.ceil(
+                    // Get time returns milliseconds but we expect time in seconds so
+                    // divide by 1000
+                    date.getTime() / 1000
+                  ).toString()
+                : "0",
+          });
+        }}
+      />
+      {/* </div> */}
     </>
   );
 }
