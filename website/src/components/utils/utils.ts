@@ -1,5 +1,4 @@
 import { publicClient } from "@/app/utils";
-import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
 
 export async function getEnsName({

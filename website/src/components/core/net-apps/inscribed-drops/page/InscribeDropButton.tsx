@@ -157,6 +157,16 @@ export default function InscribeDropButton(props: {
                 );
               }}
               prePerformTransactionValidation={() => {
+                if (
+                  props.mintConfig.mintEndTimestamp &&
+                  props.mintConfig.mintEndTimestamp > 0 &&
+                  props.mintConfig.mintEndTimestamp <
+                    new Date().getTime() / 1000
+                ) {
+                  // TODO consider moving this error to show on the dialog itself
+                  // rather than after hitting inscribe
+                  return "Mint end time must be after current time";
+                }
                 // TODO check if message is valid
                 return undefined;
               }}
