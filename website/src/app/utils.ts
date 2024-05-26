@@ -50,6 +50,11 @@ export function chainIdToOpenSeaChainString(chainId: number) {
     ?.openSeaChainString;
 }
 
+export function chainIdToChain(chainId: number) {
+  return CHAIN_ID_TO_OPENSEA_CHAIN_MAP.find((m) => m.chain.id === chainId)
+    ?.chain;
+}
+
 export function openSeaChainStringToChain(chainString: string) {
   return CHAIN_ID_TO_OPENSEA_CHAIN_MAP.find(
     (m) => m.openSeaChainString === chainString
