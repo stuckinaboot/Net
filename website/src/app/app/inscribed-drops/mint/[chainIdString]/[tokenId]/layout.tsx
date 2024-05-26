@@ -18,11 +18,12 @@ export async function generateMetadata({
 
   const image = sanitizeMediaUrl(inscribedDrop.metadata.image, true);
 
+  const imageUrl = `${WEBSITE_BASE_URL}/api/resizeImage?imageUrl=${image}`;
   return {
     other: {
       "fc:frame": "vNext",
-      "fc:frame:image": image,
-      "og:image": image,
+      "fc:frame:image": imageUrl,
+      "og:image": imageUrl,
       "fc:frame:button:1": "Mint",
       "fc:frame:button:1:action": "tx",
       "fc:frame:button:1:target": `${WEBSITE_BASE_URL}/api/frames/inscribed-drops/mint?chainId=${params.chainIdString}&tokenId=${params.tokenId}`,
