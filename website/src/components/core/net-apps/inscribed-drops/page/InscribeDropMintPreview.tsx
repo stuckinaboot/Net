@@ -69,6 +69,9 @@ export default function InscribeDropMintPreview(props: {
           </Label>
           <br />
           <div className="flex space-x-1">
+            {/* TODO three buttons all next to each other results 
+            in horizontal scroll on mobile. However, using buttons on multiple lines
+            results in some items being hidden on mobile. Figure out a better design for these buttons*/}
             <Button
               variant="outline"
               onClick={() =>
