@@ -134,8 +134,9 @@ export default function InscribeDropMintPreview(props: {
       <LabelWithSpacing>
         Mint end timestamp:{" "}
         {/* Converts end timestamp to date in the user's local timezone */}
-        {getBlockTimestampAsLocalDateString(mintConfig.mintEndTimestamp) ||
-          "Open Forever"}
+        {mintConfig.mintEndTimestamp === 0
+          ? "Open Forever"
+          : getBlockTimestampAsLocalDateString(mintConfig.mintEndTimestamp)}
       </LabelWithSpacing>
     </>
   );
