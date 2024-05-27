@@ -4,6 +4,7 @@ import InscriptionAnimationPreview from "../../../../MetadataAnimationPreview";
 import InscriptionImagePreview from "../../../../MetadataImagePreview";
 import { MintConfig } from "./InscribeDropMintConfigEntry";
 import { InscriptionContents } from "../../inscriptions/page/InscriptionEntry";
+import { getBlockTimestampAsLocalDateString } from "@/components/utils/utils";
 
 export function InscribeDropDialogContents(props: {
   inscriptionContents: InscriptionContents;
@@ -72,7 +73,13 @@ export function InscribeDropDialogContents(props: {
       <>
         <br />
         <Label>
-          Mint end date: {props.mintConfig.mintEndTimestamp || "Open Forever"}
+          Mint end date:{" "}
+          {props.mintConfig.mintEndTimestamp &&
+          props.mintConfig.mintEndTimestamp > 0
+            ? getBlockTimestampAsLocalDateString(
+                props.mintConfig.mintEndTimestamp
+              )
+            : "Open Forever"}
         </Label>
       </>
     </>

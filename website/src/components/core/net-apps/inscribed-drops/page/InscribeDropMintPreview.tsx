@@ -7,7 +7,10 @@ import { InscribedDrop, getInscribedDropUrlForTokenId } from "../utils";
 import { formatEther, parseUnits } from "viem";
 import { INSCRIBED_DROPS_CONTRACT } from "../constants";
 import { useEnsName, useReadContract } from "wagmi";
-import { getEnsName } from "@/components/utils/utils";
+import {
+  getBlockTimestampAsLocalDateString,
+  getEnsName,
+} from "@/components/utils/utils";
 import CopyInscribedDropLinkButton from "./CopyInscribedDropLinkButton";
 import ShareDropInCastButton from "./ShareDropInCastButton";
 import truncateEthAddress from "truncate-eth-address";
@@ -131,7 +134,7 @@ export default function InscribeDropMintPreview(props: {
       <LabelWithSpacing>
         Mint end timestamp:{" "}
         {/* Converts end timestamp to date in the user's local timezone */}
-        {new Date(mintConfig.mintEndTimestamp * 1000).toLocaleString() ||
+        {getBlockTimestampAsLocalDateString(mintConfig.mintEndTimestamp) ||
           "Open Forever"}
       </LabelWithSpacing>
     </>

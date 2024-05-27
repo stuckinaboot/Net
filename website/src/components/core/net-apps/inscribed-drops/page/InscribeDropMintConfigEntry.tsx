@@ -24,7 +24,6 @@ export default function InscribeDropMintConfigEntry(props: {
   const [maxSupply, setMaxSupply] = useState<string>("");
   const [priceInEth, setPriceInEth] = useState<string>("");
   const [mintEndDate, setMintEndDate] = useState<Date | undefined>(undefined);
-  const [mintEndTimestamp, setMintEndTimestamp] = useState<string>("");
 
   function Spacing() {
     return <div className="mt-4" />;
@@ -44,13 +43,22 @@ export default function InscribeDropMintConfigEntry(props: {
             ? parseFloat(params.priceInEth)
             : undefined,
         mintEndTimestamp:
-          // TODO allow date as entry and convert from date to timestamp
           params.mintEndTimestamp.length > 0
             ? parseInt(params.mintEndTimestamp)
             : undefined,
       };
       props.onMintConfigChanged(final);
     } catch (e) {}
+  }
+
+  function mintEndDateToMintEndTimestamp(date?: Date) {
+    return date != null
+      ? Math.ceil(
+          // Get time returns milliseconds but we expect time in seconds so
+          // divide by 1000
+          date.getTime() / 1000
+        ).toString()
+      : "0";
   }
 
   return (
@@ -65,7 +73,7 @@ export default function InscribeDropMintConfigEntry(props: {
           updateMintConfig({
             priceInEth: updated,
             maxSupply,
-            mintEndTimestamp,
+            mintEndTimestamp: mintEndDateToMintEndTimestamp(mintEndDate),
           });
         }}
         value={priceInEth}
@@ -82,7 +90,7 @@ export default function InscribeDropMintConfigEntry(props: {
           updateMintConfig({
             priceInEth,
             maxSupply: updated,
-            mintEndTimestamp,
+            mintEndTimestamp: mintEndDateToMintEndTimestamp(mintEndDate),
           });
         }}
         value={maxSupply}
@@ -101,17 +109,11 @@ export default function InscribeDropMintConfigEntry(props: {
             priceInEth,
             maxSupply,
             mintEndTimestamp:
-              date != null
-                ? Math.ceil(
-                    // Get time returns milliseconds but we expect time in seconds so
-                    // divide by 1000
-                    date.getTime() / 1000
-                  ).toString()
-                : "0",
+              // Use date rather than mintEndDate in case mintEndDate hasn't updated yet
+              mintEndDateToMintEndTimestamp(date),
           });
         }}
       />
-      {/* </div> */}
     </>
   );
 }

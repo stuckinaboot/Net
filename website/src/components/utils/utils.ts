@@ -18,3 +18,7 @@ export async function getEnsName({
     return null;
   }
 }
+
+export function getBlockTimestampAsLocalDateString(blockTimestamp: number) {
+  return new Date(blockTimestamp * 1000).toLocaleString();
+}
