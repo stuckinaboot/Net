@@ -17,8 +17,8 @@ export async function generateMetadata({
   }
 
   const image = sanitizeMediaUrl(inscribedDrop.metadata.image, true);
-
   const imageUrl = `${WEBSITE_BASE_URL}/api/resizeImage?imageUrl=${image}`;
+
   return {
     other: {
       "fc:frame": "vNext",

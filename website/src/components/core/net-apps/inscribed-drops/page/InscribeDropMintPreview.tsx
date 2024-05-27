@@ -6,8 +6,12 @@ import { Label } from "@/components/ui/label";
 import { InscribedDrop, getInscribedDropUrlForTokenId } from "../utils";
 import { formatEther, parseUnits } from "viem";
 import { INSCRIBED_DROPS_CONTRACT } from "../constants";
-import { useReadContract } from "wagmi";
+import { useEnsName, useReadContract } from "wagmi";
 import { getEnsName } from "@/components/utils/utils";
+import CopyInscribedDropLinkButton from "./CopyInscribedDropLinkButton";
+import ShareDropInCastButton from "./ShareDropInCastButton";
+import truncateEthAddress from "truncate-eth-address";
+import { useState } from "react";
 
 // TODO preview on NFT storage
 
@@ -35,6 +39,9 @@ export default function InscribeDropMintPreview(props: {
   });
   const totalSupply =
     totalSupplyData != null ? +(totalSupplyData as BigInt).toString() : null;
+  const ensNameResult = useEnsName({
+    address: props.previewParams.creator as any,
+  });
 
   const metadata = props.previewParams.inscribedDrop.metadata;
   const mintConfig = props.previewParams.inscribedDrop.mintConfig;
@@ -52,27 +59,51 @@ export default function InscribeDropMintPreview(props: {
     <>
       {metadata.name && (
         <>
-          <Label>Inscribed Drop: {metadata.name}</Label>{" "}
-          <Button
-            variant="outline"
-            onClick={() =>
-              window.open(
-                getInscribedDropUrlForTokenId(
-                  props.previewParams.tokenId,
-                  props.previewParams.chainId
-                ),
-                "_blank"
+          <Label>
+            <b>
+              Inscribed Drop: {metadata.name} (by{" "}
+              {ensNameResult.data ||
+                truncateEthAddress(props.previewParams.creator)}
               )
-            }
-          >
-            View on OpenSea
-          </Button>
+            </b>
+          </Label>
+          <br />
+          <div className="flex space-x-1">
+            {/* TODO three buttons all next to each other results 
+            in horizontal scroll on mobile. However, using buttons on multiple lines
+            results in some items being hidden on mobile. Figure out a better design for these buttons*/}
+            <Button
+              variant="outline"
+              onClick={() =>
+                window.open(
+                  getInscribedDropUrlForTokenId(
+                    props.previewParams.tokenId,
+                    props.previewParams.chainId
+                  ),
+                  "_blank"
+                )
+              }
+            >
+              View on OpenSea
+            </Button>
+            <ShareDropInCastButton />
+            <CopyInscribedDropLinkButton />
+          </div>
           <Spacing size={SpacingSize.SMALL} />
         </>
       )}
-      {props.previewParams.creator && (
+      {metadata.image && (
         <>
-          <Label>Created by: {props.previewParams.creator}</Label>
+          <Label>Image: </Label>
+          <br />
+          <MetadataImagePreview image={metadata.image} size="w-64" />
+          <Spacing size={SpacingSize.SMALL} />
+        </>
+      )}
+      {metadata.animationUrl && (
+        <>
+          <Label>Animation: </Label>
+          <MetadataAnimationPreview animationUrl={metadata.animationUrl} />
           <Spacing size={SpacingSize.SMALL} />
         </>
       )}
@@ -88,20 +119,6 @@ export default function InscribeDropMintPreview(props: {
           <Spacing size={SpacingSize.SMALL} />
         </>
       )}
-      {metadata.image && (
-        <>
-          <Label>Image: </Label>
-          <MetadataImagePreview image={metadata.image} />
-          <Spacing size={SpacingSize.SMALL} />
-        </>
-      )}
-      {metadata.animationUrl && (
-        <>
-          <Label>Animation: </Label>
-          <MetadataAnimationPreview animationUrl={metadata.animationUrl} />
-          <Spacing size={SpacingSize.SMALL} />
-        </>
-      )}
       <LabelWithSpacing>
         Max supply: {mintConfig.maxSupply || "Open Edition"}
       </LabelWithSpacing>
@@ -112,8 +129,10 @@ export default function InscribeDropMintPreview(props: {
         Mint price (in ETH): {mintConfig.priceInEth}
       </LabelWithSpacing>
       <LabelWithSpacing>
-        Mint end timestamp (in block time):{" "}
-        {mintConfig.mintEndTimestamp || "Open Forever"}
+        Mint end timestamp:{" "}
+        {/* Converts end timestamp to date in the user's local timezone */}
+        {new Date(mintConfig.mintEndTimestamp * 1000).toLocaleString() ||
+          "Open Forever"}
       </LabelWithSpacing>
     </>
   );
