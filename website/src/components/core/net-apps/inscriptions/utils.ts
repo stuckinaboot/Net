@@ -19,6 +19,7 @@ export async function generateInscriptionContentsAfterUploadingMedia(params: {
     if (!res.ipfsUrl) {
       throw new Error("Failed to upload image to IPFS");
     }
+    console.log("URL!", res.ipfsUrl);
     newContents.image = res.ipfsUrl.replace(IPFS_GATEWAY_PREFIX, IPFS_PREFIX);
   }
 
