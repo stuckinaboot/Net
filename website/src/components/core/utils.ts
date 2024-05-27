@@ -1,3 +1,5 @@
+import format from "string-format";
+
 // Use nft storage gateway as that's where media is stored
 const IPFS_URL_WEBSITE = "https://nftstorage.link/ipfs/"; //"https://ipfs.io/ipfs/";
 const IPFS_PREFIX = "ipfs://";
@@ -7,12 +9,24 @@ const IPFS_PREFIX = "ipfs://";
 // (ex. including images in frames)
 const IPFS_IO_PREFIX = "https://ipfs.io/ipfs/";
 
-export function sanitizeMediaUrl(inputUrl: string, useIpfsIoPrefix?: boolean) {
-  let url = inputUrl;
-  if (url.startsWith(IPFS_PREFIX)) {
-    const website = useIpfsIoPrefix ? IPFS_IO_PREFIX : IPFS_URL_WEBSITE;
-    url = website + url.substring(IPFS_PREFIX.length);
+const NFT_STORAGE_FORMAT = "https://{ipfsHash}.ipfs.nftstorage.link{path}";
+
+export function sanitizeMediaUrl(
+  inputUrl: string,
+  useFrameCompatibleIpfsGateway?: boolean
+) {
+  if (!inputUrl.startsWith(IPFS_PREFIX)) {
+    return inputUrl;
   }
+
+  if (useFrameCompatibleIpfsGateway) {
+    const hashAndPath = inputUrl.substring(IPFS_PREFIX.length);
+    const pathIdx = hashAndPath.indexOf("/");
+    const hash = pathIdx >= 0 ? hashAndPath.substring(0, pathIdx) : hashAndPath;
+    const path = pathIdx >= 0 ? hashAndPath.substring(pathIdx) : "";
+    return format(NFT_STORAGE_FORMAT, { ipfsHash: hash, path });
+  }
+
   // Add future additional sanitization here
-  return url;
+  return IPFS_URL_WEBSITE + inputUrl.substring(IPFS_PREFIX.length);
 }
