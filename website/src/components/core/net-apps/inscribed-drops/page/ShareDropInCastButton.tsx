@@ -12,7 +12,7 @@ export default function ShareDropInCastButton() {
         window.open(url, "_blank");
       }}
     >
-      Share drop in cast
+      Share in cast
     </Button>
   );
 }

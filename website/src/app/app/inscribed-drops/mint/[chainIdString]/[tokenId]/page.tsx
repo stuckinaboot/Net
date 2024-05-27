@@ -39,15 +39,7 @@ export default function Page({ params }: { params: { tokenId: string } }) {
 
   return (
     <BasePageCard
-      description={
-        <>
-          Mint from an inscribed drop on Net. <br />
-          <div className="flex space-x-1">
-            <CopyInscribedDropLinkButton />
-            <ShareDropInCastButton />
-          </div>
-        </>
-      }
+      description={<>Mint from an inscribed drop on Net.</>}
       content={{
         node: typedData ? (
           <>

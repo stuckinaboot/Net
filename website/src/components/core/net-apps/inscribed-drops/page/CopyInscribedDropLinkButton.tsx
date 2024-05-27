@@ -17,7 +17,7 @@ export default function CopyInscribedDropLinkButton() {
         });
       }}
     >
-      Share link
+      Copy link
     </Button>
   );
 }
