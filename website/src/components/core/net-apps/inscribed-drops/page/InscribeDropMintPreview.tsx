@@ -60,11 +60,11 @@ export default function InscribeDropMintPreview(props: {
 
   return (
     <>
-      {metadata.name && (
+      {
         <>
           <Label>
             <b>
-              Inscribed Drop: {metadata.name} (by{" "}
+              Inscribed Drop: {metadata.name || "Untitled"} (by{" "}
               {ensNameResult.data ||
                 truncateEthAddress(props.previewParams.creator)}
               )
@@ -94,7 +94,7 @@ export default function InscribeDropMintPreview(props: {
           </div>
           <Spacing size={SpacingSize.SMALL} />
         </>
-      )}
+      }
       {metadata.image && (
         <>
           <Label>Image: </Label>

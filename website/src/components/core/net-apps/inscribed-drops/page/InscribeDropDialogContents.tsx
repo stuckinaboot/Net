@@ -45,7 +45,11 @@ export function InscribeDropDialogContents(props: {
         <>
           <br />
           <Label>
-            Image: <InscriptionImagePreview image={inscriptionMetadata.image} />
+            Image:{" "}
+            <InscriptionImagePreview
+              image={inscriptionMetadata.image}
+              constantlyRefetchUntilLoaded={true}
+            />
           </Label>
         </>
       )}
