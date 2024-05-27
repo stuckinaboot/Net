@@ -5,7 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState } from "react";
 
 enum SelectorValues {
-  OPEN_EDITION = "Open Edition",
+  OPEN_FOREVER = "Open Forever",
   TIMED = "Timed",
 }
 
@@ -16,7 +16,7 @@ export default function MintEndTimestampPicker(props: {
   const [selected, setSelected] = useState(
     (props.value != null
       ? SelectorValues.TIMED
-      : SelectorValues.OPEN_EDITION
+      : SelectorValues.OPEN_FOREVER
     ).toString()
   );
 
@@ -26,7 +26,7 @@ export default function MintEndTimestampPicker(props: {
         value={selected}
         onValueChange={(value) => {
           setSelected(value);
-          if (value === SelectorValues.OPEN_EDITION) {
+          if (value === SelectorValues.OPEN_FOREVER) {
             props.onChange(undefined);
             return;
           }
@@ -34,8 +34,8 @@ export default function MintEndTimestampPicker(props: {
         }}
       >
         <div className="flex items-center space-x-2">
-          <RadioGroupItem value={SelectorValues.OPEN_EDITION} id="r1" />
-          <Label htmlFor="r1">{SelectorValues.OPEN_EDITION}</Label>
+          <RadioGroupItem value={SelectorValues.OPEN_FOREVER} id="r1" />
+          <Label htmlFor="r1">{SelectorValues.OPEN_FOREVER}</Label>
         </div>
         <div className="flex items-center space-x-2">
           <RadioGroupItem value={SelectorValues.TIMED} id="r2" />
