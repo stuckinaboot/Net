@@ -127,6 +127,7 @@ export default function InscribeDropMintPreview(props: {
       </LabelWithSpacing>
       <LabelWithSpacing>
         Mint end timestamp:{" "}
+        {/* Converts end timestamp to date in the user's local timezone */}
         {new Date(mintConfig.mintEndTimestamp * 1000).toLocaleString() ||
           "Open Forever"}
       </LabelWithSpacing>
