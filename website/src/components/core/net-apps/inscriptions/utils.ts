@@ -13,6 +13,7 @@ export async function generateInscriptionContentsAfterUploadingMedia(params: {
   const newContents = { ...inscriptionContents };
   if (mediaFiles.image) {
     const res = await uploadToNftStorage(mediaFiles.image);
+
     if (res.error) {
       throw new Error("Failed to upload image");
     }
