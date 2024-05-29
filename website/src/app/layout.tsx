@@ -18,8 +18,8 @@ const font = USE_COURIER ? fontCourier : fontInter;
 const SHOW_TITLE = false;
 
 export const metadata: Metadata = {
-  title: "WillieNet",
-  description: "Decentralized onchain social messaging",
+  title: "Net",
+  description: "Decentralized onchain social messaging protocol",
 };
 
 export default function RootLayout({
