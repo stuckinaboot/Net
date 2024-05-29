@@ -512,6 +512,151 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         assertEq(creator.balance, creatorBalance + mintPrice * 3);
     }
 
+    function testInscribeNoMintPriceNoMaxSupplyNoEndTimestampYesMaxMintsPerWalletAndMint(
+        uint256 maxMintsPerWallet,
+        string calldata tokenUri
+    ) public {
+        vm.assume(bytes(tokenUri).length > 0);
+        vm.assume(maxMintsPerWallet > 0 && maxMintsPerWallet < 100);
+
+        uint256 mintPrice = 0;
+        uint256 maxSupply = 0;
+        uint256 mintEndTimestamp = 0;
+        vm.startPrank(users[1]);
+
+        drops.inscribe(
+            mintPrice,
+            maxSupply,
+            mintEndTimestamp,
+            maxMintsPerWallet,
+            tokenUri
+        );
+
+        // Mint from user 1 hitting max mints per wallet
+        vm.startPrank(users[1]);
+        drops.mint(0, maxMintsPerWallet);
+
+        // Exceed max mints per wallet
+        vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+        drops.mint(0, maxMintsPerWallet);
+
+        if (maxMintsPerWallet > 1) {
+            vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+            drops.mint(0, 1);
+        }
+
+        if (maxMintsPerWallet > 2) {
+            vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+            drops.mint(0, 2);
+        }
+
+        // Mint from user 2 hitting max mints per wallet
+        vm.startPrank(users[2]);
+        drops.mint(0, maxMintsPerWallet);
+
+        // Exceed max mints per wallet
+        vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+        drops.mint(0, maxMintsPerWallet);
+
+        if (maxMintsPerWallet > 1) {
+            vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+            drops.mint(0, 1);
+        }
+
+        if (maxMintsPerWallet > 2) {
+            vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+            drops.mint(0, 2);
+        }
+
+        // Inscribe another drop
+        drops.inscribe(
+            mintPrice,
+            maxSupply,
+            mintEndTimestamp,
+            maxMintsPerWallet,
+            tokenUri
+        );
+
+        // Mint from user 1 hitting max mints per wallet
+        vm.startPrank(users[1]);
+        drops.mint(1, maxMintsPerWallet);
+
+        // Exceed max mints per wallet
+        vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+        drops.mint(1, maxMintsPerWallet);
+
+        if (maxMintsPerWallet > 1) {
+            vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+            drops.mint(1, 1);
+        }
+
+        if (maxMintsPerWallet > 2) {
+            vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+            drops.mint(1, 2);
+        }
+
+        // Mint from user 2 hitting max mints per wallet
+        vm.startPrank(users[2]);
+        drops.mint(1, maxMintsPerWallet);
+
+        // Exceed max mints per wallet
+        vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+        drops.mint(1, maxMintsPerWallet);
+
+        if (maxMintsPerWallet > 1) {
+            vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+            drops.mint(1, 1);
+        }
+
+        if (maxMintsPerWallet > 2) {
+            vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+            drops.mint(1, 2);
+        }
+
+        if (maxMintsPerWallet > 4) {
+            vm.startPrank(users[3]);
+            // Mint max from drop 1
+            drops.mint(1, maxMintsPerWallet);
+
+            // Mint max from drop 0
+            drops.mint(0, maxMintsPerWallet);
+
+            // Fail to mint more from either
+            vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+            drops.mint(1, maxMintsPerWallet);
+
+            vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+            drops.mint(0, maxMintsPerWallet);
+
+            vm.startPrank(users[4]);
+            // Mint some from drop 1
+            drops.mint(1, 2);
+
+            // Mint some from drop 0
+            drops.mint(0, 2);
+
+            drops.mint(1, 2);
+
+            drops.mint(0, 2);
+
+            drops.mint(
+                1,
+                maxMintsPerWallet - drops.mintedPerWallet(1, users[4])
+            );
+
+            drops.mint(
+                0,
+                maxMintsPerWallet - drops.mintedPerWallet(0, users[4])
+            );
+
+            vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+            drops.mint(1, 1);
+
+            vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
+            drops.mint(0, 1);
+        }
+    }
+
     function onERC1155Received(
         address operator,
         address from,
