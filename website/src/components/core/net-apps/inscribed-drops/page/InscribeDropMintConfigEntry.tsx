@@ -126,7 +126,7 @@ export default function InscribeDropMintConfigEntry(props: {
       />
       <Spacing />
       <Label>
-        <b>Mint end block timestamp (Optional):</b>
+        <b>Mint duration (Optional):</b>
       </Label>
       <Spacing />
       <MintEndTimestampPicker
