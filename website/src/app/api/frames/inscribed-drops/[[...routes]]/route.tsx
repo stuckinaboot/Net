@@ -1,12 +1,17 @@
 /** @jsxImportSource frog/jsx */
 
-import { openSeaChainStringToCrossChainId } from "@/app/utils";
+import {
+  getResizedImageUrl,
+  openSeaChainStringToCrossChainId,
+} from "@/app/utils";
 import { INSCRIBED_DROPS_CONTRACT } from "@/components/core/net-apps/inscribed-drops/constants";
 import { getInscribedDrop } from "@/components/core/net-apps/inscribed-drops/utils";
 import { Button, Frog, TextInput } from "frog";
 import { devtools } from "frog/dev";
 import { serveStatic } from "frog/serve-static";
 import { handle } from "frog/next";
+import { parseEther } from "viem";
+import { IPFS_GATEWAY, sanitizeMediaUrl } from "@/components/core/utils";
 
 const app = new Frog({
   basePath: "/api/frames/inscribed-drops",
@@ -36,6 +41,12 @@ app.frame("/:chainId/:tokenId", async (c) => {
     tokenId,
   });
 
+  const sanitizedImage = sanitizeMediaUrl(
+    drop?.metadata.image || "",
+    IPFS_GATEWAY.NFT_STORAGE
+  );
+  const resizedImageUrl = getResizedImageUrl(sanitizedImage);
+
   return c.res({
     image: (
       <div
@@ -52,7 +63,7 @@ app.frame("/:chainId/:tokenId", async (c) => {
           width: "100%",
         }}
       >
-        <img src={drop?.metadata.image} style={{ position: "absolute" }} />
+        <img src={resizedImageUrl} style={{ position: "absolute" }} />
         <div
           style={{
             color: "white",
@@ -112,7 +123,9 @@ app.transaction("/mint", async (c) => {
     throw new Error("Missing drop");
   }
 
-  const totalPrice = BigInt(drop?.mintConfig.priceInEth) * BigInt(quantity);
+  const totalPrice =
+    BigInt(parseEther(drop?.mintConfig.priceInEth.toString())) *
+    BigInt(quantity);
 
   return c.contract({
     to: INSCRIBED_DROPS_CONTRACT.address as any,
