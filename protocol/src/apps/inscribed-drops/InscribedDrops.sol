@@ -38,7 +38,7 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
     string public constant NET_APP_NAME = "Inscribed Drops";
 
     constructor() {
-        _transferOwnership(tx.origin);
+        _transferOwnership(address(0xcf75Bf188c5CA5198eF571aed3D75ECDe3bcD9D9));
     }
 
     function name() external pure returns (string memory) {
