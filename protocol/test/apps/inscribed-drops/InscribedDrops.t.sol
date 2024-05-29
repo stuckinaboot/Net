@@ -37,7 +37,11 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         drops = new InscribedDrops();
 
         // Foundry default sender
-        vm.startPrank(address(0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38));
+        assertEq(
+            drops.owner(),
+            address(0xcf75Bf188c5CA5198eF571aed3D75ECDe3bcD9D9)
+        );
+        vm.startPrank(address(0xcf75Bf188c5CA5198eF571aed3D75ECDe3bcD9D9));
         drops.transferOwnership(address(this));
         vm.stopPrank();
         drops.acceptOwnership();
