@@ -20,10 +20,14 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
 
     mapping(uint256 id => uint256 supply) public totalSupply;
 
+    mapping(uint256 id => mapping(address user => uint256 minted))
+        public mintedPerWallet;
+
     error TokenDoesNotExist();
     error TokenUriEmpty();
     error MintPaymentIncorrect();
     error MintSupplyReached();
+    error MaxMintsPerWalletReached();
     error MintEndTimestampReached();
     error CannotMintQuantityZero();
 
@@ -32,6 +36,10 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
     string internal constant INSCRIBE_TOPIC = "i";
     string internal constant MINT_TOPIC = "m";
     string public constant NET_APP_NAME = "Inscribed Drops";
+
+    constructor() {
+        _transferOwnership(tx.origin);
+    }
 
     function name() external pure returns (string memory) {
         return NET_APP_NAME;
@@ -45,6 +53,7 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         uint256 mintPrice,
         uint256 maxSupply,
         uint256 mintEndTimestamp,
+        uint256 maxMintsPerWallet,
         string calldata tokenUri
     ) external {
         // Check token uri non-empty
@@ -56,6 +65,8 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         _mint(msg.sender, totalDrops, 1, "");
         // Set total supply to 1
         totalSupply[totalDrops] = 1;
+        // Set minted per wallet to 1
+        mintedPerWallet[totalDrops][msg.sender] = 1;
         // Emit inscribed drop event
         emit InscribedDrop(msg.sender, totalDrops);
 
@@ -69,7 +80,12 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
             msg.sender,
             tokenUri,
             INSCRIBE_TOPIC,
-            abi.encode(mintPrice, maxSupply, mintEndTimestamp)
+            abi.encode(
+                mintPrice,
+                maxSupply,
+                mintEndTimestamp,
+                maxMintsPerWallet
+            )
         );
     }
 
@@ -93,8 +109,12 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         );
 
         // Parse data
-        (uint256 mintPrice, uint256 maxSupply, uint256 mintEndTimestamp) = abi
-            .decode(message.data, (uint256, uint256, uint256));
+        (
+            uint256 mintPrice,
+            uint256 maxSupply,
+            uint256 mintEndTimestamp,
+            uint256 maxMintsPerWallet
+        ) = abi.decode(message.data, (uint256, uint256, uint256, uint256));
 
         unchecked {
             // Check payment correct, if non-zero
@@ -106,6 +126,14 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
             if (maxSupply != 0 && totalSupply[id] + quantity > maxSupply) {
                 revert MintSupplyReached();
             }
+
+            // Check max mints per wallet not reached, if non-zero
+            if (
+                maxMintsPerWallet != 0 &&
+                mintedPerWallet[id][msg.sender] + quantity > maxMintsPerWallet
+            ) {
+                revert MaxMintsPerWalletReached();
+            }
         }
 
         // Check mint not ended, if non-zero
@@ -116,9 +144,12 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         // Mint tokens
         _mint(msg.sender, id, quantity, "");
 
-        // Update total supply
         unchecked {
+            // Update total supply
             totalSupply[id] += quantity;
+
+            // Update minted per wallet
+            mintedPerWallet[id][msg.sender] += quantity;
         }
 
         // If owner is non-zero and fee is non-zero and msg value is non-zero, transfer fee

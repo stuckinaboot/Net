@@ -93,3 +93,7 @@ export async function uploadToNftStorage(
   }
   return { error: "Failed to upload" };
 }
+
+export function getResizedImageUrl(imageUrl: string) {
+  return `${WEBSITE_BASE_URL}/api/resizeImage?imageUrl=${imageUrl}`;
+}

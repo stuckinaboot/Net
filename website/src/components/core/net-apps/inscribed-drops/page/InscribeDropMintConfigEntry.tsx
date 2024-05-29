@@ -9,6 +9,7 @@ export type MintConfig = {
   maxSupply?: number;
   priceInEth?: number;
   mintEndTimestamp?: number;
+  maxMintsPerWallet?: number;
 };
 
 // Same as MintConfig except all fields non-optional
@@ -16,6 +17,7 @@ export type MintConfigDefined = {
   maxSupply: number;
   priceInEth: number;
   mintEndTimestamp: number;
+  maxMintsPerWallet: number;
 };
 
 export default function InscribeDropMintConfigEntry(props: {
@@ -24,6 +26,7 @@ export default function InscribeDropMintConfigEntry(props: {
   const [maxSupply, setMaxSupply] = useState<string>("");
   const [priceInEth, setPriceInEth] = useState<string>("");
   const [mintEndDate, setMintEndDate] = useState<Date | undefined>(undefined);
+  const [maxMintsPerWallet, setMaxMintsPerWallet] = useState<string>("");
 
   function Spacing() {
     return <div className="mt-4" />;
@@ -33,6 +36,7 @@ export default function InscribeDropMintConfigEntry(props: {
     maxSupply: string;
     priceInEth: string;
     mintEndTimestamp: string;
+    maxMintsPerWallet: string;
   }) {
     try {
       const final = {
@@ -45,6 +49,10 @@ export default function InscribeDropMintConfigEntry(props: {
         mintEndTimestamp:
           params.mintEndTimestamp.length > 0
             ? parseInt(params.mintEndTimestamp)
+            : undefined,
+        maxMintsPerWallet:
+          params.maxMintsPerWallet.length > 0
+            ? parseInt(params.maxMintsPerWallet)
             : undefined,
       };
       props.onMintConfigChanged(final);
@@ -74,6 +82,7 @@ export default function InscribeDropMintConfigEntry(props: {
             priceInEth: updated,
             maxSupply,
             mintEndTimestamp: mintEndDateToMintEndTimestamp(mintEndDate),
+            maxMintsPerWallet,
           });
         }}
         value={priceInEth}
@@ -91,6 +100,7 @@ export default function InscribeDropMintConfigEntry(props: {
             priceInEth,
             maxSupply: updated,
             mintEndTimestamp: mintEndDateToMintEndTimestamp(mintEndDate),
+            maxMintsPerWallet,
           });
         }}
         value={maxSupply}
@@ -98,7 +108,25 @@ export default function InscribeDropMintConfigEntry(props: {
       />
       <Spacing />
       <Label>
-        <b>Mint end block timestamp (Optional):</b>
+        <b>Max mints per wallet (Optional):</b>
+      </Label>
+      <Textarea
+        onChange={(e) => {
+          const updated = e.target.value;
+          setMaxMintsPerWallet(updated);
+          updateMintConfig({
+            priceInEth,
+            maxSupply,
+            mintEndTimestamp: mintEndDateToMintEndTimestamp(mintEndDate),
+            maxMintsPerWallet: updated,
+          });
+        }}
+        value={maxMintsPerWallet}
+        placeholder="Leave empty for unlimited mints per wallet"
+      />
+      <Spacing />
+      <Label>
+        <b>Mint duration (Optional):</b>
       </Label>
       <Spacing />
       <MintEndTimestampPicker
@@ -111,6 +139,7 @@ export default function InscribeDropMintConfigEntry(props: {
             mintEndTimestamp:
               // Use date rather than mintEndDate in case mintEndDate hasn't updated yet
               mintEndDateToMintEndTimestamp(date),
+            maxMintsPerWallet,
           });
         }}
       />

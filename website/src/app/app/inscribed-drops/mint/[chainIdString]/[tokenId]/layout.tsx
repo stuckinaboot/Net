@@ -1,4 +1,5 @@
 import { WEBSITE_BASE_URL } from "@/app/constants";
+import { getResizedImageUrl } from "@/app/utils";
 import { getInscribedDrop } from "@/components/core/net-apps/inscribed-drops/utils";
 import { IPFS_GATEWAY, sanitizeMediaUrl } from "@/components/core/utils";
 import { Metadata } from "next";
@@ -20,7 +21,7 @@ export async function generateMetadata({
     inscribedDrop.metadata.image,
     IPFS_GATEWAY.NFT_STORAGE
   );
-  const imageUrl = `${WEBSITE_BASE_URL}/api/resizeImage?imageUrl=${image}`;
+  const imageUrl = getResizedImageUrl(image);
 
   return {
     other: {

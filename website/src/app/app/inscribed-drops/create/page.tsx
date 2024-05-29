@@ -25,6 +25,7 @@ export default function Page() {
     priceInEth: undefined,
     maxSupply: undefined,
     mintEndTimestamp: undefined,
+    maxMintsPerWallet: undefined,
   } as MintConfig);
 
   return (
