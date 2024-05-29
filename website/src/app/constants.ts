@@ -5,7 +5,7 @@ export const TESTNETS_ENABLED =
   process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true";
 export const IS_PROD = process.env.NODE_ENV === "production";
 export const WEBSITE_BASE_URL = IS_PROD
-  ? "https://willienet.vercel.app"
+  ? "https://netprotocol.app"
   : "http://localhost:3000";
 
 export const WILLIE_NET_CONTRACT = {
