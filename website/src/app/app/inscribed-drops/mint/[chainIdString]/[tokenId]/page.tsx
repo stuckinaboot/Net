@@ -35,6 +35,10 @@ export default function Page({ params }: { params: { tokenId: string } }) {
     ],
   });
 
+  if (data == null) {
+    return <>Loading...</>;
+  }
+
   const typedData = getInscribedDropFromOnchainMessage(data as OnchainMessage);
 
   return (
