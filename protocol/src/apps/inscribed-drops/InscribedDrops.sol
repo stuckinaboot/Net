@@ -20,7 +20,7 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
 
     mapping(uint256 id => uint256 supply) public totalSupply;
 
-    mapping(uint256 drop => mapping(address user => uint256 minted))
+    mapping(uint256 id => mapping(address user => uint256 minted))
         public mintedPerWallet;
 
     error TokenDoesNotExist();
@@ -65,6 +65,8 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         _mint(msg.sender, totalDrops, 1, "");
         // Set total supply to 1
         totalSupply[totalDrops] = 1;
+        // Set minted per wallet to 1
+        mintedPerWallet[totalDrops][msg.sender] = 1;
         // Emit inscribed drop event
         emit InscribedDrop(msg.sender, totalDrops);
 

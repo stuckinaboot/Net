@@ -121,6 +121,9 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
             // Check total supply
             assertEq(drops.totalSupply(i), tokenUriEmpty ? 0 : 1);
 
+            // Check minted per wallet
+            assertEq(drops.mintedPerWallet(i, users[1]), tokenUriEmpty ? 0 : 1);
+
             // Check total net messages for app
             uint256 totalMessages = net.getTotalMessagesForAppCount(
                 address(drops)
@@ -534,7 +537,11 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
 
         // Mint from user 1 hitting max mints per wallet
         vm.startPrank(users[1]);
-        drops.mint(0, maxMintsPerWallet);
+        if (maxMintsPerWallet == 1) {
+            vm.expectRevert(InscribedDrops.CannotMintQuantityZero.selector);
+        }
+        // -1 because one was already minted on inscribe
+        drops.mint(0, maxMintsPerWallet - 1);
 
         // Exceed max mints per wallet
         vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
@@ -597,7 +604,10 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
 
         // Mint from user 2 hitting max mints per wallet
         vm.startPrank(users[2]);
-        drops.mint(1, maxMintsPerWallet);
+        if (maxMintsPerWallet == 1) {
+            vm.expectRevert(InscribedDrops.CannotMintQuantityZero.selector);
+        }
+        drops.mint(1, maxMintsPerWallet - 1);
 
         // Exceed max mints per wallet
         vm.expectRevert(InscribedDrops.MaxMintsPerWalletReached.selector);
