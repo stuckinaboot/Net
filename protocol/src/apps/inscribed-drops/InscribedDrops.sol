@@ -20,10 +20,14 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
 
     mapping(uint256 id => uint256 supply) public totalSupply;
 
+    mapping(uint256 drop => mapping(address user => uint256 minted))
+        public mintedPerWallet;
+
     error TokenDoesNotExist();
     error TokenUriEmpty();
     error MintPaymentIncorrect();
     error MintSupplyReached();
+    error MaxMintsPerWalletReached();
     error MintEndTimestampReached();
     error CannotMintQuantityZero();
 
@@ -49,6 +53,7 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         uint256 mintPrice,
         uint256 maxSupply,
         uint256 mintEndTimestamp,
+        uint256 maxMintsPerWallet,
         string calldata tokenUri
     ) external {
         // Check token uri non-empty
@@ -73,7 +78,12 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
             msg.sender,
             tokenUri,
             INSCRIBE_TOPIC,
-            abi.encode(mintPrice, maxSupply, mintEndTimestamp)
+            abi.encode(
+                mintPrice,
+                maxSupply,
+                mintEndTimestamp,
+                maxMintsPerWallet
+            )
         );
     }
 
@@ -97,8 +107,12 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         );
 
         // Parse data
-        (uint256 mintPrice, uint256 maxSupply, uint256 mintEndTimestamp) = abi
-            .decode(message.data, (uint256, uint256, uint256));
+        (
+            uint256 mintPrice,
+            uint256 maxSupply,
+            uint256 mintEndTimestamp,
+            uint256 maxMintsPerWallet
+        ) = abi.decode(message.data, (uint256, uint256, uint256, uint256));
 
         unchecked {
             // Check payment correct, if non-zero
@@ -110,6 +124,14 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
             if (maxSupply != 0 && totalSupply[id] + quantity > maxSupply) {
                 revert MintSupplyReached();
             }
+
+            // Check max mints per wallet not reached, if non-zero
+            if (
+                maxMintsPerWallet != 0 &&
+                mintedPerWallet[id][msg.sender] + quantity > maxMintsPerWallet
+            ) {
+                revert MaxMintsPerWalletReached();
+            }
         }
 
         // Check mint not ended, if non-zero
@@ -120,9 +142,12 @@ contract InscribedDrops is ERC1155, TwoStepOwnable {
         // Mint tokens
         _mint(msg.sender, id, quantity, "");
 
-        // Update total supply
         unchecked {
+            // Update total supply
             totalSupply[id] += quantity;
+
+            // Update minted per wallet
+            mintedPerWallet[id][msg.sender] += quantity;
         }
 
         // If owner is non-zero and fee is non-zero and msg value is non-zero, transfer fee
