@@ -1,4 +1,5 @@
 [
+  { "type": "constructor", "inputs": [], "stateMutability": "nonpayable" },
   {
     "type": "function",
     "name": "NET_APP_NAME",
@@ -62,6 +63,11 @@
         "type": "uint256",
         "internalType": "uint256"
       },
+      {
+        "name": "maxMintsPerWallet",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
       { "name": "tokenUri", "type": "string", "internalType": "string" }
     ],
     "outputs": [],
@@ -86,6 +92,18 @@
     ],
     "outputs": [],
     "stateMutability": "payable"
+  },
+  {
+    "type": "function",
+    "name": "mintedPerWallet",
+    "inputs": [
+      { "name": "drop", "type": "uint256", "internalType": "uint256" },
+      { "name": "user", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [
+      { "name": "minted", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -378,6 +396,7 @@
   { "type": "error", "name": "ArrayLengthsMismatch", "inputs": [] },
   { "type": "error", "name": "CannotMintQuantityZero", "inputs": [] },
   { "type": "error", "name": "InsufficientBalance", "inputs": [] },
+  { "type": "error", "name": "MaxMintsPerWalletReached", "inputs": [] },
   { "type": "error", "name": "MintEndTimestampReached", "inputs": [] },
   { "type": "error", "name": "MintPaymentIncorrect", "inputs": [] },
   { "type": "error", "name": "MintSupplyReached", "inputs": [] },

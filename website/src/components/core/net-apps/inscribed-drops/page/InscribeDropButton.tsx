@@ -67,6 +67,7 @@ export default function InscribeDropButton(props: {
     priceInEth: props.mintConfig.priceInEth || 0,
     maxSupply: props.mintConfig.maxSupply || 0,
     mintEndTimestamp: props.mintConfig.mintEndTimestamp || 0,
+    maxMintsPerWallet: props.mintConfig.maxMintsPerWallet || 0,
   };
 
   async function uploadMedia() {
@@ -125,6 +126,7 @@ export default function InscribeDropButton(props: {
                 parseEther(sanitizedMintConfig.priceInEth.toString()),
                 sanitizedMintConfig.maxSupply,
                 sanitizedMintConfig.mintEndTimestamp,
+                sanitizedMintConfig.maxMintsPerWallet,
                 JSON.stringify(inscription),
               ]}
               messages={{
