@@ -77,6 +77,13 @@ export function InscribeDropDialogContents(props: {
       <>
         <br />
         <Label>
+          Max mints per wallet:{" "}
+          {props.mintConfig.maxMintsPerWallet || "Unlimited"}
+        </Label>
+      </>
+      <>
+        <br />
+        <Label>
           Mint end date:{" "}
           {props.mintConfig.mintEndTimestamp &&
           props.mintConfig.mintEndTimestamp > 0

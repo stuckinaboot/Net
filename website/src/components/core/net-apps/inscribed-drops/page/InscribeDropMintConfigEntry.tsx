@@ -121,7 +121,7 @@ export default function InscribeDropMintConfigEntry(props: {
             maxMintsPerWallet: updated,
           });
         }}
-        value={maxSupply}
+        value={maxMintsPerWallet}
         placeholder="Leave empty for unlimited mints per wallet"
       />
       <Spacing />
