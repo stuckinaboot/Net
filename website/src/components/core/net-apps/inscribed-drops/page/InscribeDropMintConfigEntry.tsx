@@ -17,6 +17,7 @@ export type MintConfigDefined = {
   maxSupply: number;
   priceInEth: number;
   mintEndTimestamp: number;
+  maxMintsPerWallet: number;
 };
 
 export default function InscribeDropMintConfigEntry(props: {

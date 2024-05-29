@@ -63,6 +63,7 @@ export function getInscribedDropFromOnchainMessage(
       priceInEth: +formatEther(BigInt(msgDataFields[0].toString())),
       maxSupply: msgDataFields[1],
       mintEndTimestamp: msgDataFields[2],
+      maxMintsPerWallet: msgDataFields[3],
     },
     metadata: {
       name: textTyped.name,

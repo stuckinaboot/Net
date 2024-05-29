@@ -132,6 +132,9 @@ export default function InscribeDropMintPreview(props: {
         Mint price (in ETH): {mintConfig.priceInEth}
       </LabelWithSpacing>
       <LabelWithSpacing>
+        Max mints per wallet: {mintConfig.maxMintsPerWallet || "Unlimited"}
+      </LabelWithSpacing>
+      <LabelWithSpacing>
         Mint end timestamp:{" "}
         {/* Converts end timestamp to date in the user's local timezone */}
         {mintConfig.mintEndTimestamp === 0
