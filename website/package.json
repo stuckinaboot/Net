@@ -18,8 +18,8 @@
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
-    "@rainbow-me/rainbowkit": "^2.0.2",
-    "@tanstack/react-query": "^5.27.5",
+    "@rainbow-me/rainbowkit": "^2.1.1",
+    "@tanstack/react-query": "^5.40.0",
     "@types/mime-types": "^2.1.4",
     "@types/react-timeago": "^4.1.7",
     "add": "^2.0.6",
@@ -50,8 +50,8 @@
     "tailwindcss-animate": "^1.0.7",
     "truncate-eth-address": "^1.0.2",
     "use-async-effect": "^2.2.7",
-    "viem": "^2.10.2",
-    "wagmi": "^2.5.16"
+    "viem": "2.x",
+    "wagmi": "^2.9.7"
   },
   "devDependencies": {
     "@types/memoizee": "^0.4.11",
