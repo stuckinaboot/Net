@@ -14,7 +14,7 @@ contract DeployApp is Script {
 
     function run() public {
         string memory root = vm.projectRoot();
-        bytes32 salt = 0xa011a366336036db84b80786ac12c6f96d19812f1286799359a55ec81347396e;
+        bytes32 salt = 0x55b65043934328110df71d1ca0eb2d9f40564e53b660da828320332809f4db6d;
 
         // uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         // vm.startBroadcast(deployerPrivateKey);
