@@ -22,18 +22,28 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
     // Test users
     address[10] users;
 
-    InscribedDrops drops = new InscribedDrops();
+    InscribedDrops drops;
 
     address constant NET_ADDRESS =
         address(0x00000000B24D62781dB359b07880a105cD0b64e6);
-    Net public net = Net(NET_ADDRESS);
+    Net public net;
 
     function setUp() public {
         // Deploy Net code to NET_ADDRESS
+        net = Net(NET_ADDRESS);
         bytes memory code = address(new Net()).code;
         vm.etch(NET_ADDRESS, code);
 
+        drops = new InscribedDrops();
+
+        // Foundry default sender
+        vm.startPrank(address(0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38));
+        drops.transferOwnership(address(this));
+        vm.stopPrank();
+        drops.acceptOwnership();
+
         vm.deal(address(this), 1000 ether);
+        assertEq(address(this), drops.owner());
         drops.setFeeBps(0);
 
         for (uint256 i = 0; i < users.length; i++) {
@@ -75,17 +85,20 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         uint256 mintPrice,
         uint256 maxSupply,
         uint256 mintEndTimestamp,
+        uint256 maxMintsPerWallet,
         string calldata tokenUri
     ) public {
         vm.assume(mintPrice < 1 ether);
         vm.assume(maxSupply < 100000);
         vm.assume(mintEndTimestamp < block.timestamp + 52 weeks);
+        vm.assume(maxMintsPerWallet < 100000);
         vm.startPrank(users[1]);
 
         for (uint256 i = 0; i < 5; i++) {
             uint256 mintPriceI = mintPrice + i;
             uint256 maxSupplyI = maxSupply + i;
             uint256 mintEndTimestampI = mintEndTimestamp + i;
+            uint256 maxMintsPerWalletI = maxMintsPerWallet + i;
 
             bool tokenUriEmpty = bytes(tokenUri).length == 0;
             if (tokenUriEmpty) {
@@ -94,7 +107,13 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
                 vm.expectEmit(true, true, true, true);
                 emit InscribedDrop(users[1], i);
             }
-            drops.inscribe(mintPriceI, maxSupplyI, mintEndTimestampI, tokenUri);
+            drops.inscribe(
+                mintPriceI,
+                maxSupplyI,
+                mintEndTimestampI,
+                maxMintsPerWalletI,
+                tokenUri
+            );
 
             // Check total drops
             assertEq(drops.totalDrops(), tokenUriEmpty ? 0 : i + 1);
@@ -142,16 +161,24 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         uint256 mintPrice,
         uint256 maxSupply,
         uint256 mintEndTimestamp,
+        uint256 maxMintsPerWallet,
         string calldata tokenUri
     ) public {
         vm.assume(mintPrice < 1 ether);
         vm.assume(maxSupply < 100000);
         vm.assume(mintEndTimestamp < block.timestamp + 52 weeks);
+        vm.assume(maxMintsPerWallet < 100000);
         vm.assume(bytes(tokenUri).length > 0);
         vm.startPrank(users[1]);
 
         for (uint256 i = 0; i < 5; i++) {
-            drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+            drops.inscribe(
+                mintPrice,
+                maxSupply,
+                mintEndTimestamp,
+                maxMintsPerWallet,
+                tokenUri
+            );
 
             for (uint256 j = 0; j <= i; j++) {
                 // No revert
@@ -201,10 +228,17 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         uint256 mintPrice = 0;
         uint256 maxSupply = 0;
         uint256 mintEndTimestamp = 0;
+        uint256 maxMintsPerWallet = 0;
         vm.assume(bytes(tokenUri).length > 0);
         vm.startPrank(users[1]);
 
-        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+        drops.inscribe(
+            mintPrice,
+            maxSupply,
+            mintEndTimestamp,
+            maxMintsPerWallet,
+            tokenUri
+        );
 
         performAndValidateMints(0, mintPrice);
     }
@@ -221,9 +255,16 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
 
         uint256 mintPrice = 0;
         uint256 maxSupply = 0;
+        uint256 maxMintsPerWallet = 0;
         vm.startPrank(users[1]);
 
-        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+        drops.inscribe(
+            mintPrice,
+            maxSupply,
+            mintEndTimestamp,
+            maxMintsPerWallet,
+            tokenUri
+        );
 
         performAndValidateMints(0, 0);
 
@@ -253,7 +294,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
         drops.mint(2, 1);
 
-        drops.inscribe(0, 0, 0, tokenUri);
+        drops.inscribe(0, 0, 0, 0, tokenUri);
         drops.mint(0, 1);
         drops.mint(0, 2);
 
@@ -263,7 +304,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         vm.expectRevert(InscribedDrops.TokenDoesNotExist.selector);
         drops.mint(2, 1);
 
-        drops.inscribe(0, 0, 0, tokenUri);
+        drops.inscribe(0, 0, 0, 0, tokenUri);
         drops.mint(0, 1);
         drops.mint(1, 1);
 
@@ -281,9 +322,16 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
 
         uint256 mintPrice = 0;
         uint256 mintEndTimestamp = 0;
+        uint256 maxMintsPerWallet = 0;
         vm.startPrank(users[1]);
 
-        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+        drops.inscribe(
+            mintPrice,
+            maxSupply,
+            mintEndTimestamp,
+            maxMintsPerWallet,
+            tokenUri
+        );
 
         vm.startPrank(users[2]);
         // Mint close to max supply.
@@ -312,7 +360,13 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         drops.mint(0, 2);
 
         // Inscribe with max supply 1
-        drops.inscribe(mintPrice, 1, mintEndTimestamp, tokenUri);
+        drops.inscribe(
+            mintPrice,
+            1,
+            mintEndTimestamp,
+            maxMintsPerWallet,
+            tokenUri
+        );
         // Mint should always revert
         vm.expectRevert(InscribedDrops.MintSupplyReached.selector);
         drops.mint(1, 1);
@@ -329,9 +383,16 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
 
         uint256 maxSupply = 0;
         uint256 mintEndTimestamp = 0;
+        uint256 maxMintsPerWallet = 0;
         vm.startPrank(users[1]);
 
-        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+        drops.inscribe(
+            mintPrice,
+            maxSupply,
+            mintEndTimestamp,
+            maxMintsPerWallet,
+            tokenUri
+        );
 
         performAndValidateMints(0, mintPrice);
 
@@ -376,6 +437,7 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
 
         uint256 maxSupply = 0;
         uint256 mintEndTimestamp = 0;
+        uint256 maxMintsPerWallet = 0;
 
         // 2.5%
         uint256 feeBps = 250;
@@ -383,7 +445,13 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
 
         vm.startPrank(users[1]);
         // Inscribe and mint with price greater than 0 and fee greater than 0 should work
-        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+        drops.inscribe(
+            mintPrice,
+            maxSupply,
+            mintEndTimestamp,
+            maxMintsPerWallet,
+            tokenUri
+        );
 
         vm.startPrank(users[2]);
         address creator = users[1];
@@ -414,7 +482,13 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
 
         vm.startPrank(users[3]);
         // Mint with price 0 and fee set should work properly
-        drops.inscribe(0, maxSupply, mintEndTimestamp, tokenUri);
+        drops.inscribe(
+            0,
+            maxSupply,
+            mintEndTimestamp,
+            maxMintsPerWallet,
+            tokenUri
+        );
         drops.mint(1, 1);
 
         drops.mint(1, 5);
@@ -422,7 +496,13 @@ contract InscribedDropsTest is PRBTest, StdCheats, IERC1155Receiver {
         vm.startPrank(drops.owner());
         // Mint with owner 0 address should work properly
         drops.renounceOwnership();
-        drops.inscribe(mintPrice, maxSupply, mintEndTimestamp, tokenUri);
+        drops.inscribe(
+            mintPrice,
+            maxSupply,
+            mintEndTimestamp,
+            maxMintsPerWallet,
+            tokenUri
+        );
 
         ownerBalance = drops.owner().balance;
         creatorBalance = creator.balance;
