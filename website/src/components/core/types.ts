@@ -88,3 +88,10 @@ export type InferredAppComponentsConfig = {
     success: { description: string };
   };
 };
+
+export type StandaloneAppComponentsConfig = {
+  getTransformedMessage: (
+    chainId: number,
+    messageText: string
+  ) => Promise<React.ReactNode | string>;
+};

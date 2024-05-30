@@ -10,17 +10,11 @@ import {
   SanitizedOnchainMessageWithRenderContext,
 } from "./types";
 import DefaultMessageRenderer from "./DefaultMessageRenderer";
-import { APP_TO_CONFIG } from "./net-apps/AppManager";
+import { APP_TO_CONFIG, STANDALONE_APP_TO_CONFIG } from "./net-apps/AppManager";
 import { getEnsName } from "../utils/utils";
 import useAsyncEffect from "use-async-effect";
-import Link from "next/link";
-import {
-  chainIdToChain,
-  chainIdToOpenSeaChainString,
-  publicClient,
-} from "@/app/utils";
+import { chainIdToChain, publicClient } from "@/app/utils";
 import { readContract } from "viem/actions";
-import { INSCRIBED_DROPS_CONTRACT } from "./net-apps/inscribed-drops/constants";
 import memoize from "memoizee";
 
 // TODO work on improving this to a lower value. Currently, if its too low,
@@ -59,51 +53,13 @@ const getTransformedMessage = memoize(
   async (
     appAddress: string,
     chainId: number,
-    message: string
+    messageText: string
   ): Promise<string | React.ReactNode> => {
-    try {
-      const hashTagIndex = message.indexOf("#");
-      if (hashTagIndex === -1) {
-        return message;
-      }
-      const dropId = message.substring(hashTagIndex + 1);
-      if (appAddress === INSCRIBED_DROPS_CONTRACT.address) {
-        const chain = chainIdToChain(chainId);
-        if (chain == null) {
-          return undefined;
-        }
-        const uri = (await readContract(publicClient(chain), {
-          address: appAddress as any,
-          abi: INSCRIBED_DROPS_CONTRACT.abi,
-          functionName: "uri",
-          args: [dropId],
-        })) as any;
-        const json = atob(
-          uri.substring("data:application/json;base64,".length)
-        );
-        const drop = JSON.parse(json);
-        if (drop.name) {
-          return (
-            <>
-              {message.substring(0, hashTagIndex)}
-              <Link
-                href={`/app/inscribed-drops/mint/${chainIdToOpenSeaChainString(
-                  chainId
-                )}/${dropId}`}
-              >
-                <p className="underline">{drop.name}</p>
-              </Link>
-            </>
-          );
-        }
-      } else {
-        return message;
-      }
-    } catch (e) {
-      // This may throw due to RPC errors or the contract not implementing the above function.
-      // In either case, gracefully return undefined
-      return undefined;
+    const config = STANDALONE_APP_TO_CONFIG[appAddress];
+    if (config == null) {
+      return messageText;
     }
+    return config.getTransformedMessage(chainId, messageText);
   }
 );
 
