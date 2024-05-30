@@ -61,9 +61,17 @@ export type AppControlsProps = {
   updateControlsState: (arg: any) => void;
 };
 
+export type AppMessageRendererContext = {
+  appName?: string;
+  transformedMessage?: React.ReactNode;
+};
+
+export type SanitizedOnchainMessageWithRenderContext = SanitizedOnchainMessage &
+  AppMessageRendererContext;
+
 export type AppMessageRendererProps = {
   idx: number;
-  message: SanitizedOnchainMessage;
+  message: SanitizedOnchainMessageWithRenderContext;
   chainId: number;
 };
 

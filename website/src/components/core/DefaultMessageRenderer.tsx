@@ -12,41 +12,40 @@ import { readContract } from "viem/actions";
 import memoize from "memoizee";
 import useAsyncEffect from "use-async-effect";
 import React, { useState } from "react";
-import { INSCRIBED_DROPS_CONTRACT } from "./net-apps/inscribed-drops/constants";
-import Link from "next/link";
 
 const SHOW_MESSAGE_TIMESTAMP = false;
 
 export default function DefaultMessageRenderer(props: AppMessageRendererProps) {
   const { idx, message } = props;
-  const [appName, setAppName] = useState<string>();
-  const [finalMessage, setFinalMessage] = useState<React.ReactNode>(
-    props.message.text
-  );
+  // const [finalMessage, setFinalMessage] = useState<React.ReactNode>(
+  //   props.message.text
+  // );
 
-  useAsyncEffect(async () => {
-    const name = await getAppName(props.message.app, props.chainId);
-    if (name != null) {
-      setAppName(name);
-    }
-  }, [props.message.app, props.chainId]);
+  // useAsyncEffect(async () => {
+  //   const name = await getAppName(props.message.app, props.chainId);
+  //   if (name != null) {
+  //     setAppName(name);
+  //   }
+  // }, [props.message.app, props.chainId]);
 
-  useAsyncEffect(async () => {
-    const messageText = await transformedMessageForApp(
-      props.message.app,
-      props.chainId,
-      message.text
-    );
-    if (messageText != null) {
-      setFinalMessage(messageText);
-    }
-  }, [props.message.app, props.chainId, message.text]);
+  // useAsyncEffect(async () => {
+  //   const messageText = await transformedMessageForApp(
+  //     props.message.app,
+  //     props.chainId,
+  //     message.text
+  //   );
+  //   if (messageText != null) {
+  //     setFinalMessage(messageText);
+  //   }
+  // }, [props.message.app, props.chainId, message.text]);
 
   return (
     <>
       <p className="flex text-left">
-        {appName && `[${appName}] `}
-        {finalMessage}
+        {props.message.appName && `[${props.message.appName}] `}
+        {props.message.transformedMessage
+          ? props.message.transformedMessage
+          : props.message.text}
       </p>
       <p className="flex justify-end">
         {SHOW_MESSAGE_TIMESTAMP && (

@@ -7,6 +7,7 @@ import {
   NetAppContext,
   OnchainMessage,
   SanitizedOnchainMessage,
+  SanitizedOnchainMessageWithRenderContext,
 } from "./types";
 import DefaultMessageRenderer from "./DefaultMessageRenderer";
 import { APP_TO_CONFIG } from "./net-apps/AppManager";
@@ -54,7 +55,7 @@ const getAppName = memoize(async (appAddress: string, chainId: number) => {
   }
 });
 
-const transformedMessageForApp = memoize(
+const getTransformedMessage = memoize(
   async (
     appAddress: string,
     chainId: number,
@@ -114,6 +115,9 @@ export default function MessagesDisplay(props: {
 }) {
   const [chainChanged, setChainChanged] = useState(false);
   const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
+  const [transformedMessages, setTransformedMessages] = useState<
+    SanitizedOnchainMessageWithRenderContext[]
+  >([]);
   const [firstLoadedMessages, setFirstLoadedMessages] = useState(false);
   const [loadedMessages, setLoadedMessages] = useState(false);
   const specificMessageRef = useRef<HTMLDivElement | null>(null);
@@ -199,6 +203,20 @@ export default function MessagesDisplay(props: {
           (await getEnsName({ address: message.sender, chainId })) || undefined,
       }))
     );
+
+    // Attempt to set transformed messages
+    const finalTransformedMessages = await Promise.all(
+      finalMessages.map(async (message) => {
+        const appName = await getAppName(message.app, chainId);
+        const messageTextNode = await getTransformedMessage(
+          message.app,
+          chainId,
+          message.text
+        );
+        return { ...message, appName, transformedMessage: messageTextNode };
+      })
+    );
+    setTransformedMessages(finalTransformedMessages);
 
     // Updating messages using state and skipping when not fetched
     // gets rid of the flicker of loading messages
@@ -294,7 +312,7 @@ export default function MessagesDisplay(props: {
             "overflow-x-hidden"
           )}
         >
-          {messages.map((message, idx) => (
+          {transformedMessages.map((message, idx) => (
             <div
               key={idx}
               className="flex flex-col"
