@@ -80,26 +80,31 @@ export async function getInscribedDrop(params: {
   chainIdString: string;
   tokenId: string;
 }) {
-  const chain = openSeaChainStringToChain(params.chainIdString);
-  if (chain == null) {
-    return undefined;
-  }
-
-  const res: OnchainMessage | undefined = (await readContract(
-    publicClient(chain),
-    {
-      address: WILLIE_NET_CONTRACT.address as any,
-      abi: WILLIE_NET_CONTRACT.abi,
-      functionName: "getMessageForAppTopic",
-      args: [
-        params.tokenId,
-        INSCRIBED_DROPS_CONTRACT.address,
-        INSCRIBE_DROP_INSCRIBE_TOPIC,
-      ],
+  try {
+    const chain = openSeaChainStringToChain(params.chainIdString);
+    if (chain == null) {
+      return undefined;
     }
-  )) as OnchainMessage;
-  if (res == null) {
+
+    const res: OnchainMessage | undefined = (await readContract(
+      publicClient(chain),
+      {
+        address: WILLIE_NET_CONTRACT.address as any,
+        abi: WILLIE_NET_CONTRACT.abi,
+        functionName: "getMessageForAppTopic",
+        args: [
+          params.tokenId,
+          INSCRIBED_DROPS_CONTRACT.address,
+          INSCRIBE_DROP_INSCRIBE_TOPIC,
+        ],
+      }
+    )) as OnchainMessage;
+    if (res == null) {
+      return undefined;
+    }
+    return getInscribedDropFromOnchainMessage(res);
+  } catch (e) {
+    console.log("Error getting inscribed drop", e);
     return undefined;
   }
-  return getInscribedDropFromOnchainMessage(res);
 }
