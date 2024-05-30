@@ -1,6 +1,6 @@
 import { chainTimeToMilliseconds } from "@/app/utils";
 import TimeAgo from "react-timeago";
-import { AppMessageRendererProps, SanitizedOnchainMessage } from "./types";
+import { AppMessageRendererProps } from "./types";
 import { SHOW_COPY_MESSAGE_LINK_BUTTON } from "@/app/constants";
 import CopyMessageLinkButton from "./CopyMessageLinkButton";
 import React from "react";
@@ -9,27 +9,6 @@ const SHOW_MESSAGE_TIMESTAMP = false;
 
 export default function DefaultMessageRenderer(props: AppMessageRendererProps) {
   const { idx, message } = props;
-  // const [finalMessage, setFinalMessage] = useState<React.ReactNode>(
-  //   props.message.text
-  // );
-
-  // useAsyncEffect(async () => {
-  //   const name = await getAppName(props.message.app, props.chainId);
-  //   if (name != null) {
-  //     setAppName(name);
-  //   }
-  // }, [props.message.app, props.chainId]);
-
-  // useAsyncEffect(async () => {
-  //   const messageText = await transformedMessageForApp(
-  //     props.message.app,
-  //     props.chainId,
-  //     message.text
-  //   );
-  //   if (messageText != null) {
-  //     setFinalMessage(messageText);
-  //   }
-  // }, [props.message.app, props.chainId, message.text]);
 
   return (
     <>
