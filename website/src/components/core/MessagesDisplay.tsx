@@ -7,15 +7,61 @@ import {
   NetAppContext,
   OnchainMessage,
   SanitizedOnchainMessage,
+  SanitizedOnchainMessageWithRenderContext,
 } from "./types";
 import DefaultMessageRenderer from "./DefaultMessageRenderer";
-import { APP_TO_CONFIG } from "./net-apps/AppManager";
+import { APP_TO_CONFIG, STANDALONE_APP_TO_CONFIG } from "./net-apps/AppManager";
 import { getEnsName } from "../utils/utils";
 import useAsyncEffect from "use-async-effect";
+import { chainIdToChain, publicClient } from "@/app/utils";
+import { readContract } from "viem/actions";
+import memoize from "memoizee";
 
 // TODO work on improving this to a lower value. Currently, if its too low,
 // we run into issues where it won't scroll at all
 const PRE_SCROLL_TIMEOUT_MS = 250;
+
+// memoize to reduce the number of RPC calls since this renderer may be called a lot
+const getAppName = memoize(async (appAddress: string, chainId: number) => {
+  const chain = chainIdToChain(chainId);
+  if (chain == null) {
+    return undefined;
+  }
+  try {
+    const netAppName = await readContract(publicClient(chain), {
+      address: appAddress as any,
+      abi: [
+        {
+          type: "function",
+          name: "NET_APP_NAME",
+          inputs: [],
+          outputs: [{ name: "", type: "string", internalType: "string" }],
+          stateMutability: "view",
+        },
+      ],
+      functionName: "NET_APP_NAME",
+    });
+    return netAppName;
+  } catch (e) {
+    // This may throw due to RPC errors or the contract not implementing the above function.
+    // In either case, gracefully return undefined
+    return undefined;
+  }
+});
+
+const getTransformedMessage = memoize(
+  async (
+    appAddress: string,
+    chainId: number,
+    messageText: string
+  ): Promise<string | React.ReactNode> => {
+    const config = STANDALONE_APP_TO_CONFIG[appAddress];
+    if (config == null) {
+      return messageText;
+    }
+    return config.getTransformedMessage(chainId, messageText);
+  }
+);
 
 export default function MessagesDisplay(props: {
   scrollToBottom: (onlyIfAlreadyOnBottom: boolean) => void;
@@ -24,7 +70,13 @@ export default function MessagesDisplay(props: {
   appContext?: NetAppContext;
 }) {
   const [chainChanged, setChainChanged] = useState(false);
+  // TODO figure out the right way to consolidate messages and transformedMessages.
+  // Might be simple but need to ensure it doesn't break initial scroll on load and later scrolls
+  // when hitting the scroll button or new message comes in
   const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
+  const [transformedMessages, setTransformedMessages] = useState<
+    SanitizedOnchainMessageWithRenderContext[]
+  >([]);
   const [firstLoadedMessages, setFirstLoadedMessages] = useState(false);
   const [loadedMessages, setLoadedMessages] = useState(false);
   const specificMessageRef = useRef<HTMLDivElement | null>(null);
@@ -110,6 +162,20 @@ export default function MessagesDisplay(props: {
           (await getEnsName({ address: message.sender, chainId })) || undefined,
       }))
     );
+
+    // Attempt to set transformed messages
+    const finalTransformedMessages = await Promise.all(
+      finalMessages.map(async (message) => {
+        const appName = await getAppName(message.app, chainId);
+        const messageTextNode = await getTransformedMessage(
+          message.app,
+          chainId,
+          message.text
+        );
+        return { ...message, appName, transformedMessage: messageTextNode };
+      })
+    );
+    setTransformedMessages(finalTransformedMessages);
 
     // Updating messages using state and skipping when not fetched
     // gets rid of the flicker of loading messages
@@ -205,7 +271,7 @@ export default function MessagesDisplay(props: {
             "overflow-x-hidden"
           )}
         >
-          {messages.map((message, idx) => (
+          {transformedMessages.map((message, idx) => (
             <div
               key={idx}
               className="flex flex-col"

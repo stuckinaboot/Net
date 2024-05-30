@@ -61,9 +61,17 @@ export type AppControlsProps = {
   updateControlsState: (arg: any) => void;
 };
 
+export type AppMessageRendererContext = {
+  appName?: string;
+  transformedMessage?: React.ReactNode;
+};
+
+export type SanitizedOnchainMessageWithRenderContext = SanitizedOnchainMessage &
+  AppMessageRendererContext;
+
 export type AppMessageRendererProps = {
   idx: number;
-  message: SanitizedOnchainMessage;
+  message: SanitizedOnchainMessageWithRenderContext;
   chainId: number;
 };
 
@@ -79,4 +87,15 @@ export type InferredAppComponentsConfig = {
   toasts: {
     success: { description: string };
   };
+};
+
+// Standalone apps are Net apps that might have their own pages in the Net UI
+// but do not simply augment the Net chat UI on its own like app components and inferred apps do.
+// Don't get confused by the name, standalone could mean that the app still lives in this codebase
+// and/or hosted on the Net domain, but it's not required to be.
+export type StandaloneAppComponentsConfig = {
+  getTransformedMessage: (
+    chainId: number,
+    messageText: string
+  ) => Promise<React.ReactNode | string>;
 };
