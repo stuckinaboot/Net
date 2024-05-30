@@ -12,10 +12,99 @@ import DefaultMessageRenderer from "./DefaultMessageRenderer";
 import { APP_TO_CONFIG } from "./net-apps/AppManager";
 import { getEnsName } from "../utils/utils";
 import useAsyncEffect from "use-async-effect";
+import Link from "next/link";
+import {
+  chainIdToChain,
+  chainIdToOpenSeaChainString,
+  publicClient,
+} from "@/app/utils";
+import { readContract } from "viem/actions";
+import { INSCRIBED_DROPS_CONTRACT } from "./net-apps/inscribed-drops/constants";
+import memoize from "memoizee";
 
 // TODO work on improving this to a lower value. Currently, if its too low,
 // we run into issues where it won't scroll at all
 const PRE_SCROLL_TIMEOUT_MS = 250;
+
+// memoize to reduce the number of RPC calls since this renderer may be called a lot
+const getAppName = memoize(async (appAddress: string, chainId: number) => {
+  const chain = chainIdToChain(chainId);
+  if (chain == null) {
+    return undefined;
+  }
+  try {
+    const netAppName = await readContract(publicClient(chain), {
+      address: appAddress as any,
+      abi: [
+        {
+          type: "function",
+          name: "NET_APP_NAME",
+          inputs: [],
+          outputs: [{ name: "", type: "string", internalType: "string" }],
+          stateMutability: "view",
+        },
+      ],
+      functionName: "NET_APP_NAME",
+    });
+    return netAppName;
+  } catch (e) {
+    // This may throw due to RPC errors or the contract not implementing the above function.
+    // In either case, gracefully return undefined
+    return undefined;
+  }
+});
+
+const transformedMessageForApp = memoize(
+  async (
+    appAddress: string,
+    chainId: number,
+    message: string
+  ): Promise<string | React.ReactNode> => {
+    try {
+      const hashTagIndex = message.indexOf("#");
+      if (hashTagIndex === -1) {
+        return message;
+      }
+      const dropId = message.substring(hashTagIndex + 1);
+      if (appAddress === INSCRIBED_DROPS_CONTRACT.address) {
+        const chain = chainIdToChain(chainId);
+        if (chain == null) {
+          return undefined;
+        }
+        const uri = (await readContract(publicClient(chain), {
+          address: appAddress as any,
+          abi: INSCRIBED_DROPS_CONTRACT.abi,
+          functionName: "uri",
+          args: [dropId],
+        })) as any;
+        const json = atob(
+          uri.substring("data:application/json;base64,".length)
+        );
+        const drop = JSON.parse(json);
+        if (drop.name) {
+          return (
+            <>
+              {message.substring(0, hashTagIndex)}
+              <Link
+                href={`/app/inscribed-drops/mint/${chainIdToOpenSeaChainString(
+                  chainId
+                )}/${dropId}`}
+              >
+                <p className="underline">{drop.name}</p>
+              </Link>
+            </>
+          );
+        }
+      } else {
+        return message;
+      }
+    } catch (e) {
+      // This may throw due to RPC errors or the contract not implementing the above function.
+      // In either case, gracefully return undefined
+      return undefined;
+    }
+  }
+);
 
 export default function MessagesDisplay(props: {
   scrollToBottom: (onlyIfAlreadyOnBottom: boolean) => void;
