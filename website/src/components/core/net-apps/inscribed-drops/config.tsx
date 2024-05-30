@@ -32,13 +32,15 @@ export const config: StandaloneAppComponentsConfig = {
         return (
           <>
             {messageText.substring(0, hashTagIndex)}
-            <Link
-              href={`/app/inscribed-drops/mint/${chainIdToOpenSeaChainString(
-                chainId
-              )}/${dropId}`}
-            >
-              <p className="underline">{drop.name}</p>
-            </Link>
+            <span className="inline underline">
+              <Link
+                href={`/app/inscribed-drops/mint/${chainIdToOpenSeaChainString(
+                  chainId
+                )}/${dropId}`}
+              >
+                {drop.name}
+              </Link>
+            </span>
           </>
         );
       }
