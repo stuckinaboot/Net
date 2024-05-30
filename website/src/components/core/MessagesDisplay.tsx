@@ -114,6 +114,9 @@ export default function MessagesDisplay(props: {
   appContext?: NetAppContext;
 }) {
   const [chainChanged, setChainChanged] = useState(false);
+  // TODO figure out the right way to consolidate messages and transformedMessages.
+  // Might be simple but need to ensure it doesn't break initial scroll on load and later scrolls
+  // when hitting the scroll button or new message comes in
   const [messages, setMessages] = useState<SanitizedOnchainMessage[]>([]);
   const [transformedMessages, setTransformedMessages] = useState<
     SanitizedOnchainMessageWithRenderContext[]

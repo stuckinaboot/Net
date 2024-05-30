@@ -1,17 +1,9 @@
-import {
-  chainIdToChain,
-  chainIdToOpenSeaChainString,
-  chainTimeToMilliseconds,
-  publicClient,
-} from "@/app/utils";
+import { chainTimeToMilliseconds } from "@/app/utils";
 import TimeAgo from "react-timeago";
 import { AppMessageRendererProps, SanitizedOnchainMessage } from "./types";
 import { SHOW_COPY_MESSAGE_LINK_BUTTON } from "@/app/constants";
 import CopyMessageLinkButton from "./CopyMessageLinkButton";
-import { readContract } from "viem/actions";
-import memoize from "memoizee";
-import useAsyncEffect from "use-async-effect";
-import React, { useState } from "react";
+import React from "react";
 
 const SHOW_MESSAGE_TIMESTAMP = false;
 
