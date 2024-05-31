@@ -93,6 +93,7 @@ export default function SendMessageSection(props: {
                 txHashes
               );
             },
+            depositGasLimit: "100000000",
             // options: { tradeType: "EXACT_OUTPUT" },
           });
         }}
