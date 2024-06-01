@@ -46,12 +46,12 @@ export default function SendMessageButton(props: {
       return "Message cannot be empty";
     }
   }
-
   if (props.appContext == null) {
     // Attempt to infer app context based on the message, where
     // we search for first inferred app matching the
     const inferredAppEntry = Object.entries(INFERRED_APP_TO_CONFIG).find(
       ([_, config]) => {
+        console.log(_);
         if (!config.supportedChains.has(chainId)) {
           // Chain not supported
           return false;

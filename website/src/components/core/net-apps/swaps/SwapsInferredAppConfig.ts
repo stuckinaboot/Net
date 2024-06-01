@@ -43,6 +43,7 @@ export const config: InferredAppComponentsConfig = {
         functionName: "sendMessageViaApp",
         args: [userAddress, message, "", ""],
       });
+
       await relayClient.actions.swap({
         chainId: base.id, //This is not required as the call action will use the active configured chain
         wallet: wallet,

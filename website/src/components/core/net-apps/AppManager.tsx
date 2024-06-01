@@ -5,6 +5,7 @@ import {
 } from "../types";
 import { INSCRIPTIONS_CONTRACT } from "./inscriptions/InscriptionInferredAppConfig";
 import { config as NftGatingAppConfig } from "./nft-gating/NftGatingAppConfig";
+import { config as SwapsAppConfig } from "./swaps/SwapsInferredAppConfig";
 import { config as InscriptionsAppConfig } from "./inscriptions/InscriptionInferredAppConfig";
 import { config as InscribedDropConfig } from "./inscribed-drops/config";
 import { NFT_GATED_CHAT_CONTRACT } from "./nft-gating/constants";
@@ -18,6 +19,7 @@ export const INFERRED_APP_TO_CONFIG: {
   [address: string]: InferredAppComponentsConfig;
 } = {
   [INSCRIPTIONS_CONTRACT.address]: InscriptionsAppConfig,
+  ["Swaps no address"]: SwapsAppConfig,
 };
 
 export const STANDALONE_APP_TO_CONFIG: {

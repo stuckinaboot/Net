@@ -9,9 +9,14 @@ export function SwapsDialogContents(props: {
 
   return (
     <>
-      <Label>Swap (powered by Relay)</Label>
+      <Label>
+        <b>Swaps Beta (powered by Relay)</b>
+      </Label>
+      <br />
+      <Label>Swap from one currency to another currency on Base.</Label>
       <Separator className="m-3" />
       <Label>{JSON.stringify(swap, null, 4)}</Label>
+      <Separator className="m-3" />
       <Label>
         <i>
           Use swaps at your own risk. The creator(s) of Net are not responsible

@@ -1,6 +1,6 @@
 import { TESTNETS_ENABLED } from "@/app/constants";
 import { base, baseSepolia } from "viem/chains";
-import { isAddress } from "viem";
+import { isAddress, parseEther } from "viem";
 
 type SwapCurrency = { symbol: string; name: string; address: string };
 
@@ -21,7 +21,7 @@ export function parseMessageToSwap(message: string): Swap | undefined {
     if (parts[0] !== "swap") {
       return undefined;
     }
-    const amount = parseFloat(parts[1]);
+    const amount = parseEther(parts[1]);
     const fromCurrencyAddress = parts[2];
     if (!isAddress(fromCurrencyAddress)) {
       return;
