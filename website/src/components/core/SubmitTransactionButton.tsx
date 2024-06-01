@@ -31,6 +31,7 @@ export default function SubmitTransactionButton(props: {
   prePerformTransactionValidation?: () => string | undefined;
   disabled?: boolean;
   value?: string;
+  customExecutor?: () => Promise<void>;
 }) {
   const { toast } = useToast();
   const chainId = useChainId();
@@ -97,13 +98,19 @@ export default function SubmitTransactionButton(props: {
     }
 
     try {
-      await writeContractAsync({
-        address: props.to as any,
-        abi: props.abi,
-        functionName: props.functionName,
-        args,
-        value: props.value != null ? BigInt(props.value) : undefined,
-      });
+      if (props.customExecutor != null) {
+        // Use custom executor instead of passed in args
+        await props.customExecutor();
+      } else {
+        // Use default executor with passed in args
+        await writeContractAsync({
+          address: props.to as any,
+          abi: props.abi,
+          functionName: props.functionName,
+          args,
+          value: props.value != null ? BigInt(props.value) : undefined,
+        });
+      }
     } catch (e) {
       if (e instanceof Error) {
         toast({

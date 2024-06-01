@@ -29,16 +29,11 @@ const relayClient = createClient({
   ],
 });
 
-function getAppSendMessageDialog() {
-  // TODO
-}
-
 export default function SendMessageSection(props: {
   appContext?: NetAppContext;
   disabled?: boolean;
 }) {
   const [message, setMessage] = useState("");
-  const account = useAccount();
   const { data: wallet } = useWalletClient();
 
   return (
