@@ -63,6 +63,8 @@ export default function SendMessageButton(props: {
     if (inferredAppEntry != null) {
       const [appAddress, config] = inferredAppEntry;
       const DialogContents = config.dialogContents;
+      // TODO support passing back a custom submit transaction button
+      // on click function that could replace the submit transaction button
       const transactionParameters = config.getTransactionParameters(
         props.message
       );

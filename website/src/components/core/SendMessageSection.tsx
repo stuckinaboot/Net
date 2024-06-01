@@ -11,7 +11,7 @@ import SendMessageButton from "./SendMessageButton";
 import { Textarea } from "@/components/ui/textarea";
 import { NetAppContext } from "./types";
 import { Button } from "../ui/button";
-import { createWalletClient, http } from "viem";
+import { createWalletClient, formatEther, http } from "viem";
 import { useAccount, useWalletClient } from "wagmi";
 import { base, baseSepolia, mainnet, zora, zoraSepolia } from "viem/chains";
 import { WILLIE_NET_CONTRACT } from "@/app/constants";
@@ -55,16 +55,22 @@ export default function SendMessageSection(props: {
       />
       <div className="m-1" />
       <Button
-        onClick={() => {
+        onClick={async () => {
           if (wallet == null) {
             return;
           }
+          const weiToSwap = "10000000000000";
+          const formattedSwapAmount = formatEther(BigInt(weiToSwap));
           const calldata = encodeFunctionData({
             abi: WILLIE_NET_CONTRACT.abi,
             functionName: "sendMessage",
-            args: ["Relay link what up", "", ""],
+            args: [
+              `Swap ${formattedSwapAmount} ETH to ${formattedSwapAmount} WETH`,
+              "",
+              "",
+            ],
           });
-          relayClient.actions.swap({
+          await relayClient.actions.swap({
             chainId: base.id, //This is not required as the call action will use the active configured chain
             wallet: wallet,
             txs: [
@@ -76,7 +82,7 @@ export default function SendMessageSection(props: {
             ],
             toChainId: base.id,
             currency: "0x0000000000000000000000000000000000000000",
-            amount: "10000000000000", // Amount in wei to swap
+            amount: weiToSwap, // Amount in wei to swap
             toCurrency: "0x4200000000000000000000000000000000000006",
             onProgress: ({
               steps,
@@ -93,8 +99,6 @@ export default function SendMessageSection(props: {
                 txHashes
               );
             },
-            depositGasLimit: "100000000",
-            // options: { tradeType: "EXACT_OUTPUT" },
           });
         }}
       >
