@@ -43,35 +43,39 @@ export const config: InferredAppComponentsConfig = {
         functionName: "sendMessageViaApp",
         args: [userAddress, message, "", ""],
       });
-
-      await relayClient.actions.swap({
-        chainId: base.id, //This is not required as the call action will use the active configured chain
-        wallet: wallet,
-        txs: [
-          {
-            to: WILLIE_NET_CONTRACT.address,
-            data: calldata,
-            value: "0",
+      return new Promise(async (resolve) => {
+        await relayClient.actions.swap({
+          chainId: TESTNETS_ENABLED ? baseSepolia.id : base.id,
+          wallet: wallet,
+          txs: [
+            {
+              to: WILLIE_NET_CONTRACT.address,
+              data: calldata,
+              value: "0",
+            },
+          ],
+          toChainId: base.id,
+          currency: swap.from.currency.address,
+          // Amount in wei to swap
+          amount: swap.from.amount,
+          toCurrency: swap.to.currency.address,
+          onProgress: ({
+            steps,
+            currentStep,
+            currentStepItem,
+            txHashes,
+            details,
+          }) => {
+            console.log(steps, currentStep, currentStepItem, details, txHashes);
+            if (txHashes != null && txHashes.length > 0) {
+              resolve(txHashes[0].txHash);
+            }
           },
-        ],
-        toChainId: base.id,
-        currency: swap.from.currency.address,
-        // Amount in wei to swap
-        amount: swap.from.amount,
-        toCurrency: swap.to.currency.address,
-        onProgress: ({
-          steps,
-          currentStep,
-          currentStepItem,
-          txHashes,
-          details,
-        }) => {
-          console.log(steps, currentStep, currentStepItem, details, txHashes);
-        },
+        });
       });
     },
   },
   toasts: {
-    success: { description: "You successfully inscribed an NFT on Net" },
+    success: { description: "You successfully swapped via Net" },
   },
 };
