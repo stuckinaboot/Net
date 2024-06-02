@@ -19,7 +19,7 @@ import { TESTNETS_ENABLED } from "./constants";
 const { wallets } = getDefaultWallets();
 
 const config = getDefaultConfig({
-  appName: "WillieNet Dapp",
+  appName: "Net Dapp",
   projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID as string,
   wallets: [
     ...wallets,

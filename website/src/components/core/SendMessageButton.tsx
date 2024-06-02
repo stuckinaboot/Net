@@ -1,4 +1,4 @@
-import { useChainId } from "wagmi";
+import { useChainId, useWalletClient } from "wagmi";
 import { WILLIE_NET_CONTRACT } from "../../app/constants";
 import SubmitTransactionButton from "./SubmitTransactionButton";
 import { APP_TO_CONFIG, INFERRED_APP_TO_CONFIG } from "./net-apps/AppManager";
@@ -38,6 +38,7 @@ export default function SendMessageButton(props: {
   appContext?: NetAppContext;
 }) {
   const chainId = useChainId();
+  const { data: wallet } = useWalletClient();
   const { toast } = useToast();
 
   function validatePrePerformTransasction() {
@@ -45,7 +46,6 @@ export default function SendMessageButton(props: {
       return "Message cannot be empty";
     }
   }
-
   if (props.appContext == null) {
     // Attempt to infer app context based on the message, where
     // we search for first inferred app matching the
@@ -63,9 +63,12 @@ export default function SendMessageButton(props: {
     if (inferredAppEntry != null) {
       const [appAddress, config] = inferredAppEntry;
       const DialogContents = config.dialogContents;
-      const transactionParameters = config.getTransactionParameters(
-        props.message
-      );
+      // TODO support passing back a custom submit transaction button
+      // on click function that could replace the submit transaction button
+      const transactionParameters =
+        config.transactionExecutor.parameters &&
+        config.transactionExecutor.parameters(props.message);
+      const transactionExecutor = config.transactionExecutor.customExecutor;
       return (
         <Dialog>
           <DialogTrigger asChild>
@@ -83,10 +86,10 @@ export default function SendMessageButton(props: {
               </DialogClose>
               <SubmitTransactionButton
                 className={cn(props.className, "flex-1")}
-                functionName={transactionParameters.functionName}
-                abi={transactionParameters.abi}
+                functionName={transactionParameters?.functionName ?? ""}
+                abi={transactionParameters?.abi ?? ""}
                 to={appAddress}
-                args={transactionParameters.args}
+                args={transactionParameters?.args ?? []}
                 messages={{ toasts: TOASTS, button: BUTTONS }}
                 useDefaultButtonMessageOnSuccess={true}
                 onTransactionConfirmed={(hash) => {
@@ -102,6 +105,16 @@ export default function SendMessageButton(props: {
                 }}
                 prePerformTransactionValidation={validatePrePerformTransasction}
                 disabled={props.disabled}
+                customExecutor={
+                  transactionExecutor != null && wallet != null
+                    ? async () => {
+                        await transactionExecutor({
+                          message: props.message,
+                          wallet,
+                        });
+                      }
+                    : undefined
+                }
               />
             </DialogFooter>
           </DialogContent>

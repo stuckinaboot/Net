@@ -3,10 +3,6 @@ import SendMessageButton from "./SendMessageButton";
 import { Textarea } from "@/components/ui/textarea";
 import { NetAppContext } from "./types";
 
-function getAppSendMessageDialog() {
-  // TODO
-}
-
 export default function SendMessageSection(props: {
   appContext?: NetAppContext;
   disabled?: boolean;

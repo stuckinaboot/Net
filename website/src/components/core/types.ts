@@ -1,3 +1,5 @@
+import { WalletClient } from "viem";
+
 export type OnchainMessage = {
   data: string;
   text: string;
@@ -79,10 +81,16 @@ export type InferredAppComponentsConfig = {
   supportedChains: Set<number>;
   infer: (message: string) => boolean;
   dialogContents: (props: { message: string }) => React.ReactNode;
-  getTransactionParameters: (message: string) => {
-    abi: any[];
-    args: any[];
-    functionName: string;
+  transactionExecutor: {
+    parameters?: (message: string) => {
+      abi: any[];
+      args: any[];
+      functionName: string;
+    };
+    customExecutor?: (params: {
+      message: string;
+      wallet: WalletClient;
+    }) => Promise<void>;
   };
   toasts: {
     success: { description: string };

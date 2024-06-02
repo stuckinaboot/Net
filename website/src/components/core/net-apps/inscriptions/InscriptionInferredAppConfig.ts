@@ -24,11 +24,13 @@ export const config: InferredAppComponentsConfig = {
     }
   },
   dialogContents: InscriptionDialogContents,
-  getTransactionParameters: (message: string) => ({
-    abi: INSCRIPTIONS_CONTRACT.abi,
-    args: [message],
-    functionName: "inscribe",
-  }),
+  transactionExecutor: {
+    parameters: (message: string) => ({
+      abi: INSCRIPTIONS_CONTRACT.abi,
+      args: [message],
+      functionName: "inscribe",
+    }),
+  },
   toasts: {
     success: { description: "You successfully inscribed an NFT on Net" },
   },
