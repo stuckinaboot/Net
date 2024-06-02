@@ -10,6 +10,7 @@ const SWAP_CHAIN_ID = TESTNETS_ENABLED ? baseSepolia.id : base.id;
 // TODO support multiple chains, as these addresses could differ across chains
 // (ex. weth address is different on different chains)
 const CURRENCY_NAME_TO_ADDRESS: { [symbol: string]: string } = {
+  eth: NULL_ADDRESS,
   ethereum: NULL_ADDRESS,
   degen: "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
   bleu: "0xBf4Db8b7A679F89Ef38125d5F84dd1446AF2ea3B",
@@ -56,14 +57,18 @@ export function parseMessageToSwap(message: string): Swap | undefined {
       from: {
         currency: {
           symbol: "TODO",
-          name: "TODO",
+          name: fromCurrencyNameOrAddress,
           address: fromCurrencyAddress,
         },
         chainId: SWAP_CHAIN_ID,
         amount: amount.toString(),
       },
       to: {
-        currency: { symbol: "TODO", name: "TODO", address: toCurrencyAddress },
+        currency: {
+          symbol: "TODO",
+          name: toCurrencyNameOrAddress,
+          address: toCurrencyAddress,
+        },
         chainId: SWAP_CHAIN_ID,
       },
     };
