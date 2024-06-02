@@ -51,7 +51,6 @@ export default function SendMessageButton(props: {
     // we search for first inferred app matching the
     const inferredAppEntry = Object.entries(INFERRED_APP_TO_CONFIG).find(
       ([_, config]) => {
-        console.log(_);
         if (!config.supportedChains.has(chainId)) {
           // Chain not supported
           return false;
