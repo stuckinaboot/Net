@@ -112,7 +112,6 @@ export default function SendMessageButton(props: {
                     title: TOASTS.title,
                     description: config.toasts.success.description,
                   });
-                  console.log("SET OPEN TO FALSE");
                   setDialogOpen(false);
                   props.onTransactionConfirmed &&
                     props.onTransactionConfirmed(hash);

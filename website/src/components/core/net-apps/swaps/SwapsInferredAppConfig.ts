@@ -76,6 +76,6 @@ export const config: InferredAppComponentsConfig = {
     },
   },
   toasts: {
-    success: { description: "You successfully swapped via Net" },
+    success: { description: "You successfully swapped on Net" },
   },
 };
