@@ -16,6 +16,7 @@ import {
 } from "../ui/dialog";
 import { cn } from "@/lib/utils";
 import { useToast } from "../ui/use-toast";
+import { useState } from "react";
 
 const TOASTS = {
   title: "Messages",
@@ -37,6 +38,7 @@ export default function SendMessageButton(props: {
   disabled?: boolean;
   appContext?: NetAppContext;
 }) {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const chainId = useChainId();
   const { data: wallet } = useWalletClient();
   const { toast } = useToast();
@@ -70,7 +72,10 @@ export default function SendMessageButton(props: {
         config.transactionExecutor.parameters(props.message);
       const transactionExecutor = config.transactionExecutor.customExecutor;
       return (
-        <Dialog>
+        <Dialog
+          open={dialogOpen}
+          onOpenChange={(newOpen) => setDialogOpen(newOpen)}
+        >
           <DialogTrigger asChild>
             <Button className={props.className}>Send message</Button>
           </DialogTrigger>
@@ -82,7 +87,14 @@ export default function SendMessageButton(props: {
             </DialogHeader>
             <DialogFooter className="flex">
               <DialogClose asChild>
-                <Button className="flex-1 mr-2">Cancel</Button>
+                <Button
+                  className="flex-1 mr-2"
+                  onClick={() => {
+                    setDialogOpen(false);
+                  }}
+                >
+                  Cancel
+                </Button>
               </DialogClose>
               <SubmitTransactionButton
                 className={cn(props.className, "flex-1")}
@@ -100,6 +112,7 @@ export default function SendMessageButton(props: {
                     title: TOASTS.title,
                     description: config.toasts.success.description,
                   });
+                  setDialogOpen(false);
                   props.onTransactionConfirmed &&
                     props.onTransactionConfirmed(hash);
                 }}
@@ -108,7 +121,7 @@ export default function SendMessageButton(props: {
                 customExecutor={
                   transactionExecutor != null && wallet != null
                     ? async () => {
-                        await transactionExecutor({
+                        return transactionExecutor({
                           message: props.message,
                           wallet,
                         });

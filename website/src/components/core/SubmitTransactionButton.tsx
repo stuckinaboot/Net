@@ -12,6 +12,12 @@ import { Log } from "viem";
 const SHOW_TX_SUBMISSION_TEXT = false;
 const SHOW_TX_RECEIPT_TEXT = false;
 
+enum CustomExecutorStatus {
+  DEFAULT,
+  PENDING,
+  SUCCESS,
+}
+
 export default function SubmitTransactionButton(props: {
   functionName: string;
   args: any[];
@@ -31,14 +37,18 @@ export default function SubmitTransactionButton(props: {
   prePerformTransactionValidation?: () => string | undefined;
   disabled?: boolean;
   value?: string;
-  customExecutor?: () => Promise<void>;
+  customExecutor?: () => Promise<string>;
 }) {
   const { toast } = useToast();
   const chainId = useChainId();
   const [shownSuccessToast, setShownSucccessToast] = useState(false);
+  const [txnHash, setTxnHash] = useState<string>();
+  const [customExecutorStatus, setCustomExecutorStatus] = useState(
+    CustomExecutorStatus.DEFAULT
+  );
 
   const { data: hash, writeContractAsync, status, reset } = useWriteContract();
-  const receipt = useWaitForTransactionReceipt({ hash });
+  const receipt = useWaitForTransactionReceipt({ hash: txnHash as any });
 
   useEffect(() => {
     // On chain switch, reset the most recent transaction write results
@@ -62,9 +72,11 @@ export default function SubmitTransactionButton(props: {
       title: props.messages.toasts.title,
       description: props.messages.toasts.success,
     });
-    hash &&
-      props.onTransactionConfirmed &&
+    if (props.onTransactionConfirmed && hash != null) {
       props.onTransactionConfirmed(hash, receipt.data.logs);
+    } else if (props.onTransactionConfirmed && txnHash != null) {
+      props.onTransactionConfirmed(txnHash, receipt.data.logs);
+    }
     setShownSucccessToast(true);
   }, [receipt.isSuccess]);
 
@@ -100,7 +112,11 @@ export default function SubmitTransactionButton(props: {
     try {
       if (props.customExecutor != null) {
         // Use custom executor instead of passed in args
-        await props.customExecutor();
+        setCustomExecutorStatus(CustomExecutorStatus.PENDING);
+        const executorTxnHash = await props.customExecutor();
+        setCustomExecutorStatus(CustomExecutorStatus.SUCCESS);
+        setShownSucccessToast(false);
+        setTxnHash(executorTxnHash);
       } else {
         // Use default executor with passed in args
         await writeContractAsync({
@@ -121,6 +137,14 @@ export default function SubmitTransactionButton(props: {
     }
   }
 
+  const idleStatus =
+    props.customExecutor != null
+      ? customExecutorStatus === CustomExecutorStatus.DEFAULT
+      : status === "idle";
+
+  // TODO add custom executor error state
+  const errorStatus = props.customExecutor != null ? false : status === "error";
+
   return (
     <>
       <Button
@@ -128,8 +152,8 @@ export default function SubmitTransactionButton(props: {
         className={props.className}
         disabled={props.disabled}
       >
-        {status === "idle" ||
-        status === "error" ||
+        {idleStatus ||
+        errorStatus ||
         (receipt.isSuccess && props.useDefaultButtonMessageOnSuccess)
           ? props.messages.button.default
           : receipt.isSuccess

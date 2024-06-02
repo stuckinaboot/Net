@@ -87,10 +87,11 @@ export type InferredAppComponentsConfig = {
       args: any[];
       functionName: string;
     };
+    // Returns transaction hash
     customExecutor?: (params: {
       message: string;
       wallet: WalletClient;
-    }) => Promise<void>;
+    }) => Promise<string>;
   };
   toasts: {
     success: { description: string };
