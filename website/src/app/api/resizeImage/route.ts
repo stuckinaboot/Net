@@ -14,7 +14,6 @@ async function processRequest(url: string, req: NextRequest) {
         );
       }
       const encodedData = url.substring(commaIdx + 1);
-      console.log("FOO", encodedData);
       buffer = Buffer.from(encodedData, "base64");
     } else {
       const response = await fetch(url);
@@ -68,20 +67,13 @@ async function processRequest(url: string, req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const url = body.imageUrl;
-  if (url == null) {
-    return Response.json({ error: "Failed to parse url" }, { status: 400 });
-  }
-  return processRequest(url, req);
-}
-
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const url = searchParams.get("imageUrl");
   if (url == null) {
     return Response.json({ error: "Failed to parse url" }, { status: 400 });
   }
+  // Important to decode uri component cause url is encoded in the GET request.
+  // NOTE: this encoding is totally separate from any "onchain art encoding"
   return processRequest(decodeURIComponent(url), req);
 }
