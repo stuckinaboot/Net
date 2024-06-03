@@ -2,7 +2,7 @@ import format from "string-format";
 
 // Use nft storage gateway as that's where media is stored
 const IPFS_URL_WEBSITE = "https://nftstorage.link/ipfs/"; //"https://ipfs.io/ipfs/";
-const IPFS_PREFIX = "ipfs://";
+export const IPFS_PREFIX = "ipfs://";
 
 // Sometimes we may want to use ipfs.io domain specifically because our
 // main IPFS_URL_WEBSITE may involve redirects which isn't suitable for certain use-cases

@@ -1,16 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 
-export async function GET(req: NextRequest) {
-  const searchParams = req.nextUrl.searchParams;
-  const url = searchParams.get("imageUrl");
-  if (url == null) {
-    return Response.json({ error: "Failed to parse url" }, { status: 400 });
-  }
-
+async function processRequest(url: string, req: NextRequest) {
   try {
-    const response = await fetch(url);
-    const buffer = await response.arrayBuffer();
+    let buffer;
+    if (url.startsWith("data:")) {
+      // Attempt to parse data uri
+      const commaIdx = url.indexOf(",");
+      if (commaIdx === -1) {
+        return Response.json(
+          { error: "Failed to parse data uri" },
+          { status: 400 }
+        );
+      }
+      const encodedData = url.substring(commaIdx + 1);
+      console.log("FOO", encodedData);
+      buffer = Buffer.from(encodedData, "base64");
+    } else {
+      const response = await fetch(url);
+      buffer = await response.arrayBuffer();
+    }
     const image = sharp(buffer);
     const metadata = await image.metadata();
 
@@ -57,4 +66,22 @@ export async function GET(req: NextRequest) {
     console.log(e);
     return Response.json({ error: "Failed to resize" }, { status: 500 });
   }
+}
+
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  const url = body.imageUrl;
+  if (url == null) {
+    return Response.json({ error: "Failed to parse url" }, { status: 400 });
+  }
+  return processRequest(url, req);
+}
+
+export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+  const url = searchParams.get("imageUrl");
+  if (url == null) {
+    return Response.json({ error: "Failed to parse url" }, { status: 400 });
+  }
+  return processRequest(decodeURIComponent(url), req);
 }
