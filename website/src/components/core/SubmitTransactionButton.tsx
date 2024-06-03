@@ -59,6 +59,7 @@ export default function SubmitTransactionButton(props: {
     if (hash == null) {
       return;
     }
+    setTxnHash(hash);
     setShownSucccessToast(false);
     console.log(`Transactions submitted with hash: ${hash}`);
   }, [hash]);

@@ -17,6 +17,7 @@ const CURRENCY_NAME_TO_ADDRESS: { [symbol: string]: string } = {
   tn100x: "0x5B5dee44552546ECEA05EDeA01DCD7Be7aa6144A",
   weth: "0x4200000000000000000000000000000000000006",
   usdc: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+  ror: "0x9e13480a81af1dea2f255761810ef8d6cbf21735",
 };
 
 export type Swap = {
