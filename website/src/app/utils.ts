@@ -95,5 +95,7 @@ export async function uploadToNftStorage(
 }
 
 export function getResizedImageUrl(imageUrl: string) {
-  return `${WEBSITE_BASE_URL}/api/resizeImage?imageUrl=${imageUrl}`;
+  return `${WEBSITE_BASE_URL}/api/resizeImage?imageUrl=${encodeURIComponent(
+    imageUrl
+  )}`;
 }

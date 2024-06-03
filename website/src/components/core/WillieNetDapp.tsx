@@ -162,7 +162,6 @@ export default function WillieNetDapp(props: {
         }
         footer={(disabled) => (
           <>
-            <Separator className="m-3" />
             <SendMessageSection appContext={appConfig} disabled={disabled} />
           </>
         )}
