@@ -4,9 +4,12 @@ import willienetAbi from "../../assets/abis/willienet.json";
 export const TESTNETS_ENABLED =
   process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true";
 export const IS_PROD = process.env.NODE_ENV === "production";
-export const WEBSITE_BASE_URL = IS_PROD
-  ? "https://netprotocol.app"
-  : "http://localhost:3000";
+export const WEBSITE_BASE_URL =
+  IS_PROD && TESTNETS_ENABLED
+    ? "https://testnets.netprotocol.app"
+    : IS_PROD
+    ? "https://netprotocol.app"
+    : "http://localhost:3000";
 
 export const WILLIE_NET_CONTRACT = {
   address: TESTNETS_ENABLED
