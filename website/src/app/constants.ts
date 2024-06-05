@@ -49,10 +49,10 @@ export const HAM_CHAIN = defineChain({
   nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
   rpcUrls: {
     default: {
-      http: ["rpc.ham.fun"],
+      http: ["https://rpc.ham.fun"],
     },
     public: {
-      http: ["rpc.ham.fun"],
+      http: ["https://rpc.ham.fun"],
     },
   },
   iconUrls: [
@@ -67,4 +67,6 @@ export const HAM_CHAIN = defineChain({
   testnet: false,
 });
 
-export const CHAINS = TESTNETS_ENABLED ? [baseSepolia, sepolia] : [base, degen];
+export const CHAINS = TESTNETS_ENABLED
+  ? [baseSepolia, sepolia]
+  : [base, degen, HAM_CHAIN];
