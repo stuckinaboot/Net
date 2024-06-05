@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { APP_TO_CONFIG } from "./net-apps/AppManager";
 import BasePageCard from "./BasePageCard";
 import { base, baseSepolia, degen, sepolia } from "viem/chains";
+import { HAM_CHAIN } from "@/app/constants";
 
 export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
@@ -34,6 +35,8 @@ export default function WillieNetDapp(props: {
       ? base
       : initialChainSearchParamStr === "degen"
       ? degen
+      : initialChainSearchParamStr === "ham"
+      ? HAM_CHAIN
       : initialChainSearchParamStr === "sepolia"
       ? sepolia
       : initialChainSearchParamStr === "baseSepolia"

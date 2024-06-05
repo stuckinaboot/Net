@@ -11,10 +11,9 @@ import {
   trustWallet,
   ledgerWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import { base, baseSepolia, degen, sepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
-import { TESTNETS_ENABLED } from "./constants";
+import { CHAINS } from "./constants";
 
 const { wallets } = getDefaultWallets();
 
@@ -28,7 +27,7 @@ const config = getDefaultConfig({
       wallets: [argentWallet, trustWallet, ledgerWallet],
     },
   ],
-  chains: TESTNETS_ENABLED ? [baseSepolia, sepolia] : [base, degen],
+  chains: CHAINS as any,
   ssr: true,
 });
 

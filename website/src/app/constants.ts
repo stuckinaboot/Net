@@ -1,5 +1,6 @@
-import { base, baseSepolia, degen, sepolia } from "viem/chains";
+import { base, baseSepolia, degen, sepolia } from "wagmi/chains";
 import willienetAbi from "../../assets/abis/willienet.json";
+import { defineChain } from "viem";
 
 export const TESTNETS_ENABLED =
   process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true";
@@ -41,3 +42,31 @@ export const CHAIN_ID_TO_OPENSEA_CHAIN_MAP = [
     crossChainId: "eip155:666666666",
   },
 ];
+
+export const HAM_CHAIN = defineChain({
+  id: 5112,
+  name: "Ham",
+  nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ["https://rpc.ham.fun"],
+    },
+    public: {
+      http: ["https://rpc.ham.fun"],
+    },
+  },
+  iconUrls: [
+    "https://black-tough-rodent-563.mypinata.cloud/ipfs/QmcbYVenTET9HBS7vs7SGv1MNqnRscAKVF5kaRVHaVCfvs",
+  ],
+  blockExplorers: {
+    default: {
+      name: "Ham Chain Explorer",
+      url: "explorer.ham.fun",
+    },
+  },
+  testnet: false,
+});
+
+export const CHAINS = TESTNETS_ENABLED
+  ? [baseSepolia, sepolia]
+  : [base, degen, HAM_CHAIN];
