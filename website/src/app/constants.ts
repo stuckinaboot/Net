@@ -69,4 +69,4 @@ export const HAM_CHAIN = defineChain({
 
 export const CHAINS = TESTNETS_ENABLED
   ? [baseSepolia, sepolia]
-  : [base, degen, HAM_CHAIN];
+  : [base, HAM_CHAIN, degen];
