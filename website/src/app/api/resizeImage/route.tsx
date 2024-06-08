@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ImageResponse } from "next/og";
 import sharp from "sharp";
 
 async function processRequest(url: string, req: NextRequest) {
@@ -14,7 +15,16 @@ async function processRequest(url: string, req: NextRequest) {
         );
       }
       const encodedData = url.substring(commaIdx + 1);
+      // TODO buffer may not even be needed
       buffer = Buffer.from(encodedData, "base64");
+      const decodedSvg = atob(encodedData);
+      return new ImageResponse(
+        (
+          <>
+            <div dangerouslySetInnerHTML={{ __html: decodedSvg as string }} />
+          </>
+        )
+      );
     } else {
       const response = await fetch(url);
       buffer = await response.arrayBuffer();
