@@ -22,6 +22,7 @@ export async function generateMetadata({
     IPFS_GATEWAY.NFT_STORAGE
   );
   const imageUrl = getResizedImageUrl(image);
+  console.log("HIT!", imageUrl);
 
   return {
     other: {
