@@ -5,7 +5,6 @@ import sharp from "sharp";
 async function processRequest(url: string, req: NextRequest) {
   try {
     let buffer;
-    let decodedSvg;
     if (url.startsWith("data:")) {
       // Attempt to parse data uri
       const commaIdx = url.indexOf(",");
@@ -16,8 +15,9 @@ async function processRequest(url: string, req: NextRequest) {
         );
       }
       const encodedData = url.substring(commaIdx + 1);
+      // TODO buffer may not even be needed
       buffer = Buffer.from(encodedData, "base64");
-      decodedSvg = atob(encodedData);
+      const decodedSvg = atob(encodedData);
       return new ImageResponse(
         (
           <>
