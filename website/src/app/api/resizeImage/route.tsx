@@ -1,11 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ImageResponse } from "next/og";
 import sharp from "sharp";
+import { TESTNETS_ENABLED } from "@/app/constants";
+import { Alchemy, Network } from "alchemy-sdk";
+import { INSCRIBED_DROPS_CONTRACT } from "@/components/core/net-apps/inscribed-drops/constants";
+
+const settings = {
+  apiKey: TESTNETS_ENABLED
+    ? process.env["NEXT_PUBLIC_ALCHEMY_BASE_SEPOLIA_ID"]
+    : process.env["NEXT_PUBLIC_ALCHEMY_BASE_ID"],
+  network: TESTNETS_ENABLED ? Network.BASE_SEPOLIA : Network.BASE_MAINNET,
+};
+
+const alchemy = new Alchemy(settings);
 
 async function processRequest(url: string, req: NextRequest) {
   try {
     let buffer;
     if (url.startsWith("data:")) {
+      console.log("WOAH!");
       // Attempt to parse data uri
       const commaIdx = url.indexOf(",");
       if (commaIdx === -1) {
@@ -18,13 +30,27 @@ async function processRequest(url: string, req: NextRequest) {
       // TODO buffer may not even be needed
       buffer = Buffer.from(encodedData, "base64");
       const decodedSvg = atob(encodedData);
-      return new ImageResponse(
-        (
-          <>
-            <div dangerouslySetInnerHTML={{ __html: decodedSvg as string }} />
-          </>
-        )
+      // return new ImageResponse(
+      // (
+      //   <>
+      //     <div dangerouslySetInnerHTML={{ __html: decodedSvg as string }} />
+      //   </>
+      // )
+      // );
+      const metadata = await alchemy.nft.getNftMetadata(
+        INSCRIBED_DROPS_CONTRACT.address,
+        23
       );
+      console.log(metadata);
+      const cachedUrl = metadata.image.cachedUrl;
+      if (cachedUrl != null) {
+        console.log("RETUNRING!");
+        const response = await fetch(cachedUrl);
+        buffer = await response.arrayBuffer();
+        return new NextResponse(buffer, {
+          headers: { "Content-Type": "image/svg+xml" },
+        });
+      }
     } else {
       const response = await fetch(url);
       buffer = await response.arrayBuffer();

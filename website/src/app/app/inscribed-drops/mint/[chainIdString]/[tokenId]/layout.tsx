@@ -27,8 +27,10 @@ export async function generateMetadata({
   return {
     other: {
       "fc:frame": "vNext",
-      "fc:frame:image": imageUrl,
-      "og:image": imageUrl,
+      "fc:frame:image":
+        "https://nft-cdn.alchemy.com/base-sepolia/33c0d98e7cd3a09b4b1d611c3cc2efb1",
+      "og:image":
+        "https://nft-cdn.alchemy.com/base-sepolia/33c0d98e7cd3a09b4b1d611c3cc2efb1",
       "fc:frame:button:1": "Mint",
       "fc:frame:button:1:action": "tx",
       "fc:frame:button:1:target": `${WEBSITE_BASE_URL}/api/frames/inscribed-drops/mint?chainId=${params.chainIdString}&tokenId=${params.tokenId}`,
