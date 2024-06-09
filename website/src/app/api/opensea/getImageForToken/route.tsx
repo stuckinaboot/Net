@@ -37,8 +37,11 @@ export async function GET(req: NextRequest) {
       tokenId,
       CHAIN
     );
-    console.log(metadata.nft);
-    return Response.json({ foo: "bar" });
+    const imageUrl = metadata?.nft?.image_url;
+    if (imageUrl == null) {
+      return Response.json({ error: "Image not found" });
+    }
+    return Response.json({ imageUrl });
   } catch (exception) {
     return Response.json({ error: "Unknown error" });
   }
