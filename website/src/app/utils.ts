@@ -99,15 +99,7 @@ export async function uploadToNftStorage(
   return { error: "Failed to upload" };
 }
 
-export async function getResizedImageUrl(imageUrl: string) {
-  if (isSvgDataUri(imageUrl)) {
-    // Use opensea image
-    // TODO make this whole thing more generic and allow it to fit into the inscribed drops flow,
-    // rather than living here at top level
-    const res = await fetch(
-      `/api/opensea/getImageForToken?contractAddress=${INSCRIBED_DROPS_CONTRACT.address}&tokenId=${tokenId}`
-    );
-  }
+export function getResizedImageUrl(imageUrl: string) {
   return `${WEBSITE_BASE_URL}/api/resizeImage?imageUrl=${encodeURIComponent(
     imageUrl
   )}`;

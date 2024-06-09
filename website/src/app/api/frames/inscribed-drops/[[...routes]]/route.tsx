@@ -5,7 +5,10 @@ import {
   openSeaChainStringToCrossChainId,
 } from "@/app/utils";
 import { INSCRIBED_DROPS_CONTRACT } from "@/components/core/net-apps/inscribed-drops/constants";
-import { getInscribedDrop } from "@/components/core/net-apps/inscribed-drops/utils";
+import {
+  getFrameImageUrl,
+  getInscribedDrop,
+} from "@/components/core/net-apps/inscribed-drops/utils";
 import { Button, Frog, TextInput } from "frog";
 import { devtools } from "frog/dev";
 import { serveStatic } from "frog/serve-static";
@@ -41,11 +44,11 @@ app.frame("/:chainId/:tokenId", async (c) => {
     tokenId,
   });
 
-  const sanitizedImage = sanitizeMediaUrl(
-    drop?.metadata.image || "",
-    IPFS_GATEWAY.NFT_STORAGE
-  );
-  const resizedImageUrl = getResizedImageUrl(sanitizedImage);
+  const frameImageUrl = await getFrameImageUrl({
+    imageUrl: drop?.metadata.image || "",
+    tokenId,
+    chain: openSeaChainId,
+  });
 
   return c.res({
     image: (
@@ -63,7 +66,7 @@ app.frame("/:chainId/:tokenId", async (c) => {
           width: "100%",
         }}
       >
-        <img src={resizedImageUrl} style={{ position: "absolute" }} />
+        <img src={frameImageUrl} style={{ position: "absolute" }} />
         <div
           style={{
             color: "white",
