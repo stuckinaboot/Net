@@ -106,5 +106,5 @@ export function getResizedImageUrl(imageUrl: string) {
 }
 
 export function isSvgDataUri(url: string) {
-  return url.startsWith(SVG_MIME_TYPE);
+  return url.startsWith("data:image/svg+xml;base64,");
 }
