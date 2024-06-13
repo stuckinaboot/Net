@@ -4,6 +4,7 @@ import { sanitizeMediaUrl } from "./core/utils";
 import mime from "mime-types";
 import InscriptionImagePreview from "./MetadataImagePreview";
 import ReactPlayer from "react-player";
+import { SVG_MIME_TYPE } from "@/app/constants";
 
 enum AnimationType {
   VIDEO,
@@ -20,7 +21,7 @@ function getAnimationType(animationUrl: string) {
   if (contentType.startsWith("video")) {
     return AnimationType.VIDEO;
   }
-  if (contentType.startsWith("image/svg+xml")) {
+  if (contentType.startsWith(SVG_MIME_TYPE)) {
     return AnimationType.SVG;
   }
   if (contentType.startsWith("text/html")) {

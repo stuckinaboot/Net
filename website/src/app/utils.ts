@@ -1,6 +1,11 @@
 import { Chain } from "viem/chains";
-import { CHAIN_ID_TO_OPENSEA_CHAIN_MAP, WEBSITE_BASE_URL } from "./constants";
+import {
+  CHAIN_ID_TO_OPENSEA_CHAIN_MAP,
+  SVG_MIME_TYPE,
+  WEBSITE_BASE_URL,
+} from "./constants";
 import { createPublicClient, http } from "viem";
+import { INSCRIBED_DROPS_CONTRACT } from "@/components/core/net-apps/inscribed-drops/constants";
 
 export function chainTimeToMilliseconds(chainTime: number) {
   return chainTime * 1000;
@@ -98,4 +103,8 @@ export function getResizedImageUrl(imageUrl: string) {
   return `${WEBSITE_BASE_URL}/api/resizeImage?imageUrl=${encodeURIComponent(
     imageUrl
   )}`;
+}
+
+export function isSvgDataUri(url: string) {
+  return url.startsWith(SVG_MIME_TYPE);
 }

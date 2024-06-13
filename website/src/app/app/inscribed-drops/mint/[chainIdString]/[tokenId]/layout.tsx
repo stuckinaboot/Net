@@ -1,6 +1,8 @@
 import { WEBSITE_BASE_URL } from "@/app/constants";
-import { getResizedImageUrl } from "@/app/utils";
-import { getInscribedDrop } from "@/components/core/net-apps/inscribed-drops/utils";
+import {
+  getFrameImageUrl,
+  getInscribedDrop,
+} from "@/components/core/net-apps/inscribed-drops/utils";
 import { IPFS_GATEWAY, sanitizeMediaUrl } from "@/components/core/utils";
 import { Metadata } from "next";
 
@@ -17,18 +19,17 @@ export async function generateMetadata({
     return {};
   }
 
-  const image = sanitizeMediaUrl(
-    inscribedDrop.metadata.image,
-    IPFS_GATEWAY.NFT_STORAGE
-  );
-  const imageUrl = getResizedImageUrl(image);
-  console.log("HIT!", imageUrl);
+  const frameImageUrl = await getFrameImageUrl({
+    imageUrl: inscribedDrop.metadata.image,
+    tokenId: params.tokenId,
+    chain: params.chainIdString,
+  });
 
   return {
     other: {
       "fc:frame": "vNext",
-      "fc:frame:image": imageUrl,
-      "og:image": imageUrl,
+      "fc:frame:image": frameImageUrl,
+      "og:image": frameImageUrl,
       "fc:frame:button:1": "Mint",
       "fc:frame:button:1:action": "tx",
       "fc:frame:button:1:target": `${WEBSITE_BASE_URL}/api/frames/inscribed-drops/mint?chainId=${params.chainIdString}&tokenId=${params.tokenId}`,

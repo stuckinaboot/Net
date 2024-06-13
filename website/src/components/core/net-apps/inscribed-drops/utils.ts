@@ -4,6 +4,8 @@ import {
 } from "./constants";
 import {
   chainIdToOpenSeaChainString,
+  getResizedImageUrl,
+  isSvgDataUri,
   openSeaChainStringToChain,
   publicClient,
 } from "@/app/utils";
@@ -12,6 +14,7 @@ import { formatEther, fromHex, parseEther } from "viem";
 import { OnchainMessage } from "../../types";
 import { TESTNETS_ENABLED, WILLIE_NET_CONTRACT } from "@/app/constants";
 import { readContract } from "viem/actions";
+import { IPFS_GATEWAY, sanitizeMediaUrl } from "../../utils";
 
 export function getInscribedDropUrlForTokenId(
   tokenId: string,
@@ -107,4 +110,31 @@ export async function getInscribedDrop(params: {
     console.log("Error getting inscribed drop", e);
     return undefined;
   }
+}
+
+// TODO support multiple chains
+export async function getFrameImageUrl(params: {
+  imageUrl: string;
+  tokenId: string;
+  chain?: string;
+}) {
+  const sanitizedImageUrl = sanitizeMediaUrl(
+    params.imageUrl,
+    IPFS_GATEWAY.NFT_STORAGE
+  );
+  if (isSvgDataUri(sanitizedImageUrl)) {
+    // Use opensea image for SVGs, as resizing SVGs is not supported.
+    // NOTE: this does imply users of this functino must wait for OpenSea to index the NFT
+    // before this function will return accurate results
+    try {
+      const res = await fetch(
+        `/api/opensea/getImageForToken?contractAddress=${INSCRIBED_DROPS_CONTRACT.address}&tokenId=${params.tokenId}`
+      );
+      const osImageUrl = (await res.json()).imageUrl;
+      return osImageUrl;
+    } catch (e) {
+      return sanitizedImageUrl;
+    }
+  }
+  return getResizedImageUrl(sanitizedImageUrl);
 }

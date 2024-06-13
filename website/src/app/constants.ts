@@ -70,3 +70,5 @@ export const HAM_CHAIN = defineChain({
 export const CHAINS = TESTNETS_ENABLED
   ? [baseSepolia, sepolia]
   : [base, HAM_CHAIN, degen];
+
+export const SVG_MIME_TYPE = "image/svg+xml";
