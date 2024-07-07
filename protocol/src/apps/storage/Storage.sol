@@ -28,17 +28,18 @@ contract Storage {
         address operator
     ) external view returns (bytes memory) {
         string memory topic = string(abi.encodePacked(key));
-        uint256 idx = net.getTotalMessagesForAppUserTopicCount(
-            address(this),
-            operator,
-            topic
-        );
-        Net.Message memory message = net.getMessageForAppUserTopic(
-            idx,
-            address(this),
-            operator,
-            topic
-        );
-        return message.data;
+        return
+            net
+                .getMessageForAppUserTopic(
+                    net.getTotalMessagesForAppUserTopicCount(
+                        address(this),
+                        operator,
+                        topic
+                    ),
+                    address(this),
+                    operator,
+                    topic
+                )
+                .data;
     }
 }
