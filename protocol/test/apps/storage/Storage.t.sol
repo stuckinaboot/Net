@@ -11,16 +11,22 @@ import {PRBTest} from "@prb/test/PRBTest.sol";
 contract StorageTest is PRBTest, StdCheats {
     using stdStorage for StdStorage;
 
+    event Stored(bytes32 indexed key, address indexed operator);
+
     StdStorage private stdstore;
 
     // Test users
     address[10] users;
 
-    Storage netStorage;
+    Storage netStorage = new Storage();
 
     address constant NET_ADDRESS =
         address(0x00000000B24D62781dB359b07880a105cD0b64e6);
     Net public net;
+
+    bytes32 key1=keccak256("key1");
+        bytes32 key2=keccak256("key2");
+        bytes32 key3=keccak256("key3"); 
 
     function setUp() public {
         // Deploy Net code to NET_ADDRESS
@@ -29,7 +35,32 @@ contract StorageTest is PRBTest, StdCheats {
         vm.etch(NET_ADDRESS, code);
     }
 
-    function testStoreData() public {}
+    function testStoreOneKeyOneValue() public {
+        netStorage.put(bytes32(0), "abc");
+    }
 
-    function testStoreAndGetData() public {}
+    function testStoreOneKeyMultipleValues() public {
+        netStorage.put(bytes32(0), "abc");
+        netStorage.put(bytes32(0), "def");
+        netStorage.put(bytes32(0), "ghi");
+    }
+
+    function testStoreMultipleKeysOneValueEach() public {
+        netStorage.put(key1, "abc");
+        netStorage.put(key2, "def");
+        netStorage.put(key3, "ghi");
+    }
+
+    function testStoreMultipleKeysMultipleValues() public {
+
+    function testStoreAndGetOneValue() public {}
+
+    function testStoreAndGetMultipleValues() public {}
+
+    function testStoreAndGetMultipleValuesMultipleOperators() public {}
+
+    function testGetTotalWrites() public {}
+
+    function testStoreAndGetValueAtIndex() public {}
 }
+ 
