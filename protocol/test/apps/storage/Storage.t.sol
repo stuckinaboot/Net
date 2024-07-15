@@ -106,6 +106,7 @@ contract StorageTest is PRBTest, StdCheats {
     }
 
     function testGetTotalWrites() public {
+        vm.startPrank(address(this));
         assertEq(netStorage.getTotalWrites(key1, address(this)), 0);
         netStorage.put(key1, "def");
         assertEq(netStorage.getTotalWrites(key1, address(this)), 1);
@@ -117,6 +118,31 @@ contract StorageTest is PRBTest, StdCheats {
         assertEq(netStorage.getTotalWrites(key2, address(this)), 1);
         netStorage.put(key2, "lmo");
         assertEq(netStorage.getTotalWrites(key2, address(this)), 2);
+        netStorage.put(key2, "qrs");
+        assertEq(netStorage.getTotalWrites(key2, address(this)), 3);
+
+        assertEq(netStorage.getTotalWrites(key1, address(this)), 2);
+
+        assertEq(netStorage.getTotalWrites(key3, address(this)), 0);
+
+        vm.startPrank(users[1]);
+        assertEq(netStorage.getTotalWrites(key3, users[1]), 0);
+        assertEq(netStorage.getTotalWrites(key1, users[1]), 0);
+        netStorage.put(key1, "qrs");
+        assertEq(netStorage.getTotalWrites(key1, users[1]), 1);
+        netStorage.put(key2, "def");
+        assertEq(netStorage.getTotalWrites(key1, users[1]), 1);
+        assertEq(netStorage.getTotalWrites(key2, users[1]), 1);
+        netStorage.put(key1, "qrs");
+        assertEq(netStorage.getTotalWrites(key1, users[1]), 2);
+        assertEq(netStorage.getTotalWrites(key2, users[1]), 1);
+        assertEq(netStorage.getTotalWrites(key3, address(this)), 0);
+        assertEq(netStorage.getTotalWrites(key2, address(this)), 3);
+
+        vm.startPrank(address(this));
+        assertEq(netStorage.getTotalWrites(key1, address(this)), 2);
+        netStorage.put(key1, "xyz");
+        assertEq(netStorage.getTotalWrites(key1, address(this)), 3);
     }
 
     function testStoreAndGetValueAtIndex() public {}
