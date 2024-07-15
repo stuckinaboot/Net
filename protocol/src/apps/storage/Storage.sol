@@ -55,6 +55,11 @@ contract Storage {
                 .data;
     }
 
+    /// @notice Get value at index for a particular key and operator
+    /// @param key key
+    /// @param operator user that stored key
+    /// @param idx index
+    /// @return value stored value at index for the particular key-operator pair
     function getValueAtIndex(
         bytes32 key,
         address operator,
