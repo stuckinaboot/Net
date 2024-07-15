@@ -59,7 +59,7 @@ export default function SendMessageButton(props: {
         }
 
         // Return true if app config can infer app based on this message
-        return config.infer(props.message);
+        return config.infer(props.message, chainId);
       }
     );
     if (inferredAppEntry != null) {
@@ -82,7 +82,7 @@ export default function SendMessageButton(props: {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogDescription>
-                <DialogContents message={props.message} />
+                <DialogContents message={props.message} chainId={chainId} />
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="flex">

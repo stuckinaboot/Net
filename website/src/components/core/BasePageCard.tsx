@@ -17,7 +17,7 @@ export default function BasePageCard(props: {
     node: React.ReactNode;
     ref?: MutableRefObject<HTMLDivElement | null>;
   };
-  footer: (disableFooter: boolean) => React.ReactNode;
+  footer?: (disableFooter: boolean) => React.ReactNode;
   betweenContentAndFooter?: React.ReactNode;
 }) {
   const [ready, setReady] = useState(false);
@@ -48,7 +48,7 @@ export default function BasePageCard(props: {
       {props.betweenContentAndFooter}
       <CardFooter className="flex flex-col justify-end">
         <Separator className="m-3" />
-        {props.footer(disableFooter)}
+        {props.footer && props.footer(disableFooter)}
       </CardFooter>
     </Card>
   );

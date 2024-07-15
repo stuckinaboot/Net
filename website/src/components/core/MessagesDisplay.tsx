@@ -53,13 +53,14 @@ const getTransformedMessage = memoize(
   async (
     appAddress: string,
     chainId: number,
-    messageText: string
+    messageText: string,
+    messageData: string
   ): Promise<string | React.ReactNode> => {
     const config = STANDALONE_APP_TO_CONFIG[appAddress];
     if (config == null) {
       return messageText;
     }
-    return config.getTransformedMessage(chainId, messageText);
+    return config.getTransformedMessage(chainId, messageText, messageData);
   }
 );
 
@@ -170,7 +171,8 @@ export default function MessagesDisplay(props: {
         const messageTextNode = await getTransformedMessage(
           message.app,
           chainId,
-          message.text
+          message.text,
+          message.data
         );
         return { ...message, appName, transformedMessage: messageTextNode };
       })

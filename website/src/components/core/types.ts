@@ -79,8 +79,11 @@ export type AppMessageRendererProps = {
 
 export type InferredAppComponentsConfig = {
   supportedChains: Set<number>;
-  infer: (message: string) => boolean;
-  dialogContents: (props: { message: string }) => React.ReactNode;
+  infer: (message: string, chainId: number) => boolean;
+  dialogContents: (props: {
+    message: string;
+    chainId: number;
+  }) => React.ReactNode;
   transactionExecutor: {
     parameters?: (message: string) => {
       abi: any[];
@@ -105,6 +108,7 @@ export type InferredAppComponentsConfig = {
 export type StandaloneAppComponentsConfig = {
   getTransformedMessage: (
     chainId: number,
-    messageText: string
+    messageText: string,
+    messageData: string
   ) => Promise<React.ReactNode | string>;
 };
