@@ -145,5 +145,43 @@ contract StorageTest is PRBTest, StdCheats {
         assertEq(netStorage.getTotalWrites(key1, address(this)), 3);
     }
 
-    function testStoreAndGetValueAtIndex() public {}
+    function testStoreAndGetValueAtIndex() public {
+        netStorage.put(key1, "xyz");
+        assertEq(netStorage.getValueAtIndex(key1, address(this), 0), "xyz");
+
+        netStorage.put(key1, "ghi");
+        assertEq(netStorage.getValueAtIndex(key1, address(this), 0), "xyz");
+        assertEq(netStorage.getValueAtIndex(key1, address(this), 1), "ghi");
+
+        netStorage.put(key1, "def");
+        assertEq(netStorage.getValueAtIndex(key1, address(this), 0), "xyz");
+        assertEq(netStorage.getValueAtIndex(key1, address(this), 1), "ghi");
+        assertEq(netStorage.getValueAtIndex(key1, address(this), 2), "def");
+
+        netStorage.put(key2, "tun");
+        netStorage.put(key2, "asd");
+        netStorage.put(key2, "tra");
+
+        vm.startPrank(users[1]);
+        netStorage.put(key1, "123");
+        assertEq(netStorage.getValueAtIndex(key1, users[1], 0), "123");
+
+        netStorage.put(key1, "456");
+        assertEq(netStorage.getValueAtIndex(key1, users[1], 0), "123");
+        assertEq(netStorage.getValueAtIndex(key1, users[1], 1), "456");
+
+        netStorage.put(key1, "789");
+        assertEq(netStorage.getValueAtIndex(key1, users[1], 0), "123");
+        assertEq(netStorage.getValueAtIndex(key1, users[1], 1), "456");
+        assertEq(netStorage.getValueAtIndex(key1, users[1], 2), "789");
+
+        // Validate prior values
+        assertEq(netStorage.getValueAtIndex(key1, address(this), 0), "xyz");
+        assertEq(netStorage.getValueAtIndex(key1, address(this), 1), "ghi");
+        assertEq(netStorage.getValueAtIndex(key1, address(this), 2), "def");
+
+        assertEq(netStorage.getValueAtIndex(key2, address(this), 0), "tun");
+        assertEq(netStorage.getValueAtIndex(key2, address(this), 1), "asd");
+        assertEq(netStorage.getValueAtIndex(key2, address(this), 2), "tra");
+    }
 }
