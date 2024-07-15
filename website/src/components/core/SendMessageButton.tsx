@@ -69,7 +69,7 @@ export default function SendMessageButton(props: {
       // on click function that could replace the submit transaction button
       const transactionParameters =
         config.transactionExecutor.parameters &&
-        config.transactionExecutor.parameters(props.message);
+        config.transactionExecutor.parameters(props.message, chainId);
       const transactionExecutor = config.transactionExecutor.customExecutor;
       return (
         <Dialog
@@ -123,6 +123,7 @@ export default function SendMessageButton(props: {
                     ? async () => {
                         return transactionExecutor({
                           message: props.message,
+                          chainId,
                           wallet,
                         });
                       }

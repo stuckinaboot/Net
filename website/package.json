@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@opensea/seaport-js": "^4.0.4",
     "@radix-ui/react-collapsible": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
@@ -30,6 +31,7 @@
     "copy-to-clipboard": "^3.3.3",
     "date-fns": "^3.6.0",
     "dialog": "^0.3.1",
+    "ethers": "^6.13.1",
     "frog": "^0.9.2",
     "hono": "^4.3.9",
     "is-html": "^3.1.0",

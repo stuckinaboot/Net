@@ -49,5 +49,13 @@ export function convertMessageToListingComponents(
     return null;
   }
 
-  return { name, price: parsedPrice, tokenId: tokenIdStr, currency };
+  return {
+    item: {
+      name,
+      address: nameAddressMappingForChain[name],
+      tokenId: tokenIdStr,
+    },
+    price: parsedPrice,
+    currency,
+  };
 }

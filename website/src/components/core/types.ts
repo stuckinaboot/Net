@@ -85,7 +85,10 @@ export type InferredAppComponentsConfig = {
     chainId: number;
   }) => React.ReactNode;
   transactionExecutor: {
-    parameters?: (message: string) => {
+    parameters?: (
+      message: string,
+      chainId: number
+    ) => {
       abi: any[];
       args: any[];
       functionName: string;
@@ -93,6 +96,7 @@ export type InferredAppComponentsConfig = {
     // Returns transaction hash
     customExecutor?: (params: {
       message: string;
+      chainId: number;
       wallet: WalletClient;
     }) => Promise<string>;
   };

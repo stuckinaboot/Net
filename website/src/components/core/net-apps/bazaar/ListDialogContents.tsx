@@ -6,7 +6,10 @@ export function ListDialogContents(props: {
   message: string;
   chainId: number;
 }): React.ReactNode {
-  const listing = convertMessageToListingComponents(props.message, 1);
+  const listing = convertMessageToListingComponents(
+    props.message,
+    props.chainId
+  );
   if (listing == null) {
     return null;
   }
@@ -22,9 +25,9 @@ export function ListDialogContents(props: {
       <Label>
         Listing{" "}
         <b>
-          {listing.name} #{listing.tokenId}
+          {listing.item.name} #{listing.item.tokenId}
         </b>{" "}
-        for
+        for{" "}
         <b>
           {listing.price} {listing.currency}
         </b>{" "}

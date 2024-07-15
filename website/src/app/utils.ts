@@ -108,3 +108,7 @@ export function getResizedImageUrl(imageUrl: string) {
 export function isSvgDataUri(url: string) {
   return url.startsWith("data:image/svg+xml;base64,");
 }
+
+export function getRpcUrl(chainId: number) {
+  return chainIdToChain(chainId)?.rpcUrls.default.http[0];
+}
