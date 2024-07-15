@@ -24,11 +24,16 @@ contract StorageTest is PRBTest, StdCheats {
         address(0x00000000B24D62781dB359b07880a105cD0b64e6);
     Net public net;
 
-    bytes32 key1=keccak256("key1");
-        bytes32 key2=keccak256("key2");
-        bytes32 key3=keccak256("key3"); 
+    bytes32 key1 = keccak256("key1");
+    bytes32 key2 = keccak256("key2");
+    bytes32 key3 = keccak256("key3");
 
     function setUp() public {
+        for (uint256 i = 0; i < users.length; i++) {
+            users[i] = address(uint160(i + 1));
+            vm.deal(users[i], 10 ether);
+        }
+
         // Deploy Net code to NET_ADDRESS
         net = Net(NET_ADDRESS);
         bytes memory code = address(new Net()).code;
@@ -52,15 +57,67 @@ contract StorageTest is PRBTest, StdCheats {
     }
 
     function testStoreMultipleKeysMultipleValues() public {
+        netStorage.put(key1, "abc");
+        netStorage.put(key1, "def");
+        netStorage.put(key1, "ghi");
+        netStorage.put(key2, "123");
+        netStorage.put(key2, "456");
+        netStorage.put(key2, "789");
+    }
 
-    function testStoreAndGetOneValue() public {}
+    function testStoreAndGetOneValue() public {
+        netStorage.put(key1, "abc");
+        assertEq(netStorage.get(key1, address(this)), "abc");
+    }
 
-    function testStoreAndGetMultipleValues() public {}
+    function testStoreAndGetMultipleValues() public {
+        vm.startPrank(users[0]);
+        netStorage.put(key1, "abc");
+        assertEq(netStorage.get(key1, users[0]), "abc");
+        netStorage.put(key1, "def");
+        assertEq(netStorage.get(key1, users[0]), "def");
+        netStorage.put(key1, "ghi");
+        assertEq(netStorage.get(key1, users[0]), "ghi");
 
-    function testStoreAndGetMultipleValuesMultipleOperators() public {}
+        vm.startPrank(users[1]);
+        netStorage.put(key2, "jfk");
+        assertEq(netStorage.get(key2, address(users[1])), "jfk");
+        netStorage.put(key2, "lmo");
+        assertEq(netStorage.get(key2, address(users[1])), "lmo");
+        netStorage.put(key2, "qrs");
+        assertEq(netStorage.get(key2, address(users[1])), "qrs");
+    }
 
-    function testGetTotalWrites() public {}
+    function testStoreAndGetSingleKeyMultipleValuesMultipleOperators() public {
+        vm.startPrank(users[0]);
+        netStorage.put(key1, "abc");
+        assertEq(netStorage.get(key1, address(users[0])), "abc");
+
+        vm.startPrank(users[1]);
+        netStorage.put(key1, "def");
+        assertEq(netStorage.get(key1, address(users[1])), "def");
+        assertEq(netStorage.get(key1, address(users[0])), "abc");
+
+        vm.startPrank(users[2]);
+        netStorage.put(key1, "ghi");
+        assertEq(netStorage.get(key1, address(users[2])), "ghi");
+        assertEq(netStorage.get(key1, address(users[1])), "def");
+        assertEq(netStorage.get(key1, address(users[0])), "abc");
+    }
+
+    function testGetTotalWrites() public {
+        assertEq(netStorage.getTotalWrites(key1, address(this)), 0);
+        netStorage.put(key1, "def");
+        assertEq(netStorage.getTotalWrites(key1, address(this)), 1);
+        netStorage.put(key1, "ghi");
+        assertEq(netStorage.getTotalWrites(key1, address(this)), 2);
+
+        assertEq(netStorage.getTotalWrites(key2, address(this)), 0);
+        netStorage.put(key2, "ghi");
+        assertEq(netStorage.getTotalWrites(key2, address(this)), 1);
+        netStorage.put(key2, "lmo");
+        assertEq(netStorage.getTotalWrites(key2, address(this)), 2);
+    }
 
     function testStoreAndGetValueAtIndex() public {}
 }
- 

@@ -47,7 +47,7 @@ contract Storage {
                         address(this),
                         operator,
                         topic
-                    ),
+                    ) - 1,
                     address(this),
                     operator,
                     topic
