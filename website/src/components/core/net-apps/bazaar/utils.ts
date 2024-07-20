@@ -1,11 +1,12 @@
 import { HAM_CHAIN } from "@/app/constants";
-import { baseSepolia } from "viem/chains";
+import { base, baseSepolia } from "viem/chains";
 
 export const NFT_CHAIN_NAME_ADDRESS_MAPPING: {
   [chainId: number]: { [name: string]: string };
 } = {
   [HAM_CHAIN.id]: { lp: "" },
-  [baseSepolia.id]: { test: "" },
+  [baseSepolia.id]: { test: "0x29f2ac9fb40fe9bb7e1e972c27ac178812cab4a0" },
+  [base.id]: { test: "" },
 };
 
 export function convertMessageToListingComponents(

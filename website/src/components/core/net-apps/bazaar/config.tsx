@@ -11,7 +11,7 @@ import {
 } from "../../types";
 import { readContract } from "viem/actions";
 import Link from "next/link";
-import { CHAINS, HAM_CHAIN } from "@/app/constants";
+import { CHAINS, HAM_CHAIN, WILLIE_NET_CONTRACT } from "@/app/constants";
 import { baseSepolia } from "viem/chains";
 import { ListDialogContents } from "./ListDialogContents";
 import { convertMessageToListingComponents } from "./utils";
@@ -50,21 +50,26 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
 export const inferredAppConfig: InferredAppComponentsConfig = {
   supportedChains: new Set(
     CHAINS.filter(
-      (chain) => chain.name === "Ham" || chain.name === "Base Sepolia"
+      (chain) =>
+        chain.name === "Ham" ||
+        chain.name === "Base Sepolia" ||
+        chain.name === "Base"
     ).map((chain) => chain.id)
   ),
+  useNetAddress: true,
   infer: (message: string, chainId: number) =>
     convertMessageToListingComponents(message, chainId) != null,
   dialogContents: ListDialogContents,
   transactionExecutor: {
-    customExecutor: async (params: {
-      message: string;
+    preProcessArgs: async (params: {
+      args: any[];
       chainId: number;
       wallet: WalletClient;
     }) => {
       // Generate listing
       const listing = convertMessageToListingComponents(
-        params.message,
+        // Message
+        params.args[0],
         params.chainId
       );
       if (listing == null) {
@@ -80,49 +85,43 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
       const network = {
         chainId: chain?.id,
         name: chain?.name,
-        ensAddress: chain?.contracts?.ensRegistry?.address,
+        ensAddress: "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e", // chain?.contracts?.ensRegistry?.address,
       };
       console.log("WTF", network);
       const provider = new BrowserProvider(transport, params.chainId);
       console.log("OOF");
-      // const signer = new JsonRpcSigner(provider, account?.address as string);
+      const signer = new JsonRpcSigner(provider, account?.address as string);
 
-      // TODO see if this works
-      const seaport = new Seaport(provider as any);
+      // const provider = new ethers.BrowserProvider(window.ethereum);
+      const seaport = new Seaport(signer as any);
 
-      console.log("WOAH!", params.wallet.account?.address);
-      try {
-        const { executeAllActions } = await seaport.createOrder(
-          {
-            offer: [
-              {
-                itemType: ItemType.ERC721,
-                token: listing.item.address,
-                identifier: listing.item.tokenId,
-              },
-            ],
-            consideration: [
-              // TODO ensure this is right
-              {
-                amount: ethers.parseEther(listing.price.toString()).toString(),
-                recipient: params.wallet.account?.address,
-              },
-            ],
-          },
-          params.wallet.account?.address
-        );
-        console.log("WOAH!", params.wallet.account?.address);
-        const order = await executeAllActions();
+      const { executeAllActions } = await seaport.createOrder(
+        {
+          offer: [
+            {
+              itemType: ItemType.ERC721,
+              token: listing.item.address,
+              identifier: listing.item.tokenId,
+            },
+          ],
+          consideration: [
+            // TODO ensure this is right
+            {
+              amount: ethers.parseEther(listing.price.toString()).toString(),
+              recipient: params.wallet.account?.address,
+            },
+          ],
+        },
+        params.wallet.account?.address
+      );
+      const order = await executeAllActions();
 
-        // TODO include order on Net
-        return "todo";
-      } catch (e) {
-        console.log("WTF", e);
-        throw e;
-      }
+      const orderString = JSON.stringify(order);
+      // TODO consider if order string should be data rather than text
+      return [orderString, ...params.args.slice(1)];
     },
   },
   toasts: {
-    success: { description: "You successfully inscribed an NFT on Net" },
+    success: { description: "You successfully submitted a listing on Net" },
   },
 };

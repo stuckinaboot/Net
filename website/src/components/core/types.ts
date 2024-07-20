@@ -84,6 +84,7 @@ export type InferredAppComponentsConfig = {
     message: string;
     chainId: number;
   }) => React.ReactNode;
+  useNetAddress?: boolean;
   transactionExecutor: {
     parameters?: (
       message: string,
@@ -93,6 +94,11 @@ export type InferredAppComponentsConfig = {
       args: any[];
       functionName: string;
     };
+    preProcessArgs?: (params: {
+      args: any[];
+      chainId: number;
+      wallet: WalletClient;
+    }) => Promise<any[]>;
     // Returns transaction hash
     customExecutor?: (params: {
       message: string;
