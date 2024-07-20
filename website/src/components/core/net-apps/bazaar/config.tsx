@@ -20,25 +20,67 @@ import { WalletClient } from "viem";
 import { Seaport } from "@opensea/seaport-js";
 import { ethers } from "ethers";
 import { ItemType } from "@opensea/seaport-js/lib/constants";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 
 export const standaloneConfig: StandaloneAppComponentsConfig = {
-  getTransformedMessage: async (chainId, messageText) => {
+  getTransformedMessage: async (chainId, messageText, messageData, wallet) => {
     try {
-      const hashTagIndex = messageText.indexOf("#");
-      if (hashTagIndex === -1) {
+      console.log("ATTEMPT!");
+      // Attempt to parse message as a seaport order
+      const possibleOrder = JSON.parse(messageText);
+      if (possibleOrder.parameters == null) {
         return messageText;
       }
-      const chain = chainIdToChain(chainId);
-      if (chain == null) {
-        return undefined;
+      if (possibleOrder.signature == null) {
+        return messageText;
       }
-      // const uri = (await readContract(publicClient(chain), {
-      //   address: INSCRIBED_DROPS_CONTRACT.address as any,
-      //   abi: INSCRIBED_DROPS_CONTRACT.abi,
-      //   functionName: "tokenURI",
-      //   args: [dropId],
-      // })) as any;
-      return "hello";
+      if (wallet == null) {
+        // NOTE: this means users have to be connected to see the fill option
+        return messageText;
+      }
+
+      const { account, chain, transport } = wallet;
+      const network = {
+        chainId: chain?.id,
+        name: chain?.name,
+        ensAddress: "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e", // chain?.contracts?.ensRegistry?.address,
+      };
+      console.log("WTF", network);
+      const provider = new BrowserProvider(transport, chainId);
+      console.log("OOF");
+      const signer = new JsonRpcSigner(provider, account?.address as string);
+
+      // const provider = new ethers.BrowserProvider(window.ethereum);
+      const seaport = new Seaport(signer as any);
+
+      console.log("REACH!");
+      return (
+        <div>
+          {messageText}{" "}
+          <Button
+            onClick={async () => {
+              try {
+                const { executeAllActions: executeAllFulfillActions } =
+                  await seaport.fulfillOrder({
+                    order: possibleOrder as any,
+                    accountAddress: wallet.account?.address,
+                  });
+
+                const transaction = executeAllFulfillActions();
+                console.log("TRANSACTION", transaction);
+              } catch (e: any) {
+                toast({
+                  title: "Fill failed",
+                  description: <>{e?.message}</>,
+                });
+              }
+            }}
+          >
+            Fill order
+          </Button>
+        </div>
+      );
     } catch (e) {
       // This may throw due to RPC errors or the contract not implementing the above function.
       // In either case, gracefully return undefined

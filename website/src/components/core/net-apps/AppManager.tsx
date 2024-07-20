@@ -13,6 +13,7 @@ import { inferredAppConfig as BazaarInferredConfig } from "./bazaar/config";
 import { NFT_GATED_CHAT_CONTRACT } from "./nft-gating/constants";
 import { INSCRIBED_DROPS_CONTRACT } from "./inscribed-drops/constants";
 import { BAZAAR_CONTRACT } from "./bazaar/constants";
+import { NULL_ADDRESS, WILLIE_NET_CONTRACT } from "@/app/constants";
 
 export const APP_TO_CONFIG: { [address: string]: AppComponentsConfig } = {
   [NFT_GATED_CHAT_CONTRACT.address]: NftGatingAppConfig,
@@ -30,5 +31,6 @@ export const STANDALONE_APP_TO_CONFIG: {
   [address: string]: StandaloneAppComponentsConfig;
 } = {
   [INSCRIBED_DROPS_CONTRACT.address]: InscribedDropConfig,
-  [BAZAAR_CONTRACT.address]: BazaarStandaloneConfig,
+  // TODO figure out the app situation here
+  [NULL_ADDRESS]: BazaarStandaloneConfig,
 };

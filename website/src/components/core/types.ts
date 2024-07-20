@@ -119,6 +119,7 @@ export type StandaloneAppComponentsConfig = {
   getTransformedMessage: (
     chainId: number,
     messageText: string,
-    messageData: string
+    messageData: string,
+    wallet?: WalletClient
   ) => Promise<React.ReactNode | string>;
 };
