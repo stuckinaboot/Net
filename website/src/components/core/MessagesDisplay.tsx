@@ -59,7 +59,6 @@ const getTransformedMessage = memoize(
     wallet?: WalletClient
   ): Promise<string | React.ReactNode> => {
     const config = STANDALONE_APP_TO_CONFIG[appAddress];
-    console.log("CONFIG!", config, appAddress);
     if (config == null) {
       return messageText;
     }

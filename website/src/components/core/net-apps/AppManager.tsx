@@ -30,6 +30,8 @@ export const INFERRED_APP_TO_CONFIG: {
 export const STANDALONE_APP_TO_CONFIG: {
   [address: string]: StandaloneAppComponentsConfig;
 } = {
+  // TODO make these addresses all lowercase and do lowercase
+  // sanitization when querying them
   [INSCRIBED_DROPS_CONTRACT.address]: InscribedDropConfig,
   [BAZAAR_CONTRACT.address]: BazaarStandaloneConfig,
 };

@@ -304,16 +304,13 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
         // TODO should this be updated
         ensAddress: "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e", // chain?.contracts?.ensRegistry?.address,
       };
-      console.log("WTF", network);
       const provider = new BrowserProvider(transport, params.chainId);
-      console.log("OOF");
       const signer = new JsonRpcSigner(provider, account?.address as string);
 
       // const provider = new ethers.BrowserProvider(window.ethereum);
       const seaport = new Seaport(signer as any);
 
       const orderEndTime = getTimestampInSecondsNHoursFromNow(24).toString();
-      console.log("END", orderEndTime);
       const { executeAllActions } = await seaport.createOrder(
         {
           offer: [
