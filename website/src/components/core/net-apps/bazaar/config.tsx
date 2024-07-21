@@ -27,6 +27,13 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { decodeAbiParameters } from "viem";
 
+enum SeaportOrderStatus {
+  CANCELLED,
+  EXPIRED,
+  OPEN,
+  FILLED,
+}
+
 export const standaloneConfig: StandaloneAppComponentsConfig = {
   getTransformedMessage: async (chainId, messageText, messageData, wallet) => {
     try {
@@ -196,12 +203,37 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
 
       // const provider = new ethers.BrowserProvider(window.ethereum);
       const seaport = new Seaport(signer as any);
+      console.log("GOT DIS", possibleOrder.parameters);
+      const orderHash = seaport.getOrderHash({
+        ...possibleOrder.parameters,
+        counter: possibleOrder.counter,
+      } as any);
+
+      // Determine order status
+      let orderStatus = SeaportOrderStatus.OPEN;
+      const onchainOrderStatus = await seaport.getOrderStatus(orderHash);
+      if (onchainOrderStatus.isCancelled) {
+        orderStatus = SeaportOrderStatus.CANCELLED;
+      } else if (
+        onchainOrderStatus.totalFilled.toString() ===
+          onchainOrderStatus.totalSize.toString() &&
+        // Likely not need but just sanity check
+        parseInt(onchainOrderStatus.totalFilled.toString()) !== 0
+      ) {
+        orderStatus = SeaportOrderStatus.FILLED;
+      } else if (
+        parseInt(possibleOrder.parameters.endTime.toString()) * 1000 <
+        Date.now()
+      ) {
+        orderStatus = SeaportOrderStatus.EXPIRED;
+      }
 
       console.log("REACH!");
       return (
         <div>
           {messageText}{" "}
           <Button
+            disabled={orderStatus !== SeaportOrderStatus.OPEN}
             onClick={async () => {
               try {
                 let finalSubmission = {
@@ -246,7 +278,15 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
               }
             }}
           >
-            Fill order
+            {orderStatus === SeaportOrderStatus.OPEN
+              ? "Buy now"
+              : orderStatus === SeaportOrderStatus.CANCELLED
+              ? "Cancelled"
+              : orderStatus === SeaportOrderStatus.EXPIRED
+              ? "Expired"
+              : orderStatus === SeaportOrderStatus.FILLED
+              ? "Filled"
+              : "Unknown"}
           </Button>
         </div>
       );
