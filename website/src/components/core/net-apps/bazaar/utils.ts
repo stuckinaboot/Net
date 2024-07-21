@@ -60,3 +60,11 @@ export function convertMessageToListingComponents(
     currency,
   };
 }
+
+export function getTimestampInSecondsNHoursFromNow(n: number) {
+  return Math.floor(
+    Date.now() / 1000 +
+      // 60 minutes per hour, 60 seconds per minute
+      n * 60 * 60
+  );
+}

@@ -14,7 +14,10 @@ import Link from "next/link";
 import { CHAINS, HAM_CHAIN, WILLIE_NET_CONTRACT } from "@/app/constants";
 import { baseSepolia } from "viem/chains";
 import { ListDialogContents } from "./ListDialogContents";
-import { convertMessageToListingComponents } from "./utils";
+import {
+  convertMessageToListingComponents,
+  getTimestampInSecondsNHoursFromNow,
+} from "./utils";
 import { BAZAAR_CONTRACT } from "./constants";
 import { WalletClient } from "viem";
 import { Seaport } from "@opensea/seaport-js";
@@ -222,7 +225,6 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
                   signature: possibleOrder.signature,
                 };
 
-                console.log("SUBMISSION IS", finalSubmission);
                 const { actions, executeAllActions: executeAllFulfillActions } =
                   await seaport.fulfillOrder({
                     // order: possibleOrder as any,
@@ -310,6 +312,8 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
       // const provider = new ethers.BrowserProvider(window.ethereum);
       const seaport = new Seaport(signer as any);
 
+      const orderEndTime = getTimestampInSecondsNHoursFromNow(24).toString();
+      console.log("END", orderEndTime);
       const { executeAllActions } = await seaport.createOrder(
         {
           offer: [
@@ -334,13 +338,12 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
               recipient: params.wallet.account?.address,
             },
           ],
+          endTime: orderEndTime,
         },
         params.wallet.account?.address
       );
       const order = await executeAllActions();
-      console.log("LFG", order);
 
-      const orderString = JSON.stringify(order);
       // Parameters includes counter (despite the naming)
       const finalSubmission = {
         parameters: order.parameters,
