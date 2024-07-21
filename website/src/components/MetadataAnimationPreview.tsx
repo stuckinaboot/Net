@@ -2,7 +2,7 @@ import { Label } from "@/components/ui/label";
 import IframeRenderer from "./core/IFrameRenderer";
 import { sanitizeMediaUrl } from "./core/utils";
 import mime from "mime-types";
-import InscriptionImagePreview from "./MetadataImagePreview";
+import MetadataImagePreview from "./MetadataImagePreview";
 import ReactPlayer from "react-player";
 import { SVG_MIME_TYPE } from "@/app/constants";
 
@@ -47,7 +47,7 @@ export default function InscriptionAnimationPreview({
     );
   }
   if (animationType === AnimationType.SVG) {
-    return <InscriptionImagePreview image={animationUrl} />;
+    return <MetadataImagePreview image={animationUrl} />;
   }
   if (animationType === AnimationType.VIDEO) {
     return (

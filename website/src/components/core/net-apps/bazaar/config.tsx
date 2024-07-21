@@ -26,6 +26,8 @@ import { ItemType } from "@opensea/seaport-js/lib/constants";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { decodeAbiParameters } from "viem";
+import { useReadContract } from "wagmi";
+import MetadataImagePreview from "@/components/MetadataImagePreview";
 
 enum SeaportOrderStatus {
   CANCELLED,
@@ -37,7 +39,6 @@ enum SeaportOrderStatus {
 export const standaloneConfig: StandaloneAppComponentsConfig = {
   getTransformedMessage: async (chainId, messageText, messageData, wallet) => {
     try {
-      console.log("ATTEMPT!", messageData);
       const [possibleOrder] = decodeAbiParameters(
         [
           {
@@ -228,66 +229,119 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
         orderStatus = SeaportOrderStatus.EXPIRED;
       }
 
+      // Fetch NFT media
+      if (chain == null) {
+        return undefined;
+      }
+      const tokenURI = (await readContract(publicClient(chain), {
+        address: possibleOrder.parameters.offer[0].token as any,
+        abi: [
+          {
+            constant: true,
+            inputs: [
+              {
+                name: "tokenId",
+                type: "uint256",
+              },
+            ],
+            name: "tokenURI",
+            outputs: [
+              {
+                name: "",
+                type: "string",
+              },
+            ],
+            payable: false,
+            stateMutability: "view",
+            type: "function",
+          },
+        ],
+        functionName: "tokenURI",
+        args: [possibleOrder.parameters.offer[0].identifierOrCriteria],
+      })) as any;
+      const res = await fetch("/api/getTokenMetadataFromTokenURI", {
+        method: "POST",
+        body: JSON.stringify({ tokenURI }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const metadata = (await res.json())?.metadata;
+      const image = metadata?.image;
+
       console.log("REACH!");
+
+      const imgComponent =
+        image != null ? (
+          <MetadataImagePreview image={image} size="w-64" />
+        ) : (
+          <i>No image found</i>
+        );
+
       return (
         <div>
-          {messageText}{" "}
-          <Button
-            disabled={orderStatus !== SeaportOrderStatus.OPEN}
-            onClick={async () => {
-              try {
-                let finalSubmission = {
-                  parameters: {
-                    ...possibleOrder.parameters,
-                    // Sanitize identifier or criterias to strings to get around a lowercasing check in seaportjs
-                    offer: possibleOrder.parameters.offer.map((offer) => ({
-                      ...offer,
-                      identifierOrCriteria:
-                        offer.identifierOrCriteria.toString(),
-                    })),
-                    consideration: possibleOrder.parameters.consideration.map(
-                      (consideration) => ({
-                        ...consideration,
+          <div>
+            {messageText}{" "}
+            <Button
+              disabled={orderStatus !== SeaportOrderStatus.OPEN}
+              onClick={async () => {
+                try {
+                  let finalSubmission = {
+                    parameters: {
+                      ...possibleOrder.parameters,
+                      // Sanitize identifier or criterias to strings to get around a lowercasing check in seaportjs
+                      offer: possibleOrder.parameters.offer.map((offer) => ({
+                        ...offer,
                         identifierOrCriteria:
-                          consideration.identifierOrCriteria.toString(),
-                      })
-                    ),
-                    counter: possibleOrder.counter,
-                  },
-                  signature: possibleOrder.signature,
-                };
+                          offer.identifierOrCriteria.toString(),
+                      })),
+                      consideration: possibleOrder.parameters.consideration.map(
+                        (consideration) => ({
+                          ...consideration,
+                          identifierOrCriteria:
+                            consideration.identifierOrCriteria.toString(),
+                        })
+                      ),
+                      counter: possibleOrder.counter,
+                    },
+                    signature: possibleOrder.signature,
+                  };
 
-                const { actions, executeAllActions: executeAllFulfillActions } =
-                  await seaport.fulfillOrder({
+                  const {
+                    actions,
+                    executeAllActions: executeAllFulfillActions,
+                  } = await seaport.fulfillOrder({
                     // order: possibleOrder as any,
                     order: finalSubmission as any,
                     accountAddress: wallet.account?.address,
                   });
 
-                const transaction = await executeAllFulfillActions();
-                // console.log(
-                //   "actions",
-                //   await actions[0].transactionMethods.buildTransaction()
-                // );
-              } catch (e: any) {
-                console.log("ERROR", e);
-                toast({
-                  title: "Fill failed",
-                  description: <>{e?.message}</>,
-                });
-              }
-            }}
-          >
-            {orderStatus === SeaportOrderStatus.OPEN
-              ? "Buy now"
-              : orderStatus === SeaportOrderStatus.CANCELLED
-              ? "Cancelled"
-              : orderStatus === SeaportOrderStatus.EXPIRED
-              ? "Expired"
-              : orderStatus === SeaportOrderStatus.FILLED
-              ? "Filled"
-              : "Unknown"}
-          </Button>
+                  const transaction = await executeAllFulfillActions();
+                  // console.log(
+                  //   "actions",
+                  //   await actions[0].transactionMethods.buildTransaction()
+                  // );
+                } catch (e: any) {
+                  console.log("ERROR", e);
+                  toast({
+                    title: "Fill failed",
+                    description: <>{e?.message}</>,
+                  });
+                }
+              }}
+            >
+              {orderStatus === SeaportOrderStatus.OPEN
+                ? "Buy now"
+                : orderStatus === SeaportOrderStatus.CANCELLED
+                ? "Cancelled"
+                : orderStatus === SeaportOrderStatus.EXPIRED
+                ? "Expired"
+                : orderStatus === SeaportOrderStatus.FILLED
+                ? "Filled"
+                : "Unknown"}
+            </Button>
+          </div>
+          <div>{imgComponent}</div>
         </div>
       );
     } catch (e) {

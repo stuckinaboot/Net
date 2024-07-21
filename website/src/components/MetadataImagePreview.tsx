@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const REFETCH_INTERVAL_MS = 500;
 const REFETCH_TIMEOUT_BEFORE_SWITCH_IPFS_GATEWAY = 3500;
 
-export default function InscriptionImagePreview(props: {
+function MetadataImagePreviewInternal(props: {
   image: string;
   size?: "w-16" | "w-32" | "w-64";
   constantlyRefetchUntilLoaded?: boolean;
@@ -63,3 +63,5 @@ export default function InscriptionImagePreview(props: {
     </>
   );
 }
+
+export default MetadataImagePreviewInternal;

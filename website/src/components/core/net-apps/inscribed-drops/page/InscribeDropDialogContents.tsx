@@ -1,7 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import InscriptionAnimationPreview from "../../../../MetadataAnimationPreview";
-import InscriptionImagePreview from "../../../../MetadataImagePreview";
+import MetadataImagePreview from "../../../../MetadataImagePreview";
 import { MintConfig } from "./InscribeDropMintConfigEntry";
 import { InscriptionContents } from "../../inscriptions/page/InscriptionEntry";
 import { getBlockTimestampAsLocalDateString } from "@/components/utils/utils";
@@ -46,7 +46,7 @@ export function InscribeDropDialogContents(props: {
           <br />
           <Label>
             Image:{" "}
-            <InscriptionImagePreview
+            <MetadataImagePreview
               image={inscriptionMetadata.image}
               constantlyRefetchUntilLoaded={true}
             />
