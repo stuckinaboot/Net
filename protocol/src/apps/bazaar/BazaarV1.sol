@@ -3,6 +3,7 @@ pragma solidity >=0.8.17 .0;
 
 import {Net} from "../../net/Net.sol";
 import {OrderParameters} from "@seaport-types/lib/ConsiderationStructs.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 /// @title Bazaar
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
@@ -38,13 +39,42 @@ contract BazaarV1 {
         address offerItemAddress = submission.parameters.offer[0].token;
         uint256 tokenId = submission.parameters.offer[0].identifierOrCriteria;
 
+        uint256 totalAmount = submission.parameters.consideration[0].endAmount +
+            submission.parameters.consideration[1].endAmount;
+
         emit Submitted(offerItemAddress, tokenId);
 
         net.sendMessageViaApp(
             msg.sender,
-            "Stored submission",
+            string.concat(
+                "List ",
+                Strings.toHexString(offerItemAddress),
+                " #",
+                Strings.toString(tokenId),
+                "\nPrice: ",
+                weiToEthString(totalAmount),
+                "\nExpiration Date: ",
+                Strings.toString(submission.parameters.endTime)
+            ),
             string(abi.encodePacked(offerItemAddress)),
             abi.encode(submission)
         );
+    }
+
+    function weiToEthString(
+        uint256 weiValue
+    ) internal pure returns (string memory) {
+        uint256 ethValueWhole = weiValue / 1e18;
+        uint256 ethValueFraction = (weiValue % 1e18) / 1e10; // 8 decimal places
+
+        string memory wholePart = Strings.toString(ethValueWhole);
+        string memory fractionPart = Strings.toString(ethValueFraction);
+
+        // Pad the fraction part with leading zeros if necessary
+        while (bytes(fractionPart).length < 8) {
+            fractionPart = string(abi.encodePacked("0", fractionPart));
+        }
+
+        return string(abi.encodePacked(wholePart, ".", fractionPart));
     }
 }
