@@ -22,14 +22,154 @@ import { ethers } from "ethers";
 import { ItemType } from "@opensea/seaport-js/lib/constants";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import { decodeAbiParameters } from "viem";
 
 export const standaloneConfig: StandaloneAppComponentsConfig = {
   getTransformedMessage: async (chainId, messageText, messageData, wallet) => {
     try {
-      console.log("ATTEMPT!");
+      console.log("ATTEMPT!", messageData);
+      const [possibleOrder] = decodeAbiParameters(
+        [
+          {
+            name: "submission",
+            type: "tuple",
+            internalType: "struct BazaarV1.Submission",
+            components: [
+              {
+                name: "parameters",
+                type: "tuple",
+                internalType: "struct OrderParameters",
+                components: [
+                  {
+                    name: "offerer",
+                    type: "address",
+                    internalType: "address",
+                  },
+                  {
+                    name: "zone",
+                    type: "address",
+                    internalType: "address",
+                  },
+                  {
+                    name: "offer",
+                    type: "tuple[]",
+                    internalType: "struct OfferItem[]",
+                    components: [
+                      {
+                        name: "itemType",
+                        type: "uint8",
+                        internalType: "enum ItemType",
+                      },
+                      {
+                        name: "token",
+                        type: "address",
+                        internalType: "address",
+                      },
+                      {
+                        name: "identifierOrCriteria",
+                        type: "uint256",
+                        internalType: "uint256",
+                      },
+                      {
+                        name: "startAmount",
+                        type: "uint256",
+                        internalType: "uint256",
+                      },
+                      {
+                        name: "endAmount",
+                        type: "uint256",
+                        internalType: "uint256",
+                      },
+                    ],
+                  },
+                  {
+                    name: "consideration",
+                    type: "tuple[]",
+                    internalType: "struct ConsiderationItem[]",
+                    components: [
+                      {
+                        name: "itemType",
+                        type: "uint8",
+                        internalType: "enum ItemType",
+                      },
+                      {
+                        name: "token",
+                        type: "address",
+                        internalType: "address",
+                      },
+                      {
+                        name: "identifierOrCriteria",
+                        type: "uint256",
+                        internalType: "uint256",
+                      },
+                      {
+                        name: "startAmount",
+                        type: "uint256",
+                        internalType: "uint256",
+                      },
+                      {
+                        name: "endAmount",
+                        type: "uint256",
+                        internalType: "uint256",
+                      },
+                      {
+                        name: "recipient",
+                        type: "address",
+                        internalType: "address payable",
+                      },
+                    ],
+                  },
+                  {
+                    name: "orderType",
+                    type: "uint8",
+                    internalType: "enum OrderType",
+                  },
+                  {
+                    name: "startTime",
+                    type: "uint256",
+                    internalType: "uint256",
+                  },
+                  {
+                    name: "endTime",
+                    type: "uint256",
+                    internalType: "uint256",
+                  },
+                  {
+                    name: "zoneHash",
+                    type: "bytes32",
+                    internalType: "bytes32",
+                  },
+                  {
+                    name: "salt",
+                    type: "uint256",
+                    internalType: "uint256",
+                  },
+                  {
+                    name: "conduitKey",
+                    type: "bytes32",
+                    internalType: "bytes32",
+                  },
+                  {
+                    name: "totalOriginalConsiderationItems",
+                    type: "uint256",
+                    internalType: "uint256",
+                  },
+                ],
+              },
+              { name: "counter", type: "uint256", internalType: "uint256" },
+              { name: "signature", type: "bytes", internalType: "bytes" },
+            ],
+          },
+        ],
+        messageData as any
+      );
+
       // Attempt to parse message as a seaport order
-      const possibleOrder = JSON.parse(messageText);
+      console.log("HIT ME!!", possibleOrder);
       if (possibleOrder.parameters == null) {
+        return messageText;
+      }
+      if (possibleOrder.counter == null) {
         return messageText;
       }
       if (possibleOrder.signature == null) {
@@ -61,18 +201,42 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
           <Button
             onClick={async () => {
               try {
+                let finalSubmission = {
+                  parameters: {
+                    ...possibleOrder.parameters,
+                    // Sanitize identifier or criterias to strings to get around a lowercasing check in seaportjs
+                    offer: possibleOrder.parameters.offer.map((offer) => ({
+                      ...offer,
+                      identifierOrCriteria:
+                        offer.identifierOrCriteria.toString(),
+                    })),
+                    consideration: possibleOrder.parameters.consideration.map(
+                      (consideration) => ({
+                        ...consideration,
+                        identifierOrCriteria:
+                          consideration.identifierOrCriteria.toString(),
+                      })
+                    ),
+                    counter: possibleOrder.counter,
+                  },
+                  signature: possibleOrder.signature,
+                };
+
+                console.log("SUBMISSION IS", finalSubmission);
                 const { actions, executeAllActions: executeAllFulfillActions } =
                   await seaport.fulfillOrder({
-                    order: possibleOrder as any,
+                    // order: possibleOrder as any,
+                    order: finalSubmission as any,
                     accountAddress: wallet.account?.address,
                   });
 
-                // const transaction = await executeAllFulfillActions();
-                console.log(
-                  "actions",
-                  await actions[0].transactionMethods.buildTransaction()
-                );
+                const transaction = await executeAllFulfillActions();
+                // console.log(
+                //   "actions",
+                //   await actions[0].transactionMethods.buildTransaction()
+                // );
               } catch (e: any) {
+                console.log("ERROR", e);
                 toast({
                   title: "Fill failed",
                   description: <>{e?.message}</>,
@@ -85,6 +249,7 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
         </div>
       );
     } catch (e) {
+      console.log("ERROR", e);
       // This may throw due to RPC errors or the contract not implementing the above function.
       // In either case, gracefully return undefined
       return messageText;
@@ -101,11 +266,15 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
         chain.name === "Base"
     ).map((chain) => chain.id)
   ),
-  useNetAddress: true,
   infer: (message: string, chainId: number) =>
     convertMessageToListingComponents(message, chainId) != null,
   dialogContents: ListDialogContents,
   transactionExecutor: {
+    parameters: (message: string) => ({
+      abi: BAZAAR_CONTRACT.abi,
+      args: [message],
+      functionName: "submit",
+    }),
     preProcessArgs: async (params: {
       args: any[];
       chainId: number;
@@ -130,6 +299,7 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
       const network = {
         chainId: chain?.id,
         name: chain?.name,
+        // TODO should this be updated
         ensAddress: "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e", // chain?.contracts?.ensRegistry?.address,
       };
       console.log("WTF", network);
@@ -152,7 +322,15 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
           consideration: [
             // TODO ensure this is right
             {
-              amount: ethers.parseEther(listing.price.toString()).toString(),
+              amount: ethers
+                .parseEther((listing.price / 2).toString())
+                .toString(),
+              recipient: params.wallet.account?.address,
+            },
+            {
+              amount: ethers
+                .parseEther((listing.price / 2).toString())
+                .toString(),
               recipient: params.wallet.account?.address,
             },
           ],
@@ -160,10 +338,17 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
         params.wallet.account?.address
       );
       const order = await executeAllActions();
+      console.log("LFG", order);
 
       const orderString = JSON.stringify(order);
+      // Parameters includes counter (despite the naming)
+      const finalSubmission = {
+        parameters: order.parameters,
+        counter: order.parameters.counter,
+        signature: order.signature,
+      };
       // TODO consider if order string should be data rather than text
-      return [orderString, ...params.args.slice(1)];
+      return [finalSubmission, ...params.args.slice(1)];
     },
   },
   toasts: {

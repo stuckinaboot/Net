@@ -131,6 +131,13 @@ export default function SubmitTransactionButton(props: {
         setShownSucccessToast(false);
         setTxnHash(executorTxnHash);
       } else {
+        console.log("HIT HERE!", {
+          address: props.to as any,
+          abi: props.abi,
+          functionName: props.functionName,
+          args,
+          value: props.value != null ? BigInt(props.value) : undefined,
+        });
         // Use default executor with passed in args
         await writeContractAsync({
           address: props.to as any,
@@ -142,6 +149,7 @@ export default function SubmitTransactionButton(props: {
       }
     } catch (e) {
       if (e instanceof Error) {
+        console.log("NO!", e);
         toast({
           title: "Error",
           description: getDisplayableErrorMessageFromSubmitTransactionError(e),

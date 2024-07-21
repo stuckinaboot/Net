@@ -23,7 +23,7 @@ export const INFERRED_APP_TO_CONFIG: {
   [address: string]: InferredAppComponentsConfig;
 } = {
   [INSCRIPTIONS_CONTRACT.address]: InscriptionsAppConfig,
-  ["TODO address"]: BazaarInferredConfig,
+  [BAZAAR_CONTRACT.address]: BazaarInferredConfig,
   ["Swaps no address"]: SwapsAppConfig,
 };
 
@@ -31,6 +31,5 @@ export const STANDALONE_APP_TO_CONFIG: {
   [address: string]: StandaloneAppComponentsConfig;
 } = {
   [INSCRIBED_DROPS_CONTRACT.address]: InscribedDropConfig,
-  // TODO figure out the app situation here
-  [NULL_ADDRESS]: BazaarStandaloneConfig,
+  [BAZAAR_CONTRACT.address]: BazaarStandaloneConfig,
 };
