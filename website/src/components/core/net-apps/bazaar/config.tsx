@@ -61,14 +61,17 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
           <Button
             onClick={async () => {
               try {
-                const { executeAllActions: executeAllFulfillActions } =
+                const { actions, executeAllActions: executeAllFulfillActions } =
                   await seaport.fulfillOrder({
                     order: possibleOrder as any,
                     accountAddress: wallet.account?.address,
                   });
 
-                const transaction = executeAllFulfillActions();
-                console.log("TRANSACTION", transaction);
+                // const transaction = await executeAllFulfillActions();
+                console.log(
+                  "actions",
+                  await actions[0].transactionMethods.buildTransaction()
+                );
               } catch (e: any) {
                 toast({
                   title: "Fill failed",
