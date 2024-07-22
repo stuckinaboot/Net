@@ -10,8 +10,14 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 contract BazaarV1 {
     event Submitted(address indexed tokenAddress, uint256 indexed tokenId);
     error OfferItemsMustContainOneItem();
-    // TODO confirm consideration items scenario
     error ConsiderationItemsMustContainTwoItems();
+    error ConsiderationItemsMustIncludeMsgSender();
+    error ConsiderationItemsMustIncludeFeeAddress();
+    error InvalidFee();
+
+    address internal constant FEE_ADDRESS =
+        address(0x32D16C15410248bef498D7aF50D10Db1a546b9E5);
+    uint256 internal constant MIN_FEE_BPS = 450;
 
     Net internal net = Net(0x00000000B24D62781dB359b07880a105cD0b64e6);
 
@@ -33,8 +39,23 @@ contract BazaarV1 {
 
         // Validate consideration items contain 2 items
         if (submission.parameters.consideration.length != 2) {
-            // TODO add fee validation
             revert ConsiderationItemsMustContainTwoItems();
+        }
+
+        // Address validation
+        if (submission.parameters.consideration[0].recipient != msg.sender) {
+            revert ConsiderationItemsMustIncludeMsgSender();
+        }
+        if (submission.parameters.consideration[1].recipient != FEE_ADDRESS) {
+            revert ConsiderationItemsMustIncludeFeeAddress();
+        }
+        if (
+            ((submission.parameters.consideration[1].startAmount * 10_000) /
+                (submission.parameters.consideration[0].startAmount +
+                    submission.parameters.consideration[1].startAmount)) <
+            MIN_FEE_BPS
+        ) {
+            revert InvalidFee();
         }
 
         // Use offer item address for topic
