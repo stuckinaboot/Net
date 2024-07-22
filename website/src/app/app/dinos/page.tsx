@@ -96,7 +96,7 @@ export default function Page() {
             {address == null
               ? "Connect wallet to view dinos"
               : loading
-              ? "Loading..."
+              ? "Loading... (this may take a few minutes)"
               : userDinos.length === 0
               ? "No dinos found"
               : ""}
