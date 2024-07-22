@@ -159,3 +159,6 @@ export const ERC721_TOKEN_URI_ABI = [
     type: "function",
   },
 ];
+
+export const FEE_ADDRESS = "TODO";
+export const FEE_BPS = 500;

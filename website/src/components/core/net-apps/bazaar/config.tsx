@@ -22,8 +22,10 @@ import {
   BAZAAR_CONTRACT,
   BAZAAR_SUBMISSION_ABI,
   ERC721_TOKEN_URI_ABI,
+  FEE_ADDRESS,
+  FEE_BPS,
 } from "./constants";
-import { WalletClient } from "viem";
+import { WalletClient, parseEther } from "viem";
 import { Seaport } from "@opensea/seaport-js";
 import { ethers } from "ethers";
 import { ItemType } from "@opensea/seaport-js/lib/constants";
@@ -258,6 +260,8 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
       const seaport = new Seaport(signer as any);
 
       const orderEndTime = getTimestampInSecondsNHoursFromNow(24).toString();
+      const listingPriceInWei = parseEther(listing.price.toString());
+      const feeInWei = (listingPriceInWei * BigInt(FEE_BPS)) / BigInt(10_000);
       const { executeAllActions } = await seaport.createOrder(
         {
           offer: [
@@ -268,18 +272,13 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
             },
           ],
           consideration: [
-            // TODO ensure this is right
             {
-              amount: ethers
-                .parseEther((listing.price / 2).toString())
-                .toString(),
+              amount: (listingPriceInWei - feeInWei).toString(),
               recipient: params.wallet.account?.address,
             },
             {
-              amount: ethers
-                .parseEther((listing.price / 2).toString())
-                .toString(),
-              recipient: params.wallet.account?.address,
+              amount: feeInWei.toString(),
+              recipient: FEE_ADDRESS,
             },
           ],
           endTime: orderEndTime,
