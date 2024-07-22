@@ -37,6 +37,9 @@ const MINT_AMOUNTS = [1, 5, 10, 20, 50];
 
 export const standaloneConfig: StandaloneAppComponentsConfig = {
   getTransformedMessage: async (chainId, messageText, messageData, wallet) => {
+    if (messageText.startsWith("Transferred")) {
+      return messageText;
+    }
     return (
       <div>
         <div>{messageText}</div>
@@ -56,7 +59,9 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
                   success: "Dinos Minted",
                 },
               }}
-              value={parseEther(DINO_PRICE_IN_ETH.toString()).toString()}
+              value={parseEther(
+                (DINO_PRICE_IN_ETH * amt).toString()
+              ).toString()}
             />
           ))}
         </div>
