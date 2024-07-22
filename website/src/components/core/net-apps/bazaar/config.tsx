@@ -294,7 +294,6 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
         counter: order.parameters.counter,
         signature: order.signature,
       };
-      // TODO consider if order string should be data rather than text
       return [finalSubmission, ...params.args.slice(1)];
     },
   },
