@@ -2,7 +2,7 @@ import abi from "../../../../../assets/abis/apps/bazaarv1.json";
 
 export const BAZAAR_CONTRACT = {
   abi,
-  address: "0x0000C922D4449156d34A6FbAE6fea1C55c7b6749",
+  address: "0x0000087A58ACF15CbE29Cce7CFD747452c9da9c2",
 };
 
 export const BAZAAR_SUBMISSION_ABI = [
@@ -160,5 +160,5 @@ export const ERC721_TOKEN_URI_ABI = [
   },
 ];
 
-export const FEE_ADDRESS = "TODO";
+export const FEE_ADDRESS = "0x32D16C15410248bef498D7aF50D10Db1a546b9E5";
 export const FEE_BPS = 500;

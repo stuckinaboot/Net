@@ -137,7 +137,8 @@ export default function WillieNetDapp(props: {
           <>
             All messages are stored and read onchain and are publicly
             accessible. Scroll down to see all messages. Use at your own risk.
-            Not financial advice.
+            Net is in beta. The creators of Net are not responsible for loss of
+            funds. Not financial advice.
             {Controls ? (
               <Controls
                 userAddress={userAddress}
