@@ -26,7 +26,7 @@ export function SwapsDialogContents(props: {
       <Separator className="m-3" />
       <Label>
         <i>
-          Use swaps at your own risk. Swaps is currenty in beta, there could be
+          Use swaps at your own risk. Swaps is currently in beta, there could be
           issues that result in loss of funds. Always check any transactions and
           messages before signing them. The creator(s) of Net are not
           responsible for any issues you experience related to swaps. This is

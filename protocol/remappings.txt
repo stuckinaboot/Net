@@ -7,3 +7,4 @@ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/
 @solady/=lib/solady/src/
 solmate/=lib/solady/lib/solmate/src
 utility-contracts/=lib/utility-contracts/src/
+@seaport-types=lib/seaport-types/src

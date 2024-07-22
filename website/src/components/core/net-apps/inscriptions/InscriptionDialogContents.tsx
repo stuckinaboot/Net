@@ -2,7 +2,7 @@ import { Label } from "@/components/ui/label";
 import IframeRenderer from "../../IFrameRenderer";
 import { Separator } from "@/components/ui/separator";
 import InscriptionAnimationPreview from "../../../MetadataAnimationPreview";
-import InscriptionImagePreview from "../../../MetadataImagePreview";
+import MetadataImagePreview from "../../../MetadataImagePreview";
 
 export function InscriptionDialogContents(props: {
   message: string;
@@ -51,7 +51,7 @@ export function InscriptionDialogContents(props: {
         <>
           <br />
           <Label>
-            Image: <InscriptionImagePreview image={inscriptionMetadata.image} />
+            Image: <MetadataImagePreview image={inscriptionMetadata.image} />
           </Label>
         </>
       )}

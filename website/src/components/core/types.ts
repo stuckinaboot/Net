@@ -79,17 +79,30 @@ export type AppMessageRendererProps = {
 
 export type InferredAppComponentsConfig = {
   supportedChains: Set<number>;
-  infer: (message: string) => boolean;
-  dialogContents: (props: { message: string }) => React.ReactNode;
+  infer: (message: string, chainId: number) => boolean;
+  dialogContents: (props: {
+    message: string;
+    chainId: number;
+  }) => React.ReactNode;
+  useNetAddress?: boolean;
   transactionExecutor: {
-    parameters?: (message: string) => {
+    parameters?: (
+      message: string,
+      chainId: number
+    ) => {
       abi: any[];
       args: any[];
       functionName: string;
     };
+    preProcessArgs?: (params: {
+      args: any[];
+      chainId: number;
+      wallet: WalletClient;
+    }) => Promise<any[]>;
     // Returns transaction hash
     customExecutor?: (params: {
       message: string;
+      chainId: number;
       wallet: WalletClient;
     }) => Promise<string>;
   };
@@ -105,6 +118,8 @@ export type InferredAppComponentsConfig = {
 export type StandaloneAppComponentsConfig = {
   getTransformedMessage: (
     chainId: number,
-    messageText: string
+    messageText: string,
+    messageData: string,
+    wallet?: WalletClient
   ) => Promise<React.ReactNode | string>;
 };

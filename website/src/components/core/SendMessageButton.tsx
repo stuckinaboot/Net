@@ -59,7 +59,7 @@ export default function SendMessageButton(props: {
         }
 
         // Return true if app config can infer app based on this message
-        return config.infer(props.message);
+        return config.infer(props.message, chainId);
       }
     );
     if (inferredAppEntry != null) {
@@ -67,9 +67,17 @@ export default function SendMessageButton(props: {
       const DialogContents = config.dialogContents;
       // TODO support passing back a custom submit transaction button
       // on click function that could replace the submit transaction button
-      const transactionParameters =
+      let transactionParameters =
         config.transactionExecutor.parameters &&
-        config.transactionExecutor.parameters(props.message);
+        config.transactionExecutor.parameters(props.message, chainId);
+      if (transactionParameters == null) {
+        // Default parameters
+        transactionParameters = {
+          abi: WILLIE_NET_CONTRACT.abi,
+          args: [props.message, props.topic, ""],
+          functionName: "sendMessage",
+        };
+      }
       const transactionExecutor = config.transactionExecutor.customExecutor;
       return (
         <Dialog
@@ -82,7 +90,7 @@ export default function SendMessageButton(props: {
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogDescription>
-                <DialogContents message={props.message} />
+                <DialogContents message={props.message} chainId={chainId} />
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="flex">
@@ -100,7 +108,11 @@ export default function SendMessageButton(props: {
                 className={cn(props.className, "flex-1")}
                 functionName={transactionParameters?.functionName ?? ""}
                 abi={transactionParameters?.abi ?? ""}
-                to={appAddress}
+                to={
+                  config.useNetAddress
+                    ? WILLIE_NET_CONTRACT.address
+                    : appAddress
+                }
                 args={transactionParameters?.args ?? []}
                 messages={{ toasts: TOASTS, button: BUTTONS }}
                 useDefaultButtonMessageOnSuccess={true}
@@ -118,11 +130,13 @@ export default function SendMessageButton(props: {
                 }}
                 prePerformTransactionValidation={validatePrePerformTransasction}
                 disabled={props.disabled}
+                preProcessArgs={config.transactionExecutor.preProcessArgs}
                 customExecutor={
                   transactionExecutor != null && wallet != null
                     ? async () => {
                         return transactionExecutor({
                           message: props.message,
+                          chainId,
                           wallet,
                         });
                       }

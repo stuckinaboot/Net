@@ -31,6 +31,7 @@ const BUTTONS = {
 export default function InscribeButton(props: {
   inscription: InscriptionContents;
   mediaFiles: MediaFiles;
+  chainId: number;
   disabled?: boolean;
 }) {
   const DialogContents = config.dialogContents;
@@ -84,7 +85,10 @@ export default function InscribeButton(props: {
             {uploadingMedia ? (
               "Uploading media to IPFS..."
             ) : (
-              <DialogContents message={JSON.stringify(inscription)} />
+              <DialogContents
+                message={JSON.stringify(inscription)}
+                chainId={props.chainId}
+              />
             )}
           </DialogDescription>
         </DialogHeader>

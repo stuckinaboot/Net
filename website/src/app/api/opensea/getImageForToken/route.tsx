@@ -11,7 +11,7 @@ const provider = new ethers.JsonRpcProvider(
 );
 
 const CHAIN = TESTNETS_ENABLED ? Chain.BaseSepolia : Chain.Base;
-const openseaSDK = new OpenSeaSDK(provider, {
+const openseaSDK = new OpenSeaSDK(provider as any, {
   chain: CHAIN,
   apiKey: process.env.OPENSEA_API_KEY,
 });

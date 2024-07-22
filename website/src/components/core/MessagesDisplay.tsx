@@ -1,8 +1,8 @@
 import { WILLIE_NET_CONTRACT } from "@/app/constants";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import truncateEthAddress from "truncate-eth-address";
-import { useChainId, useReadContract } from "wagmi";
+import { useChainId, useReadContract, useWalletClient } from "wagmi";
 import {
   NetAppContext,
   OnchainMessage,
@@ -16,6 +16,7 @@ import useAsyncEffect from "use-async-effect";
 import { chainIdToChain, publicClient } from "@/app/utils";
 import { readContract } from "viem/actions";
 import memoize from "memoizee";
+import { WalletClient } from "viem";
 
 // TODO work on improving this to a lower value. Currently, if its too low,
 // we run into issues where it won't scroll at all
@@ -49,17 +50,25 @@ const getAppName = memoize(async (appAddress: string, chainId: number) => {
   }
 });
 
+// TODO modify to use callback or memo hook
 const getTransformedMessage = memoize(
   async (
     appAddress: string,
     chainId: number,
-    messageText: string
+    messageText: string,
+    messageData: string,
+    wallet?: WalletClient
   ): Promise<string | React.ReactNode> => {
     const config = STANDALONE_APP_TO_CONFIG[appAddress];
     if (config == null) {
       return messageText;
     }
-    return config.getTransformedMessage(chainId, messageText);
+    return config.getTransformedMessage(
+      chainId,
+      messageText,
+      messageData,
+      wallet
+    );
   }
 );
 
@@ -81,6 +90,7 @@ export default function MessagesDisplay(props: {
   const [loadedMessages, setLoadedMessages] = useState(false);
   const specificMessageRef = useRef<HTMLDivElement | null>(null);
   const chainId = useChainId();
+  const { data: walletClient } = useWalletClient();
 
   const totalMessagesReadContractArgs =
     props.appContext != null &&
@@ -170,7 +180,9 @@ export default function MessagesDisplay(props: {
         const messageTextNode = await getTransformedMessage(
           message.app,
           chainId,
-          message.text
+          message.text,
+          message.data,
+          walletClient
         );
         return { ...message, appName, transformedMessage: messageTextNode };
       })

@@ -1,13 +1,14 @@
 import {
   useChainId,
   useWaitForTransactionReceipt,
+  useWalletClient,
   useWriteContract,
 } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
 import { getDisplayableErrorMessageFromSubmitTransactionError } from "@/app/utils";
-import { Log } from "viem";
+import { Log, WalletClient } from "viem";
 
 const SHOW_TX_SUBMISSION_TEXT = false;
 const SHOW_TX_RECEIPT_TEXT = false;
@@ -33,7 +34,11 @@ export default function SubmitTransactionButton(props: {
     transactionHash: string,
     logs: Log<bigint, number, false>[]
   ) => Promise<void> | void;
-  preProcessArgs?: (args: any[]) => Promise<any[]>;
+  preProcessArgs?: (params: {
+    args: any[];
+    chainId: number;
+    wallet: WalletClient;
+  }) => Promise<any[]>;
   prePerformTransactionValidation?: () => string | undefined;
   disabled?: boolean;
   value?: string;
@@ -46,6 +51,7 @@ export default function SubmitTransactionButton(props: {
   const [customExecutorStatus, setCustomExecutorStatus] = useState(
     CustomExecutorStatus.DEFAULT
   );
+  const { data: wallet } = useWalletClient();
 
   const { data: hash, writeContractAsync, status, reset } = useWriteContract();
   const receipt = useWaitForTransactionReceipt({ hash: txnHash as any });
@@ -100,7 +106,13 @@ export default function SubmitTransactionButton(props: {
     let args = props.args;
     if (props.preProcessArgs) {
       try {
-        args = await props.preProcessArgs(args);
+        if (wallet == null) {
+          return toast({
+            title: "Error",
+            description: "No wallet",
+          });
+        }
+        args = await props.preProcessArgs({ args, chainId, wallet });
       } catch (e) {
         toast({
           title: "Error",
@@ -119,6 +131,13 @@ export default function SubmitTransactionButton(props: {
         setShownSucccessToast(false);
         setTxnHash(executorTxnHash);
       } else {
+        console.log("HIT HERE!", {
+          address: props.to as any,
+          abi: props.abi,
+          functionName: props.functionName,
+          args,
+          value: props.value != null ? BigInt(props.value) : undefined,
+        });
         // Use default executor with passed in args
         await writeContractAsync({
           address: props.to as any,
@@ -130,6 +149,7 @@ export default function SubmitTransactionButton(props: {
       }
     } catch (e) {
       if (e instanceof Error) {
+        console.log("NO!", e);
         toast({
           title: "Error",
           description: getDisplayableErrorMessageFromSubmitTransactionError(e),

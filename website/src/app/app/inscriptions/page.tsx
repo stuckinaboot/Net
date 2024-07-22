@@ -9,6 +9,7 @@ import InscriptionEntry, {
 } from "@/components/core/net-apps/inscriptions/page/InscriptionEntry";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useChainId } from "wagmi";
 
 export default function Page() {
   const [inscription, setInscriptionContents] = useState<InscriptionContents>(
@@ -18,6 +19,7 @@ export default function Page() {
     image: undefined,
     animation: undefined,
   });
+  const chainId = useChainId();
 
   return (
     <BasePageCard
@@ -54,6 +56,7 @@ export default function Page() {
           inscription={inscription}
           mediaFiles={mediaFiles}
           disabled={disabled}
+          chainId={chainId}
         />
       )}
     />

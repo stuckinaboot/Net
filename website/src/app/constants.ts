@@ -23,26 +23,6 @@ export const NULL_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export const SHOW_COPY_MESSAGE_LINK_BUTTON = false;
 
-// Maps chain ID to opensea chain string that is used in public OpenSea URLs
-export const CHAIN_ID_TO_OPENSEA_CHAIN_MAP = [
-  {
-    chain: baseSepolia,
-    openSeaChainString: "base-sepolia",
-    crossChainId: "eip155:84532",
-  },
-  {
-    chain: sepolia,
-    openSeaChainString: "sepolia",
-    crossChainId: "eip155:11155111",
-  },
-  { chain: base, openSeaChainString: "base", crossChainId: "eip155:8453" },
-  {
-    chain: degen,
-    openSeaChainString: "degen",
-    crossChainId: "eip155:666666666",
-  },
-];
-
 export const HAM_CHAIN = defineChain({
   id: 5112,
   name: "Ham",
@@ -66,6 +46,32 @@ export const HAM_CHAIN = defineChain({
   },
   testnet: false,
 });
+
+// Maps chain ID to opensea chain string that is used in public OpenSea URLs
+export const CHAIN_ID_TO_OPENSEA_CHAIN_MAP = [
+  {
+    chain: baseSepolia,
+    openSeaChainString: "base-sepolia",
+    crossChainId: "eip155:84532",
+  },
+  {
+    chain: sepolia,
+    openSeaChainString: "sepolia",
+    crossChainId: "eip155:11155111",
+  },
+  { chain: base, openSeaChainString: "base", crossChainId: "eip155:8453" },
+  {
+    chain: degen,
+    openSeaChainString: "degen",
+    crossChainId: "eip155:5112",
+  },
+  // Ham is not present on OpenSea but using this as filler
+  {
+    chain: HAM_CHAIN,
+    openSeaChainString: "ham",
+    crossChainId: "eip155:666666666",
+  },
+];
 
 export const CHAINS = TESTNETS_ENABLED
   ? [baseSepolia, sepolia]
