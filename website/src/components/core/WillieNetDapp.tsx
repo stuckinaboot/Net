@@ -10,7 +10,7 @@ import BasePageCard from "./BasePageCard";
 import { base, baseSepolia, degen, sepolia } from "viem/chains";
 import { HAM_CHAIN } from "@/app/constants";
 
-const ENABLE_SHOW_SCROLL_BUTTON = false;
+const ENABLE_DYNAMICALLY_SHOW_SCROLL_BUTTON = false;
 
 export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
@@ -25,7 +25,12 @@ export default function WillieNetDapp(props: {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   // NOTE: it's the scroll button showing/hiding that's causing re-renders
   // TODO fix this
-  const [showScrollButton, setShowScrollButton] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(
+    ENABLE_DYNAMICALLY_SHOW_SCROLL_BUTTON
+      ? false
+      : // Always show scroll button if dynamically show is not enabled
+        true
+  );
   const scrollIsAtBottomRef = useRef(false);
   const scrollingToBottomRef = useRef(false);
 
@@ -98,7 +103,7 @@ export default function WillieNetDapp(props: {
       return;
     }
 
-    if (ENABLE_SHOW_SCROLL_BUTTON) {
+    if (ENABLE_DYNAMICALLY_SHOW_SCROLL_BUTTON) {
       setShowScrollButton(shouldShowScrollBottomButton);
     }
   }
@@ -131,7 +136,8 @@ export default function WillieNetDapp(props: {
         description={
           <>
             All messages are stored and read onchain and are publicly
-            accessible. Scroll down to see all messages.
+            accessible. Scroll down to see all messages. Use at your own risk.
+            Not financial advice.
             {Controls ? (
               <Controls
                 userAddress={userAddress}
