@@ -1,6 +1,6 @@
 import { WILLIE_NET_CONTRACT } from "@/app/constants";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import truncateEthAddress from "truncate-eth-address";
 import { useChainId, useReadContract, useWalletClient } from "wagmi";
 import {
@@ -50,6 +50,7 @@ const getAppName = memoize(async (appAddress: string, chainId: number) => {
   }
 });
 
+// TODO modify to use callback or memo hook
 const getTransformedMessage = memoize(
   async (
     appAddress: string,

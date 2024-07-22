@@ -273,7 +273,7 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
 
       const imgComponent =
         image != null ? (
-          <MetadataImagePreview image={image} size="w-64" />
+          <MetadataImagePreview image={image} size="w-16" />
         ) : (
           <i>No image found</i>
         );
