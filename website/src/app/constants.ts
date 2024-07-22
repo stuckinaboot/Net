@@ -75,6 +75,6 @@ export const CHAIN_ID_TO_OPENSEA_CHAIN_MAP = [
 
 export const CHAINS = TESTNETS_ENABLED
   ? [baseSepolia, sepolia]
-  : [base, HAM_CHAIN, degen];
+  : [HAM_CHAIN, base, degen];
 
 export const SVG_MIME_TYPE = "image/svg+xml";
