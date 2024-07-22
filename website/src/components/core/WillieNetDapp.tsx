@@ -21,6 +21,8 @@ export default function WillieNetDapp(props: {
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  // NOTE: it's the scroll button showing/hiding that's causing re-renders
+  // TODO fix this
   const [showScrollButton, setShowScrollButton] = useState(false);
   const scrollIsAtBottomRef = useRef(false);
   const scrollingToBottomRef = useRef(false);
@@ -118,6 +120,7 @@ export default function WillieNetDapp(props: {
     app != null ? { appAddress: app, controlsState: controlsState } : undefined;
 
   const Controls = app != null ? APP_TO_CONFIG[app].controls : null;
+
   return (
     <>
       <BasePageCard
