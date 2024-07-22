@@ -5,7 +5,7 @@ export const NFT_CHAIN_NAME_ADDRESS_MAPPING: {
   [chainId: number]: { [name: string]: string };
 } = {
   [HAM_CHAIN.id]: { lp: "" },
-  [baseSepolia.id]: { test: "0x00000000bddf795cc4a1b8107af795f434f705ed" },
+  [baseSepolia.id]: { test: "0x32ecf0b854139335faba683a1f4e65e7d941acf1" },
   [base.id]: { test: "" },
 };
 
