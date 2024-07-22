@@ -93,8 +93,9 @@ export default function Page() {
       content={{
         node: (
           <>
-            {address == null && "Connect wallet to view dinos"}
-            {loading
+            {address == null
+              ? "Connect wallet to view dinos"
+              : loading
               ? "Loading..."
               : userDinos.length === 0
               ? "No dinos found"
