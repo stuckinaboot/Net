@@ -10,6 +10,8 @@ import BasePageCard from "./BasePageCard";
 import { base, baseSepolia, degen, sepolia } from "viem/chains";
 import { HAM_CHAIN } from "@/app/constants";
 
+const ENABLE_SHOW_SCROLL_BUTTON = false;
+
 export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
 }) {
@@ -96,7 +98,9 @@ export default function WillieNetDapp(props: {
       return;
     }
 
-    setShowScrollButton(shouldShowScrollBottomButton);
+    if (ENABLE_SHOW_SCROLL_BUTTON) {
+      setShowScrollButton(shouldShowScrollBottomButton);
+    }
   }
 
   function onScroll() {
