@@ -21,6 +21,8 @@ contract BazaarV1 {
         bytes signature;
     }
 
+    string public constant NET_APP_NAME = "BazaarV1";
+
     function submit(Submission calldata submission) external {
         // https://github.com/ProjectOpenSea/seaport-types/blob/main/src/lib/ConsiderationStructs.sol
 
