@@ -102,7 +102,7 @@ export default function Page() {
               : ""}
             <div>
               {userDinos.map((dino, i) => (
-                <div>
+                <div key={i}>
                   Dino {dino}: <MetadataImagePreview image={dinoImgs[i]} />
                 </div>
               ))}

@@ -40,14 +40,14 @@ export function ListDialogContents(props: {
           Use Net listings and bazaar functionality at your own risk. Net
           listings and bazaar are currently in beta, there could be issues that
           result in loss of funds.A fee of {FEE_BPS / 100}% applies on each
-          fulfill order. There may be a lack of information conveyed by the Net
-          website and/or Net creators that results in loss of funds, including
-          but not limited to the duration of listings. Always check any
-          transactions and messages before signing them. If you make a mistake,
-          you may lose funds. transaction. The creator(s) of Net are not
-          responsible in any way, shape, or form for any issues you experience
-          related to Net, Net listings, or Net bazaar. This is not financial or
-          investment advice.
+          fulfill order. At this time, we do not provide functionality to cancel
+          orders. There may be a lack of information conveyed by the Net website
+          and/or Net creators that results in loss of funds, including but not
+          limited to the duration of listings. Always check any transactions and
+          messages before signing them. If you make a mistake, you may lose
+          funds. transaction. The creator(s) of Net are not responsible in any
+          way, shape, or form for any issues you experience related to Net, Net
+          listings, or Net bazaar. This is not financial or investment advice.
         </i>
       </Label>
     </>
