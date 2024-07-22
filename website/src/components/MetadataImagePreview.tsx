@@ -7,7 +7,7 @@ const REFETCH_TIMEOUT_BEFORE_SWITCH_IPFS_GATEWAY = 3500;
 
 function MetadataImagePreviewInternal(props: {
   image: string;
-  size?: "w-16" | "w-32" | "w-64";
+  size?: "w-8" | "w-16" | "w-32" | "w-64";
   constantlyRefetchUntilLoaded?: boolean;
 }) {
   const [counter, setCounter] = useState(0);
