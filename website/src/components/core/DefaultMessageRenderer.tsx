@@ -11,12 +11,14 @@ export default function DefaultMessageRenderer(props: AppMessageRendererProps) {
   const { idx, message } = props;
 
   return (
-    <>
-      <p className="flex text-left">
-        {props.message.appName && `[${props.message.appName}] `}
-        {props.message.transformedMessage
-          ? props.message.transformedMessage
-          : props.message.text}
+    <div>
+      <p className="flex text-left flex-wrap">
+        <p>{props.message.appName && `[${props.message.appName}] `}</p>
+        <p>
+          {props.message.transformedMessage
+            ? props.message.transformedMessage
+            : props.message.text}
+        </p>
       </p>
       <p className="flex justify-end">
         {SHOW_MESSAGE_TIMESTAMP && (
@@ -28,6 +30,6 @@ export default function DefaultMessageRenderer(props: AppMessageRendererProps) {
           <CopyMessageLinkButton messageIdx={idx} />
         )}
       </p>
-    </>
+    </div>
   );
 }
