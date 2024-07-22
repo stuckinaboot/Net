@@ -18,7 +18,11 @@ import {
   convertMessageToListingComponents,
   getTimestampInSecondsNHoursFromNow,
 } from "./utils";
-import { BAZAAR_CONTRACT } from "./constants";
+import {
+  BAZAAR_CONTRACT,
+  BAZAAR_SUBMISSION_ABI,
+  ERC721_TOKEN_URI_ABI,
+} from "./constants";
 import { WalletClient } from "viem";
 import { Seaport } from "@opensea/seaport-js";
 import { ethers } from "ethers";
@@ -39,144 +43,12 @@ enum SeaportOrderStatus {
 export const standaloneConfig: StandaloneAppComponentsConfig = {
   getTransformedMessage: async (chainId, messageText, messageData, wallet) => {
     try {
-      const [possibleOrder] = decodeAbiParameters(
-        [
-          {
-            name: "submission",
-            type: "tuple",
-            internalType: "struct BazaarV1.Submission",
-            components: [
-              {
-                name: "parameters",
-                type: "tuple",
-                internalType: "struct OrderParameters",
-                components: [
-                  {
-                    name: "offerer",
-                    type: "address",
-                    internalType: "address",
-                  },
-                  {
-                    name: "zone",
-                    type: "address",
-                    internalType: "address",
-                  },
-                  {
-                    name: "offer",
-                    type: "tuple[]",
-                    internalType: "struct OfferItem[]",
-                    components: [
-                      {
-                        name: "itemType",
-                        type: "uint8",
-                        internalType: "enum ItemType",
-                      },
-                      {
-                        name: "token",
-                        type: "address",
-                        internalType: "address",
-                      },
-                      {
-                        name: "identifierOrCriteria",
-                        type: "uint256",
-                        internalType: "uint256",
-                      },
-                      {
-                        name: "startAmount",
-                        type: "uint256",
-                        internalType: "uint256",
-                      },
-                      {
-                        name: "endAmount",
-                        type: "uint256",
-                        internalType: "uint256",
-                      },
-                    ],
-                  },
-                  {
-                    name: "consideration",
-                    type: "tuple[]",
-                    internalType: "struct ConsiderationItem[]",
-                    components: [
-                      {
-                        name: "itemType",
-                        type: "uint8",
-                        internalType: "enum ItemType",
-                      },
-                      {
-                        name: "token",
-                        type: "address",
-                        internalType: "address",
-                      },
-                      {
-                        name: "identifierOrCriteria",
-                        type: "uint256",
-                        internalType: "uint256",
-                      },
-                      {
-                        name: "startAmount",
-                        type: "uint256",
-                        internalType: "uint256",
-                      },
-                      {
-                        name: "endAmount",
-                        type: "uint256",
-                        internalType: "uint256",
-                      },
-                      {
-                        name: "recipient",
-                        type: "address",
-                        internalType: "address payable",
-                      },
-                    ],
-                  },
-                  {
-                    name: "orderType",
-                    type: "uint8",
-                    internalType: "enum OrderType",
-                  },
-                  {
-                    name: "startTime",
-                    type: "uint256",
-                    internalType: "uint256",
-                  },
-                  {
-                    name: "endTime",
-                    type: "uint256",
-                    internalType: "uint256",
-                  },
-                  {
-                    name: "zoneHash",
-                    type: "bytes32",
-                    internalType: "bytes32",
-                  },
-                  {
-                    name: "salt",
-                    type: "uint256",
-                    internalType: "uint256",
-                  },
-                  {
-                    name: "conduitKey",
-                    type: "bytes32",
-                    internalType: "bytes32",
-                  },
-                  {
-                    name: "totalOriginalConsiderationItems",
-                    type: "uint256",
-                    internalType: "uint256",
-                  },
-                ],
-              },
-              { name: "counter", type: "uint256", internalType: "uint256" },
-              { name: "signature", type: "bytes", internalType: "bytes" },
-            ],
-          },
-        ],
+      const [possibleOrder]: any[] = decodeAbiParameters(
+        BAZAAR_SUBMISSION_ABI,
         messageData as any
       );
 
       // Attempt to parse message as a seaport order
-      console.log("HIT ME!!", possibleOrder);
       if (possibleOrder.parameters == null) {
         return messageText;
       }
@@ -197,14 +69,12 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
         name: chain?.name,
         ensAddress: "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e", // chain?.contracts?.ensRegistry?.address,
       };
-      console.log("WTF", network);
+
       const provider = new BrowserProvider(transport, chainId);
-      console.log("OOF");
       const signer = new JsonRpcSigner(provider, account?.address as string);
 
       // const provider = new ethers.BrowserProvider(window.ethereum);
       const seaport = new Seaport(signer as any);
-      console.log("GOT DIS", possibleOrder.parameters);
       const orderHash = seaport.getOrderHash({
         ...possibleOrder.parameters,
         counter: possibleOrder.counter,
@@ -235,27 +105,7 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
       }
       const tokenURI = (await readContract(publicClient(chain), {
         address: possibleOrder.parameters.offer[0].token as any,
-        abi: [
-          {
-            constant: true,
-            inputs: [
-              {
-                name: "tokenId",
-                type: "uint256",
-              },
-            ],
-            name: "tokenURI",
-            outputs: [
-              {
-                name: "",
-                type: "string",
-              },
-            ],
-            payable: false,
-            stateMutability: "view",
-            type: "function",
-          },
-        ],
+        abi: ERC721_TOKEN_URI_ABI,
         functionName: "tokenURI",
         args: [possibleOrder.parameters.offer[0].identifierOrCriteria],
       })) as any;
@@ -269,8 +119,6 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
       const metadata = (await res.json())?.metadata;
       const image = metadata?.image;
 
-      console.log("REACH!");
-
       const imgComponent =
         image != null ? (
           <MetadataImagePreview image={image} size="w-16" />
@@ -280,7 +128,7 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
 
       return (
         <div>
-          <div>
+          <div className="flex space-x-2 flex-wrap">
             {messageText}{" "}
             <Button
               disabled={orderStatus !== SeaportOrderStatus.OPEN}
@@ -290,13 +138,15 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
                     parameters: {
                       ...possibleOrder.parameters,
                       // Sanitize identifier or criterias to strings to get around a lowercasing check in seaportjs
-                      offer: possibleOrder.parameters.offer.map((offer) => ({
-                        ...offer,
-                        identifierOrCriteria:
-                          offer.identifierOrCriteria.toString(),
-                      })),
+                      offer: possibleOrder.parameters.offer.map(
+                        (offer: any) => ({
+                          ...offer,
+                          identifierOrCriteria:
+                            offer.identifierOrCriteria.toString(),
+                        })
+                      ),
                       consideration: possibleOrder.parameters.consideration.map(
-                        (consideration) => ({
+                        (consideration: any) => ({
                           ...consideration,
                           identifierOrCriteria:
                             consideration.identifierOrCriteria.toString(),
@@ -317,12 +167,15 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
                   });
 
                   const transaction = await executeAllFulfillActions();
+                  toast({
+                    title: "Submitted buy transaction",
+                    description: "Transaction submitted to fulfill order.",
+                  });
                   // console.log(
                   //   "actions",
                   //   await actions[0].transactionMethods.buildTransaction()
                   // );
                 } catch (e: any) {
-                  console.log("ERROR", e);
                   toast({
                     title: "Fill failed",
                     description: <>{e?.message}</>,
