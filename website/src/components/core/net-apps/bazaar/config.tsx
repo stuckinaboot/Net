@@ -340,8 +340,8 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
                 ? "Filled"
                 : "Unknown"}
             </Button>
-          </div>
-          <div>{imgComponent}</div>
+          </div>{" "}
+          {imgComponent}
         </div>
       );
     } catch (e) {

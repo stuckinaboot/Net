@@ -10,6 +10,7 @@ function MetadataImagePreviewInternal(props: {
   size?: "w-16" | "w-32" | "w-64";
   constantlyRefetchUntilLoaded?: boolean;
 }) {
+  console.log("HMMM", props.image);
   const [counter, setCounter] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [ipfsGateway, setIpfsGateway] = useState(IPFS_GATEWAY.NFT_STORAGE);
