@@ -178,6 +178,7 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
                   //   await actions[0].transactionMethods.buildTransaction()
                   // );
                 } catch (e: any) {
+                  console.log("Error on fill", e);
                   toast({
                     title: "Fill failed",
                     description: <>{e?.message}</>,
