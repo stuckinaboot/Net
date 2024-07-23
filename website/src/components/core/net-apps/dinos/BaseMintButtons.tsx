@@ -30,7 +30,7 @@ const relayClient = createClient({
 
 export default function BaseMintButtons() {
   const { data: wallet } = useWalletClient();
-  const [isCurrentlyMintingAmt, setIsCurrentlyMintingAmt] = useState(false);
+  const [isCurrentlyMintingAmt, setIsCurrentlyMintingAmt] = useState(0);
 
   return (
     <div className="flex space-x-2 flex-wrap">
@@ -61,6 +61,7 @@ export default function BaseMintButtons() {
                 account: wallet.account?.address as any,
               },
             ];
+            setIsCurrentlyMintingAmt(amt);
             const quote = await relayClient.actions.getCallQuote({
               chainId: base.id,
               toChainId: HAM_CHAIN.id,
@@ -93,9 +94,10 @@ export default function BaseMintButtons() {
                 },
               });
             });
+            setIsCurrentlyMintingAmt(0);
           }}
         >
-          Mint {amt}
+          {isCurrentlyMintingAmt === amt ? "Minting..." : `Mint ${amt}`}
         </Button>
       ))}
     </div>
