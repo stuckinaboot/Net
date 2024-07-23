@@ -23,18 +23,13 @@ import { decodeAbiParameters } from "viem";
 import { useReadContract } from "wagmi";
 import MetadataImagePreview from "@/components/MetadataImagePreview";
 import SubmitTransactionButton from "../../SubmitTransactionButton";
-import { DINOS_CONTRACT } from "./constants";
+import {
+  DINOS_CONTRACT,
+  DINO_PRICE_IN_ETH,
+  MINT_AMOUNTS,
+  MINT_TOASTS,
+} from "./constants";
 import { ERC721_TOKEN_URI_ABI } from "../bazaar/constants";
-
-const DINO_PRICE_IN_ETH = 0.001;
-
-const MINT_TOASTS = {
-  title: "dinos",
-  success: "Successfully minted dinos",
-  error: "Failed to mint dinos",
-};
-
-const MINT_AMOUNTS = [1, 5, 10, 20, 50];
 
 export const standaloneConfig: StandaloneAppComponentsConfig = {
   getTransformedMessage: async (chainId, messageText, messageData, wallet) => {
