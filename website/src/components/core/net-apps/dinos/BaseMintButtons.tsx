@@ -103,7 +103,7 @@ export default function BaseMintButtons() {
               toast({
                 title: "Success",
                 description:
-                  "Submitted cross-chain mint transaction. Please wait a few minutes for your dinos to mint.",
+                  "Submitted cross-chain mint transaction. Please wait a minute for your dinos to mint and then refresh the page.",
               });
             }
             setIsCurrentlyMintingAmt(0);
