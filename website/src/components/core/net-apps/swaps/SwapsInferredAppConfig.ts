@@ -8,8 +8,14 @@ import {
   convertViemChainToRelayChain,
   createClient,
 } from "@reservoir0x/relay-sdk";
-import { TESTNETS_ENABLED, WILLIE_NET_CONTRACT } from "@/app/constants";
-import { encodeFunctionData, formatEther } from "viem";
+import {
+  HAM_CHAIN,
+  TESTNETS_ENABLED,
+  WILLIE_NET_CONTRACT,
+} from "@/app/constants";
+import { encodeFunctionData, formatEther, parseEther } from "viem";
+import { DINOS_CONTRACT } from "../dinos/constants";
+import { chainIdToChain } from "@/app/utils";
 
 const SUPPORTED_CHAINS = [base, baseSepolia];
 const SUPPORTED_CHAIN_IDS = new Set(SUPPORTED_CHAINS.map((chain) => chain.id));
@@ -44,34 +50,62 @@ export const config: InferredAppComponentsConfig = {
         args: [userAddress, message, "", ""],
       });
       return new Promise(async (resolve) => {
-        await relayClient.actions.swap({
-          chainId: TESTNETS_ENABLED ? baseSepolia.id : base.id,
-          wallet: wallet,
-          txs: [
-            {
-              to: WILLIE_NET_CONTRACT.address,
-              data: calldata,
-              value: "0",
-            },
-          ],
-          toChainId: base.id,
-          currency: swap.from.currency.address,
-          // Amount in wei to swap
-          amount: swap.from.amount,
-          toCurrency: swap.to.currency.address,
-          onProgress: ({
-            steps,
-            currentStep,
-            currentStepItem,
-            txHashes,
-            details,
-          }) => {
-            console.log(steps, currentStep, currentStepItem, details, txHashes);
-            if (txHashes != null && txHashes.length > 0) {
-              resolve(txHashes[0].txHash);
-            }
+        const chain = chainIdToChain(HAM_CHAIN.id);
+        if (chain == null) {
+          return;
+        }
+        const txs = [
+          {
+            address: DINOS_CONTRACT.address as any,
+            abi: DINOS_CONTRACT.abi as any,
+            functionName: "mint",
+            args: ["1"],
+            value: parseEther(".001"),
+            chain: chain,
+            account: wallet.account?.address as any,
           },
+        ];
+        const quote = await relayClient.actions.getCallQuote({
+          chainId: base.id,
+          toChainId: HAM_CHAIN.id,
+          txs,
+          wallet,
         });
+        const execute = await relayClient.actions.call({
+          chainId: base.id,
+          toChainId: HAM_CHAIN.id,
+          wallet,
+          txs,
+        });
+        console.log("QUOTE IS!", quote, execute);
+        // await relayClient.actions.swap({
+        //   chainId: TESTNETS_ENABLED ? baseSepolia.id : base.id,
+        //   wallet: wallet,
+        //   txs: [
+        //     {
+        //       to: WILLIE_NET_CONTRACT.address,
+        //       data: calldata,
+        //       value: "0",
+        //     },
+        //   ],
+        //   toChainId: base.id,
+        //   currency: swap.from.currency.address,
+        //   // Amount in wei to swap
+        //   amount: swap.from.amount,
+        //   toCurrency: swap.to.currency.address,
+        //   onProgress: ({
+        //     steps,
+        //     currentStep,
+        //     currentStepItem,
+        //     txHashes,
+        //     details,
+        //   }) => {
+        //     console.log(steps, currentStep, currentStepItem, details, txHashes);
+        //     if (txHashes != null && txHashes.length > 0) {
+        //       resolve(txHashes[0].txHash);
+        //     }
+        //   },
+        // });
       });
     },
   },
