@@ -16,6 +16,7 @@ import {
 import { encodeFunctionData, formatEther, parseEther } from "viem";
 import { DINOS_CONTRACT } from "../dinos/constants";
 import { chainIdToChain } from "@/app/utils";
+import dinosProxyMinterAbi from "../../../../../assets/abis/apps/dinos-proxy-minter.json";
 
 const SUPPORTED_CHAINS = [base, baseSepolia];
 const SUPPORTED_CHAIN_IDS = new Set(SUPPORTED_CHAINS.map((chain) => chain.id));
@@ -56,10 +57,11 @@ export const config: InferredAppComponentsConfig = {
         }
         const txs = [
           {
-            address: DINOS_CONTRACT.address as any,
-            abi: DINOS_CONTRACT.abi as any,
-            functionName: "mint",
-            args: ["1"],
+            // Dinos proxy minter address on ham
+            address: "0x00000000Ac8bbBDbF685c8D6750666480674cC1d" as any,
+            abi: dinosProxyMinterAbi as any,
+            functionName: "mintTo",
+            args: [wallet.account?.address, "1"],
             value: parseEther(".001"),
             chain: chain,
             account: wallet.account?.address as any,
@@ -77,7 +79,6 @@ export const config: InferredAppComponentsConfig = {
           wallet,
           txs,
         });
-        console.log("QUOTE IS!", quote, execute);
         // await relayClient.actions.swap({
         //   chainId: TESTNETS_ENABLED ? baseSepolia.id : base.id,
         //   wallet: wallet,

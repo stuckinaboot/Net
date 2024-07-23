@@ -1,0 +1,12 @@
+[
+  {
+    "type": "function",
+    "name": "mintTo",
+    "inputs": [
+      { "name": "to", "type": "address", "internalType": "address" },
+      { "name": "amount", "type": "uint8", "internalType": "uint8" }
+    ],
+    "outputs": [],
+    "stateMutability": "payable"
+  }
+]
