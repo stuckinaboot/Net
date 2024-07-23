@@ -93,13 +93,6 @@ export default function Page() {
       content={{
         node: (
           <>
-            {address == null
-              ? "Connect wallet to view dinos"
-              : loading
-              ? "Loading... (this may take a few minutes)"
-              : userDinos.length === 0
-              ? "No dinos found"
-              : ""}
             {address == null ? (
               ""
             ) : chainId === HAM_CHAIN.id ? (
@@ -107,6 +100,13 @@ export default function Page() {
             ) : chainId === base.id ? (
               <BaseMintButtons />
             ) : null}
+            {address == null
+              ? "Connect wallet to view dinos"
+              : loading
+              ? "Loading dinos you own... (this may take a few minutes)"
+              : userDinos.length === 0
+              ? "No dinos found"
+              : ""}
             <div>
               {userDinos.map((dino, i) => (
                 <div key={i}>

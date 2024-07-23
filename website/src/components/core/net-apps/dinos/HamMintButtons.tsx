@@ -9,7 +9,7 @@ import {
 
 export default function HamMintButtons() {
   return (
-    <div>
+    <div className="flex space-x-2 flex-wrap">
       {MINT_AMOUNTS.map((amt) => (
         <SubmitTransactionButton
           key={amt}

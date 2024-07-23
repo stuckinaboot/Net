@@ -18,6 +18,7 @@ import {
   convertViemChainToRelayChain,
   createClient,
 } from "@reservoir0x/relay-sdk";
+import { useState } from "react";
 
 const relayClient = createClient({
   baseApiUrl: TESTNETS_ENABLED ? TESTNET_RELAY_API : MAINNET_RELAY_API,
@@ -29,9 +30,10 @@ const relayClient = createClient({
 
 export default function BaseMintButtons() {
   const { data: wallet } = useWalletClient();
+  const [isCurrentlyMintingAmt, setIsCurrentlyMintingAmt] = useState(false);
 
   return (
-    <div>
+    <div className="flex space-x-2 flex-wrap">
       {MINT_AMOUNTS.map((amt) => (
         <Button
           key={amt}
@@ -65,11 +67,31 @@ export default function BaseMintButtons() {
               txs,
               wallet,
             });
-            const execute = await relayClient.actions.call({
-              chainId: base.id,
-              toChainId: HAM_CHAIN.id,
-              wallet,
-              txs,
+            const txHash = await new Promise(async (resolve) => {
+              const execute = await relayClient.actions.call({
+                chainId: base.id,
+                toChainId: HAM_CHAIN.id,
+                wallet,
+                txs,
+                onProgress: ({
+                  steps,
+                  currentStep,
+                  currentStepItem,
+                  txHashes,
+                  details,
+                }) => {
+                  console.log(
+                    steps,
+                    currentStep,
+                    currentStepItem,
+                    details,
+                    txHashes
+                  );
+                  if (txHashes != null && txHashes.length > 0) {
+                    resolve(txHashes[0].txHash);
+                  }
+                },
+              });
             });
           }}
         >
