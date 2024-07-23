@@ -99,6 +99,13 @@ export default function BaseMintButtons() {
                 return null;
               }
             });
+            if (txHash != null) {
+              toast({
+                title: "Success",
+                description:
+                  "Submitted cross-chain mint transaction. Please wait a few minutes for your dinos to mint.",
+              });
+            }
             setIsCurrentlyMintingAmt(0);
           }}
         >
