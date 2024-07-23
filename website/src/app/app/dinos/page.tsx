@@ -1,12 +1,16 @@
 "use client";
 
-import { chainIdToChain, publicClient } from "@/app/utils";
+import { HAM_CHAIN } from "@/app/constants";
+import { publicClient } from "@/app/utils";
 import MetadataImagePreview from "@/components/MetadataImagePreview";
 import BasePageCard from "@/components/core/BasePageCard";
+import BaseMintButtons from "@/components/core/net-apps/dinos/BaseMintButtons";
+import HamMintButtons from "@/components/core/net-apps/dinos/HamMintButtons";
 import { DINOS_CONTRACT } from "@/components/core/net-apps/dinos/constants";
 import { useEffect, useState } from "react";
 import useAsyncEffect from "use-async-effect";
 import { readContract } from "viem/actions";
+import { base } from "viem/chains";
 import { useAccount, useChainId } from "wagmi";
 
 const START_TOKEN_ID = 1;
@@ -45,24 +49,20 @@ export default function Page() {
     if (address == null) {
       return;
     }
-    const chain = chainIdToChain(chainId);
-    if (chain == null) {
-      return;
-    }
     setLoading(true);
     const finalDinoTokenIds = [];
     const finalDinoImages = [];
     const addressSanitized = address.toLowerCase();
     for (let i = START_TOKEN_ID; i <= MAX_SUPPLY; i++) {
       try {
-        const owner = (await readContract(publicClient(chain), {
+        const owner = (await readContract(publicClient(HAM_CHAIN), {
           address: DINOS_CONTRACT.address as any,
           abi: DINOS_CONTRACT.abi,
           functionName: "ownerOf",
           args: [i],
         })) as any;
         if (owner.toLowerCase() === addressSanitized) {
-          const tokenURI = (await readContract(publicClient(chain), {
+          const tokenURI = (await readContract(publicClient(HAM_CHAIN), {
             address: DINOS_CONTRACT.address as any,
             abi: ERC721_TOKEN_URI_ABI,
             functionName: "tokenURI",
@@ -100,6 +100,13 @@ export default function Page() {
               : userDinos.length === 0
               ? "No dinos found"
               : ""}
+            {address == null ? (
+              ""
+            ) : chainId === HAM_CHAIN.id ? (
+              <HamMintButtons />
+            ) : chainId === base.id ? (
+              <BaseMintButtons />
+            ) : null}
             <div>
               {userDinos.map((dino, i) => (
                 <div key={i}>
