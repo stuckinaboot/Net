@@ -52,11 +52,11 @@ export default function BaseMintButtons() {
             const txs = [
               {
                 // Dinos proxy minter address on ham
-                address: "0x00000000Ac8bbBDbF685c8D6750666480674cC1d" as any,
+                address: DINOS_PROXY_MINTER_CONTRACT.address as any,
                 abi: DINOS_PROXY_MINTER_CONTRACT.abi,
                 functionName: "mintTo",
-                args: [wallet.account?.address, "1"],
-                value: parseEther(".001"),
+                args: [wallet.account?.address, amt],
+                value: parseEther((DINO_PRICE_IN_ETH * amt).toString()),
                 chain: HAM_CHAIN,
                 account: wallet.account?.address as any,
               },
@@ -69,30 +69,35 @@ export default function BaseMintButtons() {
               wallet,
             });
             const txHash = await new Promise(async (resolve) => {
-              const execute = await relayClient.actions.call({
-                chainId: base.id,
-                toChainId: HAM_CHAIN.id,
-                wallet,
-                txs,
-                onProgress: ({
-                  steps,
-                  currentStep,
-                  currentStepItem,
-                  txHashes,
-                  details,
-                }) => {
-                  console.log(
+              try {
+                const execute = await relayClient.actions.call({
+                  chainId: base.id,
+                  toChainId: HAM_CHAIN.id,
+                  wallet,
+                  txs,
+                  onProgress: ({
                     steps,
                     currentStep,
                     currentStepItem,
+                    txHashes,
                     details,
-                    txHashes
-                  );
-                  if (txHashes != null && txHashes.length > 0) {
-                    resolve(txHashes[0].txHash);
-                  }
-                },
-              });
+                  }) => {
+                    console.log(
+                      steps,
+                      currentStep,
+                      currentStepItem,
+                      details,
+                      txHashes
+                    );
+                    if (txHashes != null && txHashes.length > 0) {
+                      resolve(txHashes[0].txHash);
+                    }
+                  },
+                });
+              } catch (e) {
+                setIsCurrentlyMintingAmt(0);
+                return null;
+              }
             });
             setIsCurrentlyMintingAmt(0);
           }}
