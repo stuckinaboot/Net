@@ -4,7 +4,7 @@ import { base, baseSepolia } from "viem/chains";
 export const NFT_CHAIN_NAME_ADDRESS_MAPPING: {
   [chainId: number]: { [name: string]: string };
 } = {
-  [HAM_CHAIN.id]: { lp: "" },
+  [HAM_CHAIN.id]: { dino: "0xAbCdefC26dAc279770D07eE513668b5aB74718e3" },
   [baseSepolia.id]: { dino: "0xAbCdefC26dAc279770D07eE513668b5aB74718e3" },
   [base.id]: { test: "" },
 };
