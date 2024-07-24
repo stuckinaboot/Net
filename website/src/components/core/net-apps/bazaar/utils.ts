@@ -4,7 +4,10 @@ import { base, baseSepolia } from "viem/chains";
 export const NFT_CHAIN_NAME_ADDRESS_MAPPING: {
   [chainId: number]: { [name: string]: string };
 } = {
-  [HAM_CHAIN.id]: { dino: "0xAbCdefC26dAc279770D07eE513668b5aB74718e3" },
+  [HAM_CHAIN.id]: {
+    dino: "0xAbCdefC26dAc279770D07eE513668b5aB74718e3",
+    punk: "0xd1Ee96F8859Da046781cACa35EF0FF2A0307570C",
+  },
   [baseSepolia.id]: { dino: "0xAbCdefC26dAc279770D07eE513668b5aB74718e3" },
   [base.id]: { test: "" },
 };
@@ -13,6 +16,7 @@ export const NFT_ADDRESS_NAME_MAPPING: {
   [address: string]: string;
 } = {
   "0xAbCdefC26dAc279770D07eE513668b5aB74718e3": "ham dino",
+  "0xd1Ee96F8859Da046781cACa35EF0FF2A0307570C": "ham punk",
 };
 
 export function convertMessageToListingComponents(
