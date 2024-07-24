@@ -9,6 +9,12 @@ export const NFT_CHAIN_NAME_ADDRESS_MAPPING: {
   [base.id]: { test: "" },
 };
 
+export const NFT_ADDRESS_NAME_MAPPING: {
+  [address: string]: string;
+} = {
+  "0xAbCdefC26dAc279770D07eE513668b5aB74718e3": "ham dino",
+};
+
 export function convertMessageToListingComponents(
   message: string,
   chainId: number

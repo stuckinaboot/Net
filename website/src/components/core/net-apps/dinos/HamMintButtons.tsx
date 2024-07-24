@@ -30,6 +30,7 @@ export default function HamMintButtons() {
             },
           }}
           value={parseEther((DINO_PRICE_IN_ETH * amt).toString()).toString()}
+          disabled={true}
         />
       ))}
     </div>

@@ -92,6 +92,7 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
               value={parseEther(
                 (DINO_PRICE_IN_ETH * amt).toString()
               ).toString()}
+              disabled={true}
             />
           ))}
         </div>

@@ -15,6 +15,7 @@ import { CHAINS, HAM_CHAIN, WILLIE_NET_CONTRACT } from "@/app/constants";
 import { baseSepolia } from "viem/chains";
 import { ListDialogContents } from "./ListDialogContents";
 import {
+  NFT_ADDRESS_NAME_MAPPING,
   convertMessageToListingComponents,
   getTimestampInSecondsNHoursFromNow,
 } from "./utils";
@@ -60,32 +61,27 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
       if (possibleOrder.signature == null) {
         return messageText;
       }
-      if (wallet == null) {
-        // NOTE: this means users have to be connected to see the fill option
-        return (
-          <div>
-            {messageText}
-            <br />
-            <b className="border-2">
-              Connect your wallet and refresh <br />
-              the page to buy/sell NFTs
-            </b>
-          </div>
+
+      let providerOrSigner;
+
+      if (wallet != null) {
+        const { account, chain, transport } = wallet;
+
+        const provider = new BrowserProvider(transport, chainId);
+        const signer = new JsonRpcSigner(provider, account?.address as string);
+        providerOrSigner = signer;
+      } else {
+        const chain = chainIdToChain(chainId);
+        if (chain == null) {
+          return messageText;
+        }
+        const provider = new ethers.JsonRpcProvider(
+          publicClient(chain).transport.url
         );
+        providerOrSigner = provider;
       }
-
-      const { account, chain, transport } = wallet;
-      const network = {
-        chainId: chain?.id,
-        name: chain?.name,
-        ensAddress: "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e", // chain?.contracts?.ensRegistry?.address,
-      };
-
-      const provider = new BrowserProvider(transport, chainId);
-      const signer = new JsonRpcSigner(provider, account?.address as string);
-
       // const provider = new ethers.BrowserProvider(window.ethereum);
-      const seaport = new Seaport(signer as any);
+      const seaport = new Seaport(providerOrSigner as any);
       const orderHash = seaport.getOrderHash({
         ...possibleOrder.parameters,
         counter: possibleOrder.counter,
@@ -134,14 +130,32 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
           <i>No image found</i>
         );
 
+      // Sanitize text
+      let sanitizedMessageText = messageText;
+
+      // Replace address with name of collection
+      Object.entries(NFT_ADDRESS_NAME_MAPPING).forEach(([address, name]) => {
+        sanitizedMessageText = sanitizedMessageText.replace(address, name);
+      });
+
+      // Replace expiration time with human readable time
+      sanitizedMessageText = sanitizedMessageText.replace(
+        possibleOrder.parameters.endTime.toString(),
+        new Date(
+          parseInt(possibleOrder.parameters.endTime.toString()) * 1000
+        ).toLocaleString()
+      );
+
       return (
         <div>
           <div className="flex space-x-2 flex-wrap">
-            {messageText}{" "}
+            {sanitizedMessageText}{" "}
             <Button
-              disabled={orderStatus !== SeaportOrderStatus.OPEN}
+              disabled={
+                wallet == null || orderStatus !== SeaportOrderStatus.OPEN
+              }
               onClick={async () => {
-                if (chain?.id !== HAM_CHAIN.id) {
+                if (wallet?.chain?.id !== HAM_CHAIN.id) {
                   toast({
                     title: "Error",
                     description: "You must be on Ham to use this feature.",
