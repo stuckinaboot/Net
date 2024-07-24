@@ -15,9 +15,9 @@ contract DeployApp is Script {
         string memory root = vm.projectRoot();
         bytes32 salt = 0xd95417bf80bdb9e77286b6eaaeab7eb4b4e1cc71a20c0e898ae18f42fcc03f56;
 
-        // uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
-        // vm.startBroadcast(deployerPrivateKey);
-        vm.startBroadcast();
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        vm.startBroadcast(deployerPrivateKey);
+        // vm.startBroadcast();
         app = new BazaarV1{salt: salt}();
         vm.stopBroadcast();
 
