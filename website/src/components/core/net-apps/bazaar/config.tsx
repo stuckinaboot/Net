@@ -62,7 +62,13 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
       }
       if (wallet == null) {
         // NOTE: this means users have to be connected to see the fill option
-        return messageText;
+        return (
+          <div>
+            {messageText}
+            <br />
+            <b className="border-2">Connect your wallet to buy/sell NFTs</b>
+          </div>
+        );
       }
 
       const { account, chain, transport } = wallet;
@@ -102,10 +108,7 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
       }
 
       // Fetch NFT media
-      if (chain == null) {
-        return undefined;
-      }
-      const tokenURI = (await readContract(publicClient(chain), {
+      const tokenURI = (await readContract(publicClient(HAM_CHAIN), {
         address: possibleOrder.parameters.offer[0].token as any,
         abi: ERC721_TOKEN_URI_ABI,
         functionName: "tokenURI",
@@ -135,6 +138,13 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
             <Button
               disabled={orderStatus !== SeaportOrderStatus.OPEN}
               onClick={async () => {
+                if (chain?.id !== HAM_CHAIN.id) {
+                  toast({
+                    title: "Error",
+                    description: "You must be on Ham to use this feature.",
+                  });
+                  return;
+                }
                 try {
                   let finalSubmission = {
                     parameters: {
