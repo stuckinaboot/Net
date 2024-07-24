@@ -135,7 +135,10 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
 
       // Replace address with name of collection
       Object.entries(NFT_ADDRESS_NAME_MAPPING).forEach(([address, name]) => {
-        sanitizedMessageText = sanitizedMessageText.replace(address, name);
+        sanitizedMessageText = sanitizedMessageText.replace(
+          address.toLowerCase(),
+          name
+        );
       });
 
       // Replace expiration time with human readable time
