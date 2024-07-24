@@ -283,6 +283,7 @@ export default function MessagesDisplay(props: {
             "overflow-x-hidden"
           )}
         >
+          {!firstLoadedMessages && "Loading messages..."}
           {transformedMessages.map((message, idx) => (
             <div
               key={idx}
