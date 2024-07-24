@@ -61,19 +61,6 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
       if (possibleOrder.signature == null) {
         return messageText;
       }
-      // if (wallet == null) {
-      //   // NOTE: this means users have to be connected to see the fill option
-      //   return (
-      //     <div>
-      //       {messageText}
-      //       <br />
-      //       <b className="border-2">
-      //         Connect your wallet and refresh <br />
-      //         the page to buy/sell NFTs
-      //       </b>
-      //     </div>
-      //   );
-      // }
 
       let providerOrSigner;
 
