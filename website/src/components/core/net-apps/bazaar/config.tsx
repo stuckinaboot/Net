@@ -121,7 +121,8 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
         },
       });
       const metadata = (await res.json())?.metadata;
-      const image = metadata?.image;
+      // ham punks uses image_data
+      const image = metadata?.image || metadata?.image_data;
 
       const imgComponent =
         image != null ? (
