@@ -108,6 +108,7 @@ export default function BaseMintButtons() {
             }
             setIsCurrentlyMintingAmt(0);
           }}
+          disabled={true}
         >
           {isCurrentlyMintingAmt === amt ? "Minting..." : `Mint ${amt}`}
         </Button>
