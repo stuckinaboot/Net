@@ -149,6 +149,11 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
         ).toLocaleString()
       );
 
+      sanitizedMessageText = sanitizedMessageText.replace(
+        "\nExpiration Date",
+        " eth\nExpiration Date"
+      );
+
       return (
         <div>
           <div className="flex space-x-2 flex-wrap">
