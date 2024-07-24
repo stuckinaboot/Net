@@ -66,7 +66,10 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
           <div>
             {messageText}
             <br />
-            <b className="border-2">Connect your wallet to buy/sell NFTs</b>
+            <b className="border-2">
+              Connect your wallet and refresh <br />
+              the page to buy/sell NFTs
+            </b>
           </div>
         );
       }
