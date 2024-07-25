@@ -22,6 +22,10 @@ import { WalletClient } from "viem";
 // we run into issues where it won't scroll at all
 const PRE_SCROLL_TIMEOUT_MS = 250;
 
+// Displaying all messages can take a really long time so limit max messages to display.
+// TODO allow infinite scrolling
+const MAX_MESSAGES_TO_DISPLAY = 150;
+
 // memoize to reduce the number of RPC calls since this renderer may be called a lot
 const getAppName = memoize(async (appAddress: string, chainId: number) => {
   const chain = chainIdToChain(chainId);
@@ -110,6 +114,12 @@ export default function MessagesDisplay(props: {
         };
 
   const totalMessagesResult = useReadContract(totalMessagesReadContractArgs);
+  const endMessageIdx = +(totalMessagesResult.data || 0).toString();
+  const startMessageIdx =
+    endMessageIdx > MAX_MESSAGES_TO_DISPLAY
+      ? endMessageIdx - MAX_MESSAGES_TO_DISPLAY
+      : 0;
+
   const messagesResultsReadContractArgs =
     props.appContext &&
     APP_TO_CONFIG[props.appContext.appAddress]?.getContractReadArgsFunction !=
@@ -117,14 +127,14 @@ export default function MessagesDisplay(props: {
       ? APP_TO_CONFIG[props.appContext.appAddress]
           .getContractReadArgsFunction(props.appContext)
           .messages({
-            startIndex: 0,
-            endIndex: +(totalMessagesResult.data || 0).toString(),
+            startIndex: startMessageIdx,
+            endIndex: endMessageIdx,
           })
       : {
           abi: WILLIE_NET_CONTRACT.abi,
           address: WILLIE_NET_CONTRACT.address as any,
           functionName: "getMessagesInRange",
-          args: [BigInt(0), totalMessagesResult.data],
+          args: [BigInt(startMessageIdx), endMessageIdx],
         };
   const messagesResult = useReadContract(messagesResultsReadContractArgs);
   const onchainMessages =
@@ -238,10 +248,8 @@ export default function MessagesDisplay(props: {
     return (
       <AppProvider
         messageRange={{
-          startIndex: 0,
-          endIndex: +(totalMessagesResult.data != null
-            ? +totalMessagesResult.data.toString()
-            : 0),
+          startIndex: startMessageIdx,
+          endIndex: endMessageIdx,
         }}
         appContext={props.appContext}
       >
@@ -294,7 +302,10 @@ export default function MessagesDisplay(props: {
                   : undefined
               }
             >
-              <ConditionalMessageRenderer idx={idx} message={message} />
+              <ConditionalMessageRenderer
+                idx={idx + startMessageIdx}
+                message={message}
+              />
             </div>
           ))}
         </div>
