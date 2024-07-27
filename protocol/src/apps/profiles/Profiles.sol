@@ -79,7 +79,98 @@ contract Profiles {
         // Send message on Net
         net.sendMessageViaApp(
             msg.sender,
-            "Updated profile",
+            "Updated complete profile",
+            // TODO decide if topic is needed
+            "",
+            ""
+        );
+
+        // Emit event
+        emit ProfileUpdated(msg.sender);
+    }
+
+    /// @notice Set picture for a given user
+    function setPicture(
+        uint256 profilePictureChainId,
+        address profilePictureTokenAddress,
+        uint256 profilePictureTokenId
+    ) external {
+        // Store picture
+        store.put(
+            keccak256(
+                abi.encodePacked(
+                    // TODO see if this is correct for type conversions for sender
+                    bytes20(uint160(msg.sender)),
+                    PICTURE_KEY_INDICATOR
+                )
+            ),
+            bytes(
+                Picture({
+                    profilePictureChainId: profilePictureChainId,
+                    profilePictureTokenAddress: profilePictureTokenAddress,
+                    profilePictureTokenId: profilePictureTokenId
+                })
+            )
+        );
+
+        // Send message on Net
+        net.sendMessageViaApp(
+            msg.sender,
+            "Updated profile picture",
+            // TODO decide if topic is needed
+            "",
+            ""
+        );
+
+        // Emit event
+        emit ProfileUpdated(msg.sender);
+    }
+
+    /// @notice Set profile body for a given user
+    function setBody(string calldata body) external {
+        // Store body
+        store.put(
+            keccak256(
+                abi.encodePacked(
+                    // TODO see if this is correct for type conversions for sender
+                    bytes20(uint160(msg.sender)),
+                    BODY_KEY_INDICATOR
+                )
+            ),
+            bytes(body)
+        );
+
+        // Send message on Net
+        net.sendMessageViaApp(
+            msg.sender,
+            "Updated profile body",
+            // TODO decide if topic is needed
+            "",
+            ""
+        );
+
+        // Emit event
+        emit ProfileUpdated(msg.sender);
+    }
+
+    /// @notice Set profile title for a given user
+    function setTitle(string calldata title) external {
+        // Store title
+        store.put(
+            keccak256(
+                abi.encodePacked(
+                    // TODO see if this is correct for type conversions for sender
+                    bytes20(uint160(msg.sender)),
+                    TITLE_KEY_INDICATOR
+                )
+            ),
+            bytes(title)
+        );
+
+        // Send message on Net
+        net.sendMessageViaApp(
+            msg.sender,
+            "Updated profile title",
             // TODO decide if topic is needed
             "",
             ""
