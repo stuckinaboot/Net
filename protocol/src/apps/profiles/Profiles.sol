@@ -6,7 +6,7 @@ import {Storage} from "../storage/Storage.sol";
 
 /// @title Profiles
 /// @author Aspyn Palatnick (aspyn.eth, stuckinaboot.eth)
-/// @notice User profiles based on Net
+/// @notice User profiles on Net
 contract Profiles {
     event ProfileUpdated(address indexed user);
 
@@ -37,13 +37,7 @@ contract Profiles {
     ) external {
         // Store picture
         store.put(
-            keccak256(
-                abi.encodePacked(
-                    // TODO see if this is correct for type conversions for sender
-                    bytes20(uint160(msg.sender)),
-                    PICTURE_INDICATOR
-                )
-            ),
+            keccak256(abi.encodePacked(msg.sender, PICTURE_INDICATOR)),
             abi.encode(
                 Picture({
                     profilePictureChainId: profilePictureChainId,
@@ -55,25 +49,13 @@ contract Profiles {
 
         // Store title
         store.put(
-            keccak256(
-                abi.encodePacked(
-                    // TODO see if this is correct for type conversions for sender
-                    bytes20(uint160(msg.sender)),
-                    TITLE_INDICATOR
-                )
-            ),
+            keccak256(abi.encodePacked(msg.sender, TITLE_INDICATOR)),
             bytes(title)
         );
 
         // Store body
         store.put(
-            keccak256(
-                abi.encodePacked(
-                    // TODO see if this is correct for type conversions for sender
-                    bytes20(uint160(msg.sender)),
-                    BODY_INDICATOR
-                )
-            ),
+            keccak256(abi.encodePacked(msg.sender, BODY_INDICATOR)),
             bytes(body)
         );
 
@@ -98,13 +80,7 @@ contract Profiles {
     ) external {
         // Store picture
         store.put(
-            keccak256(
-                abi.encodePacked(
-                    // TODO see if this is correct for type conversions for sender
-                    bytes20(uint160(msg.sender)),
-                    PICTURE_INDICATOR
-                )
-            ),
+            keccak256(abi.encodePacked(msg.sender, PICTURE_INDICATOR)),
             abi.encode(
                 Picture({
                     profilePictureChainId: profilePictureChainId,
@@ -131,13 +107,7 @@ contract Profiles {
     function setBody(string calldata body) external {
         // Store body
         store.put(
-            keccak256(
-                abi.encodePacked(
-                    // TODO see if this is correct for type conversions for sender
-                    bytes20(uint160(msg.sender)),
-                    BODY_INDICATOR
-                )
-            ),
+            keccak256(abi.encodePacked(msg.sender, BODY_INDICATOR)),
             bytes(body)
         );
 
@@ -158,13 +128,7 @@ contract Profiles {
     function setTitle(string calldata title) external {
         // Store title
         store.put(
-            keccak256(
-                abi.encodePacked(
-                    // TODO see if this is correct for type conversions for sender
-                    bytes20(uint160(msg.sender)),
-                    TITLE_INDICATOR
-                )
-            ),
+            keccak256(abi.encodePacked(msg.sender, TITLE_INDICATOR)),
             bytes(title)
         );
 
@@ -197,13 +161,7 @@ contract Profiles {
         return
             string(
                 store.get(
-                    keccak256(
-                        abi.encodePacked(
-                            // TODO see if this is correct for type conversions for sender
-                            bytes20(uint160(msg.sender)),
-                            TITLE_INDICATOR
-                        )
-                    ),
+                    keccak256(abi.encodePacked(msg.sender, TITLE_INDICATOR)),
                     user
                 )
             );
@@ -216,13 +174,7 @@ contract Profiles {
         return
             string(
                 store.get(
-                    keccak256(
-                        abi.encodePacked(
-                            // TODO see if this is correct for type conversions for sender
-                            bytes20(uint160(msg.sender)),
-                            BODY_INDICATOR
-                        )
-                    ),
+                    keccak256(abi.encodePacked(msg.sender, BODY_INDICATOR)),
                     user
                 )
             );
@@ -235,13 +187,7 @@ contract Profiles {
         return
             abi.decode(
                 store.get(
-                    keccak256(
-                        abi.encodePacked(
-                            // TODO see if this is correct for type conversions for sender
-                            bytes20(uint160(msg.sender)),
-                            PICTURE_INDICATOR
-                        )
-                    ),
+                    keccak256(abi.encodePacked(msg.sender, PICTURE_INDICATOR)),
                     user
                 ),
                 (Picture)

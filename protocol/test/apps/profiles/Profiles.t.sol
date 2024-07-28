@@ -9,10 +9,10 @@ import {Storage} from "../../../src/apps/storage/Storage.sol";
 import {Profiles} from "../../../src/apps/profiles/Profiles.sol";
 import {PRBTest} from "@prb/test/PRBTest.sol";
 
-contract StorageTest is PRBTest, StdCheats {
+contract ProfilesTest is PRBTest, StdCheats {
     using stdStorage for StdStorage;
 
-    event Stored(bytes32 indexed key, address indexed operator);
+    event ProfileUpdated(address indexed user);
 
     StdStorage private stdstore;
 
@@ -40,10 +40,15 @@ contract StorageTest is PRBTest, StdCheats {
         vm.etch(NET_ADDRESS, netCode);
 
         // Deploy Storage code to STORAGE_ADDRESS
-        net = Net(STORAGE_ADDRESS);
+        store = Storage(STORAGE_ADDRESS);
         bytes memory storeCode = address(new Storage()).code;
         vm.etch(STORAGE_ADDRESS, storeCode);
+
+        net.sendMessage("abc", "def", "");
+        // store.put(keccak256(abi.encodePacked(address(0))), bytes("abc"));
     }
 
-    function testSetProfile() public {}
+    function testSetProfile() public {
+        // profiles.setFullProfile(1, address(0), 1, "title", "body");
+    }
 }
