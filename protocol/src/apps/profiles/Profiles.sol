@@ -150,8 +150,8 @@ contract Profiles {
     /// @return profile profile
     function getFullProfile(
         address user
-    ) external view returns (string memory, string memory, Picture memory) {
-        return (getTitle(user), getBody(user), getPicture(user));
+    ) external view returns (Picture memory, string memory, string memory) {
+        return (getPicture(user), getTitle(user), getBody(user));
     }
 
     /// @notice Get title

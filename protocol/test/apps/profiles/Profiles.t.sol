@@ -45,7 +45,32 @@ contract ProfilesTest is PRBTest, StdCheats {
         store = Storage(STORAGE_ADDRESS);
     }
 
-    function testSetFullProfile() public {
-        profiles.setFullProfile(1, address(0), 1, "title", "body");
+    function testSetFullProfile(
+        uint256 profilePictureChainId,
+        address profilePictureTokenAddress,
+        uint256 profilePictureTokenId,
+        string calldata title,
+        string calldata body
+    ) public {
+        profiles.setFullProfile(
+            profilePictureChainId,
+            profilePictureTokenAddress,
+            profilePictureTokenId,
+            title,
+            body
+        );
+        (
+            Profiles.Picture memory picture,
+            string memory actualTitle,
+            string memory actualBody
+        ) = profiles.getFullProfile(address(this));
+        assertEq(picture.profilePictureChainId, profilePictureChainId);
+        assertEq(
+            picture.profilePictureTokenAddress,
+            profilePictureTokenAddress
+        );
+        assertEq(picture.profilePictureTokenId, profilePictureTokenId);
+        assertEq(actualTitle, title);
+        assertEq(actualBody, body);
     }
 }
