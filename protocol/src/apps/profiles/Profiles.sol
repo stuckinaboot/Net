@@ -32,8 +32,8 @@ contract Profiles {
         uint256 profilePictureChainId,
         address profilePictureTokenAddress,
         uint256 profilePictureTokenId,
-        string calldata body,
-        string calldata title
+        string calldata title,
+        string calldata body
     ) external {
         // Store picture
         store.put(
@@ -53,18 +53,6 @@ contract Profiles {
             )
         );
 
-        // Store body
-        store.put(
-            keccak256(
-                abi.encodePacked(
-                    // TODO see if this is correct for type conversions for sender
-                    bytes20(uint160(msg.sender)),
-                    BODY_INDICATOR
-                )
-            ),
-            bytes(body)
-        );
-
         // Store title
         store.put(
             keccak256(
@@ -75,6 +63,18 @@ contract Profiles {
                 )
             ),
             bytes(title)
+        );
+
+        // Store body
+        store.put(
+            keccak256(
+                abi.encodePacked(
+                    // TODO see if this is correct for type conversions for sender
+                    bytes20(uint160(msg.sender)),
+                    BODY_INDICATOR
+                )
+            ),
+            bytes(body)
         );
 
         // Send message on Net
@@ -184,7 +184,7 @@ contract Profiles {
     /// @notice Get profile
     /// @param user user
     /// @return profile profile
-    function getProfile(
+    function getFullProfile(
         address user
     ) external view returns (string memory, string memory, Picture memory) {
         return (getTitle(user), getBody(user), getPicture(user));

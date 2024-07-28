@@ -6,6 +6,7 @@ import {StdCheats} from "forge-std/StdCheats.sol";
 import {StdStorage, stdStorage} from "forge-std/StdStorage.sol";
 import {Net} from "../../../src/net/Net.sol";
 import {Storage} from "../../../src/apps/storage/Storage.sol";
+import {Profiles} from "../../../src/apps/profiles/Profiles.sol";
 import {PRBTest} from "@prb/test/PRBTest.sol";
 
 contract StorageTest is PRBTest, StdCheats {
@@ -25,6 +26,7 @@ contract StorageTest is PRBTest, StdCheats {
         address(0x00000000B24D62781DB359B07880A105cd0b64e5);
     Net public net;
     Storage public store;
+    Profiles public profiles = new Profiles();
 
     function setUp() public {
         for (uint256 i = 0; i < users.length; i++) {
