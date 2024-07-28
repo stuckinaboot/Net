@@ -12,7 +12,7 @@ contract Profiles {
 
     // TODO use correct address, this is wrong
     Storage internal store =
-        Storage(0x00000000B24D62781DB359B07880A105cd0b64e5);
+        Storage(0x000061e2E84b1662dacA23e1aE2acf7b32793350);
     Net internal net = Net(0x00000000B24D62781dB359b07880a105cD0b64e6);
 
     uint256 constant BODY_INDICATOR = 1;

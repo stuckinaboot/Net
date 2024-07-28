@@ -23,7 +23,7 @@ contract ProfilesTest is PRBTest, StdCheats {
         address(0x00000000B24D62781dB359b07880a105cD0b64e6);
     // TODO use correct storage address
     address constant STORAGE_ADDRESS =
-        address(0x00000000B24D62781DB359B07880A105cd0b64e5);
+        address(0x000061e2E84b1662dacA23e1aE2acf7b32793350);
     Net public net;
     Storage public store;
     Profiles public profiles = new Profiles();
@@ -34,21 +34,18 @@ contract ProfilesTest is PRBTest, StdCheats {
             vm.deal(users[i], 10 ether);
         }
 
-        // Deploy Net code to NET_ADDRESS
+        // Deploy Net to NET_ADDRESS.
+        // NOTE: had to use `deployCodeTo` since `vm.etch` would
+        // result in Net contract code not being found in Storage.sol during tests
+        deployCodeTo("Net.sol", "", NET_ADDRESS);
         net = Net(NET_ADDRESS);
-        bytes memory netCode = address(new Net()).code;
-        vm.etch(NET_ADDRESS, netCode);
 
-        // Deploy Storage code to STORAGE_ADDRESS
+        // Deploy Storage to STORAGE_ADDRESS
+        deployCodeTo("Storage.sol", "", STORAGE_ADDRESS);
         store = Storage(STORAGE_ADDRESS);
-        bytes memory storeCode = address(new Storage()).code;
-        vm.etch(STORAGE_ADDRESS, storeCode);
-
-        net.sendMessage("abc", "def", "");
-        // store.put(keccak256(abi.encodePacked(address(0))), bytes("abc"));
     }
 
-    function testSetProfile() public {
-        // profiles.setFullProfile(1, address(0), 1, "title", "body");
+    function testSetFullProfile() public {
+        profiles.setFullProfile(1, address(0), 1, "title", "body");
     }
 }
