@@ -10,8 +10,9 @@ import {Storage} from "../storage/Storage.sol";
 contract Profiles {
     event ProfileUpdated(address indexed user);
 
-    // TODO use correct address
-    Storage internal store = Storage(address(0));
+    // TODO use correct address, this is wrong
+    Storage internal store =
+        Storage(0x00000000B24D62781DB359B07880A105cd0b64e5);
     Net internal net = Net(0x00000000B24D62781dB359b07880a105cD0b64e6);
 
     uint256 constant BODY_INDICATOR = 1;
