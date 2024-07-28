@@ -14,7 +14,7 @@ contract Profiles {
     Storage internal store = Storage(address(0));
     Net internal net = Net(0x00000000B24D62781dB359b07880a105cD0b64e6);
 
-    uint256 constant BODY_KEY_INDICATOR = 1;
+    uint256 constant BODY_INDICATOR = 1;
     uint256 constant TITLE_INDICATOR = 2;
     uint256 constant PICTURE_INDICATOR = 3;
 
@@ -40,10 +40,10 @@ contract Profiles {
                 abi.encodePacked(
                     // TODO see if this is correct for type conversions for sender
                     bytes20(uint160(msg.sender)),
-                    PICTURE_KEY_INDICATOR
+                    PICTURE_INDICATOR
                 )
             ),
-            bytes(
+            abi.encode(
                 Picture({
                     profilePictureChainId: profilePictureChainId,
                     profilePictureTokenAddress: profilePictureTokenAddress,
@@ -58,7 +58,7 @@ contract Profiles {
                 abi.encodePacked(
                     // TODO see if this is correct for type conversions for sender
                     bytes20(uint160(msg.sender)),
-                    BODY_KEY_INDICATOR
+                    BODY_INDICATOR
                 )
             ),
             bytes(body)
@@ -70,7 +70,7 @@ contract Profiles {
                 abi.encodePacked(
                     // TODO see if this is correct for type conversions for sender
                     bytes20(uint160(msg.sender)),
-                    TITLE_KEY_INDICATOR
+                    TITLE_INDICATOR
                 )
             ),
             bytes(title)
@@ -101,10 +101,10 @@ contract Profiles {
                 abi.encodePacked(
                     // TODO see if this is correct for type conversions for sender
                     bytes20(uint160(msg.sender)),
-                    PICTURE_KEY_INDICATOR
+                    PICTURE_INDICATOR
                 )
             ),
-            bytes(
+            abi.encode(
                 Picture({
                     profilePictureChainId: profilePictureChainId,
                     profilePictureTokenAddress: profilePictureTokenAddress,
@@ -134,7 +134,7 @@ contract Profiles {
                 abi.encodePacked(
                     // TODO see if this is correct for type conversions for sender
                     bytes20(uint160(msg.sender)),
-                    BODY_KEY_INDICATOR
+                    BODY_INDICATOR
                 )
             ),
             bytes(body)
@@ -161,7 +161,7 @@ contract Profiles {
                 abi.encodePacked(
                     // TODO see if this is correct for type conversions for sender
                     bytes20(uint160(msg.sender)),
-                    TITLE_KEY_INDICATOR
+                    TITLE_INDICATOR
                 )
             ),
             bytes(title)
@@ -180,65 +180,61 @@ contract Profiles {
         emit ProfileUpdated(msg.sender);
     }
 
-    /// @notice Get value for a particular key and operator
-    /// @param key key
-    /// @param operator user that stored key
-    /// @return value stored value for the particular key-operator pair
-    function get(
-        bytes32 key,
-        address operator
-    ) external view returns (bytes memory) {
-        string memory topic = string(abi.encodePacked(key));
-        // Get most recent message for particular key-operator pair
+    /// @notice Get title
+    /// @param user user
+    /// @return title title
+    function getTitle(address user) external view returns (string memory) {
         return
-            net
-                .getMessageForAppUserTopic(
-                    net.getTotalMessagesForAppUserTopicCount(
-                        address(this),
-                        operator,
-                        topic
-                    ) - 1,
-                    address(this),
-                    operator,
-                    topic
+            string(
+                store.get(
+                    keccak256(
+                        abi.encodePacked(
+                            // TODO see if this is correct for type conversions for sender
+                            bytes20(uint160(msg.sender)),
+                            TITLE_INDICATOR
+                        )
+                    ),
+                    user
                 )
-                .data;
+            );
     }
 
-    /// @notice Get value at index for a particular key and operator
-    /// @param key key
-    /// @param operator user that stored key
-    /// @param idx index
-    /// @return value stored value at index for the particular key-operator pair
-    function getValueAtIndex(
-        bytes32 key,
-        address operator,
-        uint256 idx
-    ) public view returns (bytes memory) {
+    /// @notice Get body
+    /// @param user user
+    /// @return body body
+    function getBody(address user) external view returns (string memory) {
         return
-            net
-                .getMessageForAppUserTopic(
-                    idx,
-                    address(this),
-                    operator,
-                    string(abi.encodePacked(key))
+            string(
+                store.get(
+                    keccak256(
+                        abi.encodePacked(
+                            // TODO see if this is correct for type conversions for sender
+                            bytes20(uint160(msg.sender)),
+                            BODY_INDICATOR
+                        )
+                    ),
+                    user
                 )
-                .data;
+            );
     }
 
-    /// @notice Get total number of writes to a particular key for a given operator
-    /// @param key key
-    /// @param operator user that stored key
-    /// @return total total writes count
-    function getTotalWrites(
-        bytes32 key,
-        address operator
-    ) external view returns (uint256) {
+    /// @notice Get picture
+    /// @param user user
+    /// @return picture picture
+    function getPicture(address user) external view returns (Picture memory) {
         return
-            net.getTotalMessagesForAppUserTopicCount(
-                address(this),
-                operator,
-                string(abi.encodePacked(key))
+            abi.decode(
+                store.get(
+                    keccak256(
+                        abi.encodePacked(
+                            // TODO see if this is correct for type conversions for sender
+                            bytes20(uint160(msg.sender)),
+                            PICTURE_INDICATOR
+                        )
+                    ),
+                    user
+                ),
+                (Picture)
             );
     }
 }
