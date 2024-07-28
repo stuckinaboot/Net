@@ -180,10 +180,19 @@ contract Profiles {
         emit ProfileUpdated(msg.sender);
     }
 
+    /// @notice Get profile
+    /// @param user user
+    /// @return profile profile
+    function getProfile(
+        address user
+    ) external view returns (string memory, string memory, Picture memory) {
+        return (getTitle(user), getBody(user), getPicture(user));
+    }
+
     /// @notice Get title
     /// @param user user
     /// @return title title
-    function getTitle(address user) external view returns (string memory) {
+    function getTitle(address user) public view returns (string memory) {
         return
             string(
                 store.get(
@@ -202,7 +211,7 @@ contract Profiles {
     /// @notice Get body
     /// @param user user
     /// @return body body
-    function getBody(address user) external view returns (string memory) {
+    function getBody(address user) public view returns (string memory) {
         return
             string(
                 store.get(
@@ -221,7 +230,7 @@ contract Profiles {
     /// @notice Get picture
     /// @param user user
     /// @return picture picture
-    function getPicture(address user) external view returns (Picture memory) {
+    function getPicture(address user) public view returns (Picture memory) {
         return
             abi.decode(
                 store.get(
