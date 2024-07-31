@@ -60,6 +60,7 @@ export const CHAIN_ID_TO_OPENSEA_CHAIN_MAP = [
     crossChainId: "eip155:11155111",
   },
   { chain: base, openSeaChainString: "base", crossChainId: "eip155:8453" },
+  // Degen is not present on OpenSea but using this as filler
   {
     chain: degen,
     openSeaChainString: "degen",

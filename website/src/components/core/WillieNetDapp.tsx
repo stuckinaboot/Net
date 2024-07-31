@@ -14,6 +14,7 @@ const ENABLE_DYNAMICALLY_SHOW_SCROLL_BUTTON = false;
 
 export default function WillieNetDapp(props: {
   specificMessageIndex?: number;
+  forceInitialChainIdString?: string;
 }) {
   const { address: userAddress } = useAccount();
   const [controlsState, setControlsState] = useState<any>({});
@@ -36,9 +37,9 @@ export default function WillieNetDapp(props: {
 
   const searchParams = useSearchParams();
   const { switchChain } = useSwitchChain();
-  const initialChainSearchParamStr = searchParams
-    .get("initialChain")
-    ?.toLowerCase();
+  const initialChainSearchParamStr =
+    searchParams.get("initialChain")?.toLowerCase() ||
+    props.forceInitialChainIdString;
   const initialChainSearchParam =
     initialChainSearchParamStr === "base"
       ? base

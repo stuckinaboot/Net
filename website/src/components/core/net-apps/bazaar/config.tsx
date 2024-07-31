@@ -1,7 +1,7 @@
 import { BrowserProvider, JsonRpcProvider, JsonRpcSigner } from "ethers";
 import {
   chainIdToChain,
-  chainIdToOpenSeaChainString,
+  chainIdToChainString,
   getRpcUrl,
   publicClient,
 } from "@/app/utils";
@@ -153,7 +153,6 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
           parseInt(possibleOrder.parameters.endTime.toString()) * 1000
         ).toLocaleString()
       );
-      console.log("HIT ME!", getDefaultCurrencySymbolForChain(chainId));
       sanitizedMessageText = sanitizedMessageText.replace(
         "\nExpiration Date",
         ` ${getDefaultCurrencySymbolForChain(chainId)}\nExpiration Date`

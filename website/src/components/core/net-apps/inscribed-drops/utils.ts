@@ -3,7 +3,7 @@ import {
   INSCRIBE_DROP_INSCRIBE_TOPIC,
 } from "./constants";
 import {
-  chainIdToOpenSeaChainString,
+  chainIdToChainString,
   getResizedImageUrl,
   isSvgDataUri,
   openSeaChainStringToChain,
@@ -20,7 +20,7 @@ export function getInscribedDropUrlForTokenId(
   tokenId: string,
   chainId: number
 ) {
-  const chainString = chainIdToOpenSeaChainString(chainId);
+  const chainString = chainIdToChainString(chainId);
   return TESTNETS_ENABLED
     ? `https://testnets.opensea.io/assets/${chainString}/${INSCRIBED_DROPS_CONTRACT.address}/${tokenId}`
     : `https://opensea.io/assets/${chainString}/${INSCRIBED_DROPS_CONTRACT.address}/${tokenId}`;

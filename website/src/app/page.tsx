@@ -1,28 +1,23 @@
 "use client";
 
-import { Suspense } from "react";
+import { useEffect } from "react";
 
-import { useSearchParams } from "next/navigation";
-import WillieNetDapp from "../components/core/WillieNetDapp";
+import { useRouter } from "next/navigation";
+import { useChainId } from "wagmi";
+import { chainIdToChainString } from "./utils";
 
 function Core() {
-  const searchParams = useSearchParams();
-  const specificMessageIndexParam = searchParams.get("specificMessageIndex");
-  let specificMessageIndex =
-    specificMessageIndexParam != null
-      ? parseInt(specificMessageIndexParam)
-      : undefined;
-  if (specificMessageIndex != null && isNaN(specificMessageIndex)) {
-    specificMessageIndex = undefined;
-  }
+  const router = useRouter();
+  const chainId = useChainId();
 
-  return <WillieNetDapp specificMessageIndex={specificMessageIndex} />;
+  useEffect(() => {
+    const chain = chainIdToChainString(chainId);
+    router.push(`/${chain}`);
+  }, [chainId]);
+
+  return <></>;
 }
 
 export default function Home() {
-  return (
-    <Suspense>
-      <Core />
-    </Suspense>
-  );
+  return <Core />;
 }

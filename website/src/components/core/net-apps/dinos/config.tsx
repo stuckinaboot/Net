@@ -1,7 +1,7 @@
 import { BrowserProvider, JsonRpcProvider, JsonRpcSigner } from "ethers";
 import {
   chainIdToChain,
-  chainIdToOpenSeaChainString,
+  chainIdToChainString,
   getRpcUrl,
   publicClient,
 } from "@/app/utils";
