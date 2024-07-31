@@ -70,7 +70,7 @@ export function convertMessageToListingComponents(
   }
 
   const currency = split[5];
-  if (currency !== "eth") {
+  if (currency !== getDefaultCurrencySymbolForChain(chainId)) {
     return null;
   }
 
