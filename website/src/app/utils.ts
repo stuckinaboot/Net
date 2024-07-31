@@ -50,7 +50,7 @@ export async function getDisplayableErrorMessageFromSubmitTransactionError(
   return msg.substring(0, periodIdx);
 }
 
-export function chainIdToOpenSeaChainString(chainId: number) {
+export function chainIdToChainString(chainId: number) {
   return CHAIN_ID_TO_OPENSEA_CHAIN_MAP.find((m) => m.chain.id === chainId)
     ?.openSeaChainString;
 }

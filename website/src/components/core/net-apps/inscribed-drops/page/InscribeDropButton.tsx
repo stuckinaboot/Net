@@ -19,7 +19,7 @@ import { InscribeDropDialogContents } from "./InscribeDropDialogContents";
 import { useRouter } from "next/navigation";
 import { fromHex, parseEther, parseUnits } from "viem";
 import { useChainId } from "wagmi";
-import { chainIdToOpenSeaChainString } from "@/app/utils";
+import { chainIdToChainString } from "@/app/utils";
 import {
   InscriptionContents,
   MediaFiles,
@@ -54,7 +54,7 @@ export default function InscribeDropButton(props: {
     setInscription(props.inscription);
   }, [props.inscription]);
 
-  const chainString = chainIdToOpenSeaChainString(chainId);
+  const chainString = chainIdToChainString(chainId);
 
   const inscriptionJson = inscription;
 

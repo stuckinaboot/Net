@@ -1,6 +1,6 @@
 import {
   chainIdToChain,
-  chainIdToOpenSeaChainString,
+  chainIdToChainString,
   publicClient,
 } from "@/app/utils";
 import { StandaloneAppComponentsConfig } from "../../types";
@@ -34,7 +34,7 @@ export const config: StandaloneAppComponentsConfig = {
             {messageText.substring(0, hashTagIndex)}
             <span className="inline underline">
               <Link
-                href={`/app/inscribed-drops/mint/${chainIdToOpenSeaChainString(
+                href={`/app/inscribed-drops/mint/${chainIdToChainString(
                   chainId
                 )}/${dropId}`}
               >

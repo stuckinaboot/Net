@@ -4,14 +4,14 @@ import { useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 import { useChainId } from "wagmi";
-import { chainIdToOpenSeaChainString } from "./utils";
+import { chainIdToChainString } from "./utils";
 
 function Core() {
   const router = useRouter();
   const chainId = useChainId();
 
   useEffect(() => {
-    const chain = chainIdToOpenSeaChainString(chainId);
+    const chain = chainIdToChainString(chainId);
     router.push(`/${chain}`);
   }, [chainId]);
 
