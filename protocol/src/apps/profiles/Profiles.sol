@@ -161,8 +161,8 @@ contract Profiles {
         return
             string(
                 store.get(
-                    keccak256(abi.encodePacked(msg.sender, TITLE_INDICATOR)),
-                    user
+                    keccak256(abi.encodePacked(user, TITLE_INDICATOR)),
+                    address(this)
                 )
             );
     }
@@ -174,8 +174,8 @@ contract Profiles {
         return
             string(
                 store.get(
-                    keccak256(abi.encodePacked(msg.sender, BODY_INDICATOR)),
-                    user
+                    keccak256(abi.encodePacked(user, BODY_INDICATOR)),
+                    address(this)
                 )
             );
     }
@@ -187,8 +187,8 @@ contract Profiles {
         return
             abi.decode(
                 store.get(
-                    keccak256(abi.encodePacked(msg.sender, PICTURE_INDICATOR)),
-                    user
+                    keccak256(abi.encodePacked(user, PICTURE_INDICATOR)),
+                    address(this)
                 ),
                 (Picture)
             );

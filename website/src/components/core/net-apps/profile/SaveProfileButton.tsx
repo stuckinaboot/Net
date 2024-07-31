@@ -15,6 +15,7 @@ import { fromHex, parseEther, parseUnits } from "viem";
 import { useChainId } from "wagmi";
 import { chainIdToOpenSeaChainString } from "@/app/utils";
 import { STORAGE_CONTRACT } from "./constants";
+import { ProfileContents } from "./types";
 
 const TOASTS = {
   title: "Profile",
@@ -28,7 +29,7 @@ const BUTTONS = {
   success: "Saved",
 };
 
-type Props = { disabled?: boolean };
+type Props = { profileContents: ProfileContents; disabled?: boolean };
 
 export default function SaveProfileButton(props: Props) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -50,7 +51,7 @@ export default function SaveProfileButton(props: Props) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogDescription>Foobar</DialogDescription>
+          <DialogDescription>TODO</DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex">
           <DialogClose asChild>

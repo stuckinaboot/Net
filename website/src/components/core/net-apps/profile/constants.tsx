@@ -1,6 +1,6 @@
 import abi from "../../../../../assets/abis/apps/dinos.json";
 
-// TODO decide if we profile contract is needed
+// TODO use PROFILE_CONTRACT to allow storage of name, body, and pfp independently
 
 export const STORAGE_CONTRACT = {
   abi,
