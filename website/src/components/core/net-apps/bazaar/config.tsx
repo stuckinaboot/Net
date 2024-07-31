@@ -12,11 +12,11 @@ import {
 import { readContract } from "viem/actions";
 import Link from "next/link";
 import { CHAINS, HAM_CHAIN, WILLIE_NET_CONTRACT } from "@/app/constants";
-import { baseSepolia } from "viem/chains";
 import { ListDialogContents } from "./ListDialogContents";
 import {
   NFT_ADDRESS_NAME_MAPPING,
   convertMessageToListingComponents,
+  getDefaultCurrencySymbolForChain,
   getTimestampInSecondsNHoursFromNow,
 } from "./utils";
 import {
@@ -152,7 +152,7 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
 
       sanitizedMessageText = sanitizedMessageText.replace(
         "\nExpiration Date",
-        " eth\nExpiration Date"
+        ` ${getDefaultCurrencySymbolForChain(chainId)}\nExpiration Date`
       );
 
       return (
@@ -251,7 +251,8 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
       (chain) =>
         chain.name === "Ham" ||
         chain.name === "Base Sepolia" ||
-        chain.name === "Base"
+        chain.name === "Base" ||
+        chain.name === "Degen"
     ).map((chain) => chain.id)
   ),
   infer: (message: string, chainId: number) =>

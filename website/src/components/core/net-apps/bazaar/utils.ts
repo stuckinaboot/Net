@@ -23,6 +23,16 @@ export const NFT_ADDRESS_NAME_MAPPING: {
   "0x8a53ed5189ca8d5cac4149d75408cec047cd5b2e": "degen punk",
 };
 
+export function getDefaultCurrencySymbolForChain(chainId: number) {
+  if (chainId === HAM_CHAIN.id) {
+    return "eth";
+  }
+  if (chainId === degen.id) {
+    return "degen";
+  }
+  return "eth";
+}
+
 export function convertMessageToListingComponents(
   message: string,
   chainId: number
