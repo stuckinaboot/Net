@@ -10,13 +10,12 @@ import {
   StandaloneAppComponentsConfig,
 } from "../../types";
 import { readContract } from "viem/actions";
-import Link from "next/link";
-import { CHAINS, HAM_CHAIN, WILLIE_NET_CONTRACT } from "@/app/constants";
-import { baseSepolia } from "viem/chains";
+import { CHAINS } from "@/app/constants";
 import { ListDialogContents } from "./ListDialogContents";
 import {
   NFT_ADDRESS_NAME_MAPPING,
   convertMessageToListingComponents,
+  getDefaultCurrencySymbolForChain,
   getTimestampInSecondsNHoursFromNow,
 } from "./utils";
 import {
@@ -106,8 +105,13 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
         orderStatus = SeaportOrderStatus.EXPIRED;
       }
 
+      const chainVal = chainIdToChain(chainId);
+      if (chainVal == null) {
+        throw Error("Chain not found");
+      }
+
       // Fetch NFT media
-      const tokenURI = (await readContract(publicClient(HAM_CHAIN), {
+      const tokenURI = (await readContract(publicClient(chainVal), {
         address: possibleOrder.parameters.offer[0].token as any,
         abi: ERC721_TOKEN_URI_ABI,
         functionName: "tokenURI",
@@ -149,10 +153,10 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
           parseInt(possibleOrder.parameters.endTime.toString()) * 1000
         ).toLocaleString()
       );
-
+      console.log("HIT ME!", getDefaultCurrencySymbolForChain(chainId));
       sanitizedMessageText = sanitizedMessageText.replace(
         "\nExpiration Date",
-        " eth\nExpiration Date"
+        ` ${getDefaultCurrencySymbolForChain(chainId)}\nExpiration Date`
       );
 
       return (
@@ -164,7 +168,7 @@ export const standaloneConfig: StandaloneAppComponentsConfig = {
                 wallet == null || orderStatus !== SeaportOrderStatus.OPEN
               }
               onClick={async () => {
-                if (wallet?.chain?.id !== HAM_CHAIN.id) {
+                if (wallet?.chain?.id !== chainVal.id) {
                   toast({
                     title: "Error",
                     description: "You must be on Ham to use this feature.",
@@ -251,7 +255,8 @@ export const inferredAppConfig: InferredAppComponentsConfig = {
       (chain) =>
         chain.name === "Ham" ||
         chain.name === "Base Sepolia" ||
-        chain.name === "Base"
+        chain.name === "Base" ||
+        chain.name === "Degen"
     ).map((chain) => chain.id)
   ),
   infer: (message: string, chainId: number) =>
