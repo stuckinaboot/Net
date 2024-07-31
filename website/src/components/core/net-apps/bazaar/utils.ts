@@ -1,5 +1,5 @@
 import { HAM_CHAIN } from "@/app/constants";
-import { base, baseSepolia } from "viem/chains";
+import { base, baseSepolia, degen } from "viem/chains";
 
 export const NFT_CHAIN_NAME_ADDRESS_MAPPING: {
   [chainId: number]: { [name: string]: string };
@@ -9,6 +9,7 @@ export const NFT_CHAIN_NAME_ADDRESS_MAPPING: {
     punk: "0xd1Ee96F8859Da046781cACa35EF0FF2A0307570C",
     lp: "0x68f343bC08D1C093754a74F2b45a69A2f1A42872",
   },
+  [degen.id]: { punk: "0x8a53ed5189ca8d5cac4149d75408cec047cd5b2e" },
   [baseSepolia.id]: { dino: "0xAbCdefC26dAc279770D07eE513668b5aB74718e3" },
   [base.id]: { test: "" },
 };
@@ -19,6 +20,7 @@ export const NFT_ADDRESS_NAME_MAPPING: {
   "0xAbCdefC26dAc279770D07eE513668b5aB74718e3": "ham dino",
   "0xd1Ee96F8859Da046781cACa35EF0FF2A0307570C": "ham punk",
   "0x68f343bC08D1C093754a74F2b45a69A2f1A42872": "ham lp",
+  "0x8a53ed5189ca8d5cac4149d75408cec047cd5b2e": "degen punk",
 };
 
 export function convertMessageToListingComponents(
