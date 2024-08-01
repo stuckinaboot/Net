@@ -24,7 +24,7 @@ const PRE_SCROLL_TIMEOUT_MS = 250;
 
 // Displaying all messages can take a really long time so limit max messages to display.
 // TODO allow infinite scrolling
-const MAX_MESSAGES_TO_DISPLAY = 150;
+const MAX_MESSAGES_TO_DISPLAY = 100;
 
 // memoize to reduce the number of RPC calls since this renderer may be called a lot
 const getAppName = memoize(async (appAddress: string, chainId: number) => {
